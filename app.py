@@ -35,13 +35,11 @@ from routes.teacher.finance.fee import fee_bp
 from routes.teacher.finance.payment import payment_bp
 from routes.teacher.operations.attendance import attendance_bp
 from routes.teacher.finance.fee_reminder import fee_reminder_bp
-from routes.teacher.assessments.assignment import assignment_bp
+from routes.teacher.assessments.assignment import assignment_for_student_bp
+from routes.teacher.assessments.assignment_check_ import teacher_see_student_bp
 from routes.teacher.assessments.quize import quiz_bp
 from routes.teacher.assessments.quiz_question import quiz_question_bp
 from routes.student_auth import student_auth_bp
-from routes.student.assessments.assignment import student_assignment_bp
-from routes.student.assessments.assignment_submission import student_assignment_submission_bp
-from routes.teacher.assessments.assignment_subbmission import teacher_submission_check_bp
 from routes.student.dashboard import student_dashboard_bp
 from routes.student.finance.fee import student_fee_bp
 from routes.student.finance.payment  import student_payment_bp
@@ -55,6 +53,12 @@ from routes.teacher.leads import lead_bp
 from routes.teacher.faq import teacher_faq_bp
 from routes.teacher.chat_history import chat_history_bp
 from routes.ai.admission_bot import admission_bot_bp
+from routes.student.assessments.assignment_view_submission import assignment_submission_view_bp
+from routes.student.assessments.assignment_submission import student_assignment_submission_bp
+from routes.student.assessments.assignment_view import student_assignment_bp
+from routes.student.assessments.student_assignment_result import student_result_bp
+
+
 app=Flask(__name__)
 app.config.from_object(Config)
 CORS(app)
@@ -74,6 +78,7 @@ def revoked_token_loader(jwt_header,jwt_payload):
       },401)
 
 #register blueprint
+print(app.url_map)
 app.register_blueprint(auth_bp)
 app.register_blueprint(otp_bp)
 app.register_blueprint(institute_bp)
@@ -84,18 +89,20 @@ app.register_blueprint(fee_bp)
 app.register_blueprint(payment_bp)
 app.register_blueprint(attendance_bp)
 app.register_blueprint(fee_reminder_bp)
-app.register_blueprint(assignment_bp)
+app.register_blueprint(assignment_for_student_bp)
+app.register_blueprint(teacher_see_student_bp)
 app.register_blueprint(quiz_bp)
 app.register_blueprint(quiz_question_bp)
 app.register_blueprint(student_auth_bp)
-app.register_blueprint(student_assignment_bp)
+app.register_blueprint(assignment_submission_view_bp)
+app.register_blueprint(student_result_bp)
 app.register_blueprint(student_assignment_submission_bp)
-app.register_blueprint(teacher_submission_check_bp)
+app.register_blueprint(student_assignment_bp)
 app.register_blueprint(student_dashboard_bp)
 app.register_blueprint(student_fee_bp)
 app.register_blueprint(student_payment_bp)
 app.register_blueprint(student_attendance_bp)
-app.register_blueprint(assignment_submission_view_bp)
+
 app.register_blueprint(student_quiz_bp)
 app.register_blueprint(student_quiz_question_bp)
 app.register_blueprint(student_quiz_submission_bp)
@@ -104,6 +111,9 @@ app.register_blueprint(teacher_faq_bp)
 app.register_blueprint(lead_bp)
 app.register_blueprint(chat_history_bp)
 app.register_blueprint(admission_bot_bp)
+print(student_assignment_bp)
+for rule in app.url_map.iter_rules():
+    print(rule.endpoint, "---->", rule)
 @app.route("/",methods=["GET"])
 def home():
     return jsonify({

@@ -27,28 +27,25 @@ def view_assignment():
             "success":False,
             "message":"Student not found"
         }),400
+    submission_list = []
     submissions = AssignmentSubmission.query.filter_by(
         student_id=student.id
     ).all()
-
-    submission_list = []
-
     for submission in submissions:
-        assignment = Assignment.query.filter_by(
-            id=submission.assignment_id
-        ).first()
+       assignment = Assignment.query.filter_by(
+        id=submission.assignment_id
+    ).first()    
 
-    submission_list.append({
-            "id": submission.id,
-            "assignment_id": submission.assignment_id,
-            "assignment_title": assignment.title if assignment else None,
-            "answer_text": submission.answer_text,
-            "file_url": submission.file_url,
-            "status": submission.status,
-            "marks_obtained": submission.marks,
-            "teacher_feedback": submission.feedback,
-            "submitted_at": submission.submitted_at.isoformat() if submission.submitted_at else None
-        })
+       submission_list.append({
+    "assignment_id": assignment.id,
+    "title": assignment.title,
+    "description": assignment.description,
+    "due_date": assignment.due_date,
+    "submitted_at": submission.submitted_at,
+    "submission_status": submission.status,
+    "marks": submission.marks,
+    "feedback": submission.feedback
+})
     return jsonify({
         "success": True,
         "message": "Assignment submissions fetched successfully",

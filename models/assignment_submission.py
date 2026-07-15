@@ -12,6 +12,7 @@ class AssignmentSubmission(db.Model):
     answer_text=db.Column(db.Text,nullable=True)
     file_url = db.Column(db.String(500), nullable=True)
     submitted_at = db.Column(db.DateTime, default=datetime.utcnow)
+    stored_filename = db.Column(db.String(255), nullable=True)
     marks = db.Column(db.Float, nullable=True)
     feedback = db.Column(db.Text, nullable=True)
     status = db.Column(db.String(50), default="Submitted")
