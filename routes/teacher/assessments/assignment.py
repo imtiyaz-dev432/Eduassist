@@ -180,45 +180,48 @@ def add_assignment(batch_id):
     }), 201               
 
 
-@assignment_for_student_bp.route("/file/<string:filename>", methods=["GET"])
+
+#download 
+@assignment_for_student_bp.route(
+    "/file/<string:filename>",
+    methods=["GET"]
+)
 @jwt_required()
 def download_assignment_pdf(filename):
+
     assignment = Assignment.query.filter(
-        Assignment.file_url.like(f"%{filename}%")
+        Assignment.file_url.like(f"%{filename}")
     ).first()
+
 
     if not assignment:
         return jsonify({
-            "success": False,
-            "message": "Assignment file not found"
-        }), 404
-    file_url = url_for(
-    "assignment_bp.download_assignment_pdf",
-    filename=filename
-)
-   
+            "success":False,
+            "message":"Assignment not found"
+        }),404
+
+
     current_user_id = int(get_jwt_identity())
     role = get_jwt().get("role")
-    
+
+
     if role == "owner":
-        is_authorized = Institution.query.filter_by(
+
+        authorized = Institution.query.filter_by(
             id=assignment.institution_id,
             user_id=current_user_id
-        ).first() is not None
+        ).first()
+
     else:
-        is_authorized = False
+        authorized = False
 
-    if not is_authorized:
+
+    if not authorized:
         return jsonify({
-            "success": False,
-            "message": "Unauthorized to access this assignment file"
-        }), 403
-    print(current_app.config["ASSIGNMENT_UPLOAD_FOLDER"])
-    print(filename)
-    print(os.path.join(current_app.config["ASSIGNMENT_UPLOAD_FOLDER"], filename))
-    print(os.path.exists(os.path.join(current_app.config["ASSIGNMENT_UPLOAD_FOLDER"], filename)))    
+            "success":False,
+            "message":"Unauthorized"
+        }),403
 
-    
 
     return send_from_directory(
         current_app.config["ASSIGNMENT_UPLOAD_FOLDER"],
@@ -226,66 +229,107 @@ def download_assignment_pdf(filename):
         mimetype="application/pdf"
     )
 
-@assignment_for_student_bp.route("/file/replace/<int:assignment_id>",methods=["PATCH"])
+@assignment_for_student_bp.route(
+    "/file/replace/<int:assignment_id>",
+    methods=["PATCH"]
+)
 @jwt_required()
 def replace(assignment_id):
-    claims=get_jwt().get("role")
-    if claims!="owner":
+
+    claims = get_jwt()
+
+    if claims.get("role") != "owner":
         return jsonify({
-            "success":False,
-            "message":"Owner access only"
+            "success": False,
+            "message": "Owner access only"
         }),403
-    assignment=Assignment.query.filter_by(
+
+
+    assignment = Assignment.query.filter_by(
         id=assignment_id
     ).first()
+
+
     if not assignment:
         return jsonify({
             "success":False,
             "message":"Assignment not found"
         }),404
-    current_user_id=int(get_jwt_identity())    
-    institute=Institution.query.filter_by(
-     id=assignment.institution_id,
-     user_id=current_user_id
+
+
+
+    current_user_id = int(get_jwt_identity())
+
+
+    institute = Institution.query.filter_by(
+        id=assignment.institution_id,
+        user_id=current_user_id
     ).first()
+
+
     if not institute:
         return jsonify({
             "success":False,
-            "message":"Unauthorized to replace the file"
+            "message":"Unauthorized"
         }),403
-    data = request.get_json(silent=True) if request.is_json else request.form
-    
-    
-    assignment.title=data.get("title",assignment.title)
-    assignment.description=data.get("description",assignment.description)
-    assignment.due_date=data.get("due_date",assignment.due_date)
-    assignment.max_marks=data.get("max_marks",assignment.max_marks)
-    assignment.status=data.get("status",assignment.status)
+
+
+
     uploaded_file = request.files.get("file")
 
-    if uploaded_file:
-        saved_pdf = save_pdf(
+
+    if not uploaded_file:
+        return jsonify({
+            "success":False,
+            "message":"PDF file required"
+        }),400
+
+
+
+    # save new file first
+    saved_pdf = save_pdf(
         uploaded_file,
         current_app.config["ASSIGNMENT_UPLOAD_FOLDER"]
     )
 
+
+    new_filename = saved_pdf["stored_filename"]
+
+
+
+    # delete old file
     if assignment.file_url:
+
         old_filename = assignment.file_url.split("/")[-1]
-        old_file_path = os.path.join(
+
+        old_path = os.path.join(
             current_app.config["ASSIGNMENT_UPLOAD_FOLDER"],
             old_filename
         )
-        if os.path.exists(old_file_path):
-            os.remove(old_file_path)
+
+        if os.path.exists(old_path):
+            os.remove(old_path)
+
+
+
+    # update database
 
     assignment.file_url = url_for(
-        "assignment_bp.download_assignment_pdf",
-        filename=saved_pdf["stored_filename"]
+        "assignment_for_student_bp.download_assignment_pdf",
+        filename=new_filename
     )
+
+
 
     db.session.commit()
 
+
+
     return jsonify({
-    "success": True,
-    "message": "Assignment updated successfully"
-}), 200
+
+        "success":True,
+        "message":"Assignment file replaced successfully",
+
+        "file_url":assignment.file_url
+
+    }),200

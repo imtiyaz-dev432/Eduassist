@@ -213,8 +213,8 @@ def update_student(student_id):
             "message": f"Invalid status. Allowed values are: {', '.join(allowed_status)}"
         }), 400
 
-    new_phone = clean_text(data.get("phone", student.phone))
-    new_email = clean_text(data.get("email", student.email))
+    new_phone = data.get("phone", student.phone)
+    new_email = data.get("email", student.email)
 
     if new_email:
         new_email = new_email.lower()
@@ -256,11 +256,11 @@ def update_student(student_id):
 
         student.admission_date = parsed_admission_date
 
-    student.student_name = clean_text(data.get("student_name", student.student_name))
+    student.student_name = data.get("student_name", student.student_name)
     student.email = new_email
     student.phone = new_phone
-    student.parent_phone = clean_text(data.get("parent_phone", student.parent_phone))
-    student.address = clean_text(data.get("address", student.address))
+    student.parent_phone = data.get("parent_phone", student.parent_phone)
+    student.address = data.get("address", student.address)
     student.status = data.get("status", student.status)
 
     db.session.commit()

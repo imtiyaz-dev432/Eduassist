@@ -64,42 +64,63 @@ def assignment_check(assignment_id):
     })     ,200
 
 #downlaod 
-@teacher_see_student_bp.route("/file/<string:filename>",methods=["GET"])
+@teacher_see_student_bp.route("/file/<string:filename>", methods=["GET"])
 @jwt_required()
 def download_pdf(filename):
-    claims=get_jwt()
-    if claims.get("role")!="owner":
+
+    if get_jwt().get("role") != "owner":
         return jsonify({
-            "success":False,
-            "message":"Owner access only"
-        }),403
-    file_url= url_for(
-    "teacher_see_student_bp.download_pdf",
-    filename=filename
-)
-    assignment_submission=AssignmentSubmission.query.filter_by(
-        file_url=file_url
+            "success": False,
+            "message": "Owner access only"
+        }), 403
+
+    # Find submission by stored filename
+    assignment_submission = AssignmentSubmission.query.filter_by(
+        stored_filename=filename
     ).first()
 
     if not assignment_submission:
         return jsonify({
-            "success":False,
-            "message":"Assignment submission not found"
-        }),404
-    current_user_id=int(get_jwt_identity())
-    institute=Institution.query.filter_by(
-        user_id=current_user_id,
-        id=assignment_submission.institution_id
+            "success": False,
+            "message": "Assignment submission not found"
+        }), 404
+
+    current_user_id = int(get_jwt_identity())
+
+    institute = Institution.query.filter_by(
+        id=assignment_submission.institution_id,
+        user_id=current_user_id
     ).first()
+
     if not institute:
         return jsonify({
-            "success":False,
-            "message":"Unauthorized to download pdf"
-        }),403
+            "success": False,
+            "message": "Unauthorized"
+        }), 403
+
+    file_path = os.path.join(
+        current_app.config["ASSIGNMENT_UPLOAD_FOLDER"],
+        assignment_submission.stored_filename
+    )
+    print("Requested filename:", filename)
+
+    assignment_submission = AssignmentSubmission.query.filter_by(
+    stored_filename=filename
+).first()
+
+   
+
+    if not os.path.exists(file_path):
+        return jsonify({
+            "success": False,
+            "message": "PDF file not found on disk"
+        }), 404
+
     return send_from_directory(
         current_app.config["ASSIGNMENT_UPLOAD_FOLDER"],
-        filename,
-        mimetype="application/pdf"
+        assignment_submission.stored_filename,
+        mimetype="application/pdf",
+        as_attachment=False
     )  
 
 #check marking 

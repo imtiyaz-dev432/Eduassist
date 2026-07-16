@@ -9,7 +9,7 @@ from models.quiz_question import QuizQuestion
 student_quiz_question_bp = Blueprint(
     "student_quiz_question_bp",
     __name__,
-    url_prefix="/student/assessments/quiz"
+    url_prefix="/student/quiz"
 )
 
 

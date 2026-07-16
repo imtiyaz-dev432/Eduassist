@@ -67,12 +67,9 @@ def my_quizzes():
             "submission_status": submission.status if submission else None,
             "obtained_marks": submission.obtained_marks if submission else None,
             "teacher_feedback": submission.teacher_feedback if submission else None
-        })
-    print("Student ID:", student.id)
-    print("Student Batch ID:", student.batch_id)
+        })   
 
     all_quizzes = Quiz.query.all()
-    print("All quizzes:", [(q.id, q.title, q.batch_id, q.status) for q in all_quizzes])
     return jsonify({
         "success": True,
         "message": "Quizzes fetched successfully",

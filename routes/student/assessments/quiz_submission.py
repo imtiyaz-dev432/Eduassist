@@ -12,7 +12,7 @@ from models.quiz_submission_answer import QuizSubmissionAnswer
 student_quiz_submission_bp = Blueprint(
     "student_quiz_check_bp",
     __name__,
-    url_prefix="/student/assessments/quiz"
+    url_prefix="/student/quiz"
 )
 
 
@@ -165,15 +165,15 @@ def quiz_submission(quiz_id):
 
         if is_correct:
             obtained_marks += question_marks
-
         new_answer = QuizSubmissionAnswer(
     quiz_submission_id=new_submission.id,
     quiz_question_id=question.id,
+    student_id=student.id,          # <-- Add this
     student_answer=selected_option,
     is_correct=is_correct,
     marks_awarded=question_marks if is_correct else 0,
     checked_at=datetime.utcnow()
-        )
+)
 
         db.session.add(new_answer)
 
