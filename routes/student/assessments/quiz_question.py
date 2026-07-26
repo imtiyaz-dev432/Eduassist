@@ -11,21 +11,16 @@ student_quiz_question_bp = Blueprint(
     __name__,
     url_prefix="/student/quiz"
 )
-
-
 @student_quiz_question_bp.route("/questions/<int:quiz_id>", methods=["GET"])
 @jwt_required()
 def view_quiz_questions(quiz_id):
     claims = get_jwt()
-
     if claims.get("role") != "student":
         return jsonify({
             "success": False,
             "message": "Student access only"
         }), 403
-
     current_student_id = int(get_jwt_identity())
-
     student = Student.query.filter_by(
         id=current_student_id
     ).first()

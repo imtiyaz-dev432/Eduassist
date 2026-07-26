@@ -1,13 +1,20 @@
 from flask import Blueprint,request,jsonify
-from flask_jwt_extended import jwt_required,get_jwt_identity
+from flask_jwt_extended import jwt_required,get_jwt_identity,get_jwt
 from dbms.db import db
 from models.course import Course
 from models.institute import Institution
 
 course_bp=Blueprint("course_bp",__name__,url_prefix="/teacher/academics/courses")
+#add course
 @course_bp.route("/add/<int:institution_id>",methods=["POST"])
 @jwt_required()
 def add_course(institution_id):
+    claims=get_jwt()
+    if claims.get("role")!="owner":
+        return jsonify({
+            "success":False,
+            "message":"Owner access only"
+        }),403
     current_user_id=int(get_jwt_identity())
     data=request.get_json()
     if not data:
@@ -71,6 +78,12 @@ def add_course(institution_id):
 @course_bp.route("/get/<int:institution_id>",methods=["GET"])
 @jwt_required()
 def get_course(institution_id):
+    claims=get_jwt()
+    if claims.get("role")!="owner":
+        return jsonify({
+            "success":False,
+            "message":"Owner access only"
+        }),403
     current_user_id=int(get_jwt_identity())    
     institution=Institution.query.filter_by(
     id=institution_id,
@@ -115,8 +128,13 @@ def get_course(institution_id):
 @course_bp.route("/update/<int:course_id>", methods=["PATCH"])
 @jwt_required()
 def update_course(course_id):
+    claims=get_jwt()
+    if claims.get("role")!="owner":
+        return jsonify({
+            "success":False,
+            "message":"Owner access only"
+        }),403
     current_user_id = int(get_jwt_identity())
-
     course = Course.query.filter_by(id=course_id).first()
 
     if not course:
@@ -135,9 +153,7 @@ def update_course(course_id):
             "success":False,
             "message": "Unauthorized to update this course"
         }), 403
-
     data = request.get_json()
-
     if not data:
         return jsonify({
             "success":False,
@@ -172,6 +188,12 @@ def update_course(course_id):
 @course_bp.route("/delete/<int:course_id>", methods=["DELETE"])
 @jwt_required()
 def delete_course(course_id):
+    claims=get_jwt()
+    if claims.get("role")!="owner":
+        return jsonify({
+            "success":False,
+            "message":"Owner access only"
+        }),403
     current_user_id = int(get_jwt_identity())
 
     course = Course.query.filter_by(id=course_id).first()

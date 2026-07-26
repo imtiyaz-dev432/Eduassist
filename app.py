@@ -78,7 +78,6 @@ def revoked_token_loader(jwt_header,jwt_payload):
       },401)
 
 #register blueprint
-print(app.url_map)
 app.register_blueprint(auth_bp)
 app.register_blueprint(otp_bp)
 app.register_blueprint(institute_bp)
@@ -111,14 +110,11 @@ app.register_blueprint(teacher_faq_bp)
 app.register_blueprint(lead_bp)
 app.register_blueprint(chat_history_bp)
 app.register_blueprint(admission_bot_bp)
-print(student_assignment_bp)
-for rule in app.url_map.iter_rules():
-    print(rule.endpoint, "---->", rule)
+
 @app.route("/",methods=["GET"])
 def home():
     return jsonify({
         "message":"eduassist ai is running successfully"
     }),200
-# https://chatgpt.com/share/6a2410fe-cc9c-83ab-990a-6a0cafb95be8
 if __name__ == "__main__":
     app.run(debug=True)

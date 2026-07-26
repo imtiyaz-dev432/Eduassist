@@ -24,7 +24,6 @@ def view_quiz(quiz_id):
             "success":False,
             "message":"Quiz not found"
         }),404
-
     institute=Institution.query.filter_by(
         id=quiz.institution_id,
         user_id=current_user_id
@@ -33,22 +32,17 @@ def view_quiz(quiz_id):
         return jsonify({
             "success":False,
             "message":"Unauthorized to view this quiz submissions"
-        }),400
-     
+        }),400     
     quiz_questions = QuizQuestion.query.filter_by(
     quiz_id=quiz.id
 ).all()
-
     question_ids = [q.id for q in quiz_questions]
-
     answers = QuizSubmissionAnswer.query.filter(
     QuizSubmissionAnswer.quiz_question_id.in_(question_ids)
 ).all()
-
     submission_ids = list(set([
     ans.quiz_submission_id for ans in answers
 ]))
-
     submissions = QuizSubmission.query.filter(
     QuizSubmission.id.in_(submission_ids)
 ).all()

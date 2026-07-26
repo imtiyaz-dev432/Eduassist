@@ -18,9 +18,6 @@ teacher_faq_bp = Blueprint(
 @jwt_required()
 def faq_add(institution_id):
     claims = get_jwt()
-    print("JWT CLAIMS:", claims)
-    print("ROLE:", claims.get("role"))
-
     if claims.get("role") not in ["teacher", "owner"]:
         return jsonify({
             "success": False,

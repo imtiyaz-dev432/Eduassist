@@ -2,7 +2,6 @@ from flask import Blueprint,request,jsonify
 from flask_jwt_extended import jwt_required,get_jwt_identity
 from datetime import datetime ,timedelta
 from dbms.db import db
-
 from models.institute import Institution
 from models.student import Student
 from models.fee import Fee
@@ -12,6 +11,12 @@ fee_reminder_bp=Blueprint("fee_reminder_bp",__name__,url_prefix="/teacher/fee_re
 @fee_reminder_bp.route("/add/<int:fee_id>",methods=["POST"])
 @jwt_required()
 def fee_reminder(fee_id):
+    claims=get_jwt()
+    if claims.get("role")!="owner":
+        return jsonify({
+            "success":False,
+            "message":"Owner access only"
+        }),403 
     current_user_id=int(get_jwt_identity())
     fee=Fee.query.filter_by(
         id=fee_id
@@ -79,13 +84,11 @@ def get_reminder(fee_id):
     fee=Fee.query.filter_by(
         id=fee_id
     ).first()
-
     if not fee:
         return jsonify({
             "success":False,
             "message":"Fee not found"
         }),404
-
     institute=Institution.query.filter_by(
         id=fee.institution_id,
         user_id=current_user_id

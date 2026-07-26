@@ -15,74 +15,57 @@ student_quiz_submission_bp = Blueprint(
     url_prefix="/student/quiz"
 )
 
-
 @student_quiz_submission_bp.route("/my/<int:quiz_id>", methods=["POST"])
 @jwt_required()
 def quiz_submission(quiz_id):
     claims = get_jwt()
-
     if claims.get("role") != "student":
         return jsonify({
             "success": False,
             "message": "Student access only"
         }), 403
-
     current_student_id = int(get_jwt_identity())
-
     student = Student.query.filter_by(id=current_student_id).first()
-
     if not student:
         return jsonify({
             "success": False,
             "message": "Student not found"
         }), 404
-
     quiz = Quiz.query.filter_by(id=quiz_id).first()
-
     if not quiz:
         return jsonify({
             "success": False,
             "message": "Quiz not found"
         }), 404
-
     if quiz.batch_id != student.batch_id:
         return jsonify({
             "success": False,
             "message": "Unauthorized to submit this quiz"
         }), 403
-
     existing_submission = QuizSubmission.query.filter_by(
         quiz_id=quiz.id,
         student_id=student.id
     ).first()
-
     if existing_submission:
         return jsonify({
             "success": False,
             "message": "Quiz already submitted"
         }), 409
-
     data = request.get_json()
-
     if not data:
         return jsonify({
             "success": False,
             "message": "Request body is required"
         }), 400
-
     answers = data.get("answers")
-
     if not answers or not isinstance(answers, list):
         return jsonify({
             "success": False,
             "message": "Answers list is required"
         }), 400
-
     allowed_options = ["A", "B", "C", "D"]
-
     total_marks = 0
     obtained_marks = 0
-
     new_submission = QuizSubmission(
         institution_id=quiz.institution_id,
         course_id=quiz.course_id,
@@ -93,31 +76,24 @@ def quiz_submission(quiz_id):
         obtained_marks=0,
         status="Checked"
     )
-
     db.session.add(new_submission)
     db.session.flush()
-
     submitted_question_ids = set()
-
     for item in answers:
-
         if not isinstance(item, dict):
             db.session.rollback()
             return jsonify({
                 "success": False,
                 "message": "Each answer must be an object"
             }), 400
-
         question_id = item.get("question_id")
         selected_option = item.get("student_answer")
-
         if not question_id or not selected_option:
             db.session.rollback()
             return jsonify({
                 "success": False,
                 "message": "question_id and student_answer are required"
             }), 400
-
         if question_id in submitted_question_ids:
             db.session.rollback()
             return jsonify({

@@ -1,16 +1,22 @@
 from flask import Blueprint,request,jsonify
-from flask_jwt_extended import jwt_required,get_jwt_identity
+from flask_jwt_extended import jwt_required,get_jwt_identity,get_jwt
 from datetime import datetime 
 from dbms.db import db
 
 from models.institute import Institution
 from models.student import Student
 from models.fee import Fee
-
+#add fee 
 fee_bp=Blueprint("fee_bp",__name__,url_prefix="/teacher/fees")
 @fee_bp.route("/create/<int:student_id>",methods=["POST"])
 @jwt_required()
 def add_fees(student_id):
+    claims=get_jwt()
+    if claims.get("role")!="owner":
+        return jsonify({
+            "success":False,
+            "message":"Owner access only"
+        }),403 
     current_user_id=int(get_jwt_identity())
     student=Student.query.filter_by(id=student_id).first()
     if not student:
@@ -44,9 +50,7 @@ def add_fees(student_id):
         return jsonify({
             "success":False,
             "message":"Total fee is required"
-        }),400
-
-     
+        }),400    
     try:
       total_fee = float(total_fee)
       paid_amount = float(paid_amount)
@@ -117,6 +121,12 @@ def add_fees(student_id):
 @fee_bp.route("/find/<int:student_id>",methods=['GET'])
 @jwt_required()
 def get_student(student_id):
+    claims=get_jwt()
+    if claims.get("role")!="owner":
+        return jsonify({
+            "success":False,
+            "message":"Owner access only"
+        }),403 
     current_user_id=int(get_jwt_identity())
     student=Student.query.filter_by(id=student_id).first()
     if not student:
@@ -154,6 +164,12 @@ def get_student(student_id):
 @fee_bp.route("/update/<fee_id>",methods=["PATCH"])
 @jwt_required()
 def update_fee(fee_id):
+    claims=get_jwt()
+    if claims.get("role")!="owner":
+        return jsonify({
+            "success":False,
+            "message":"Owner access only"
+        }),403 
     current_user_id=int(get_jwt_identity())
     fee=Fee.query.filter_by(
         id=fee_id
@@ -230,6 +246,12 @@ def update_fee(fee_id):
 @fee_bp.route("/delete/<int:fee_id>",methods=["DELETE"])
 @jwt_required()
 def delete_fee(fee_id):
+    claims=get_jwt()
+    if claims.get("role")!="owner":
+        return jsonify({
+            "success":False,
+            "message":"Owner access only"
+        }),403 
     current_user_id=int(get_jwt_identity())
     fee=Fee.query.filter_by(
         id=fee_id

@@ -12,24 +12,19 @@ student_quiz_bp = Blueprint(
     url_prefix="/student/assessments/quiz"
 )
 
-
 @student_quiz_bp.route("/my", methods=["GET"])
 @jwt_required()
 def my_quizzes():
     claims = get_jwt()
-
     if claims.get("role") != "student":
         return jsonify({
             "success": False,
             "message": "Student access only"
         }), 403
-
     current_student_id = int(get_jwt_identity())
-
     student = Student.query.filter_by(
         id=current_student_id
     ).first()
-
     if not student:
         return jsonify({
             "success": False,
@@ -40,7 +35,6 @@ def my_quizzes():
         batch_id=student.batch_id,
         status="Active"
     ).all()
-
     quiz_list = []
 
     for quiz in quizzes:

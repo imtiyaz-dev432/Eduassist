@@ -228,7 +228,6 @@ def update_payment(payment_id):
         fee.status = "Partially Paid"
     else:
         fee.status = "Pending"
-
     db.session.commit()
 
     return jsonify({
@@ -236,54 +235,5 @@ def update_payment(payment_id):
         "payment": payment.to_dict(),
         "updated_fee": fee.to_dict()
     }), 200
-#delete
-@payment_bp.route("/delete/<int:payment_id>",methods=['DELETE']) 
-@jwt_required()
-def delete_payment(payment_id):
-    current_user_id=int(get_jwt_identity())
-    payment=Payment.query.filter_by(
-        id=payment_id
-    ).first()
-    if not payment:
-        return jsonify({
-            "message":"Payment not found"
-        }),404
-    institute=Institution.query.filter_by(
-        id=payment.institution_id,
-        user_id=current_user_id
-    ).first()
-    if not institute:
-        return jsonify({
-            "message":"Institute not found"
-        }),404
 
-    fee=Fee.query.filter_by(
-        id=payment.fee_id
-    ).first()
-
-    if not fee:
-        return jsonify({
-            "message":"Fee not found"
-        }),404
-
-    fee.paid_amount = fee.paid_amount - payment.amount
-
-    if fee.paid_amount < 0:
-        fee.paid_amount = 0
-
-    fee.due_amount = fee.total_fee - fee.paid_amount
-
-    if fee.due_amount == 0:
-        fee.status = "Paid"
-    elif fee.paid_amount > 0:
-        fee.status = "Partially Paid"
-    else:
-        fee.status = "Pending"
-
-    db.session.delete(payment)
-    db.session.commit()
-
-    return jsonify({
-        "message": "Payment deleted successfully",
-        "updated_fee": fee.to_dict()
-    }), 200    
+   

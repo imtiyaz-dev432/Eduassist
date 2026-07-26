@@ -1,5 +1,4 @@
 import os
-
 from flask import (
     Blueprint,
     current_app,
@@ -102,14 +101,9 @@ def download_pdf(filename):
         current_app.config["ASSIGNMENT_UPLOAD_FOLDER"],
         assignment_submission.stored_filename
     )
-    print("Requested filename:", filename)
-
     assignment_submission = AssignmentSubmission.query.filter_by(
     stored_filename=filename
 ).first()
-
-   
-
     if not os.path.exists(file_path):
         return jsonify({
             "success": False,

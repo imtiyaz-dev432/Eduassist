@@ -4,7 +4,7 @@ from dbms.db import db
 from utils.security import verify_otp,hash_otp
 from utils.otp import generate_otp
 from models.user import User
-
+  
 otp_bp = Blueprint("otp_bp", __name__, url_prefix="/otp")
 @otp_bp.route("/verify-otp", methods=["POST"])
 def otp_verify():
@@ -98,7 +98,6 @@ def resend_otp():
     user.otp_created_at=now
     user.otp_expires_at=now+timedelta(minutes=5)
     db.session.commit()
-    print("Resend Otp",plain_otp)
     return jsonify({
         "message":"New otp sent successfully"
     }),200

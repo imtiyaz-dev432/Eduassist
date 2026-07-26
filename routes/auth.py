@@ -33,10 +33,14 @@ def register():
         "success": False,
         "message": "Email or mobile number is already registered"
     }), 409
+    if len(password)<8:
+        return jsonify({
+            "success":False,
+            "message":"Passwird must be of 8 character"
+        }) ,403
 
     plain_otp=generate_otp()
     hashed_otp=hash_otp(plain_otp)
-    print("Otp is ",plain_otp)
     now=datetime.utcnow()
     new_user=User(
         name=name,

@@ -11,6 +11,12 @@ quiz_bp=Blueprint("quize_bp",__name__,url_prefix="/quiz")
 @quiz_bp.route("/add/<int:batch_id>",methods=["POST"])
 @jwt_required()
 def add_quize(batch_id):
+    claims=get_jwt()
+    if claims.get("role") !="owner":
+        return jsonify({
+            "success":False,
+            "message":"owner access only "
+        }),403
     current_user_id=int(get_jwt_identity())
     batch=Batch.query.filter_by(
         id=batch_id
@@ -85,32 +91,33 @@ def add_quize(batch_id):
 @quiz_bp.route("/get/<int:batch_id>",methods=["GET"])
 @jwt_required()
 def get_quiz(batch_id):
+    claims=get_jwt()
+    if claims.get("role") !="owner":
+        return jsonify({
+            "success":False,
+            "message":"owner access only "
+        }),403
     current_user_id=int(get_jwt_identity())
     batch=Batch.query.filter_by(
         id=batch_id
     ).first()
-
     if not batch:
         return jsonify({
             "success":False,
             "message":"Batch not found"
         }),404
-
     institute=Institution.query.filter_by(
         id=batch.institution_id,
         user_id=current_user_id
     ).first()
-
     if not institute:
         return jsonify({
             "success":False,
             "message":"Unauthorized to get quiz"
         }),403
-
     quizes=Quiz.query.filter_by(
         batch_id=batch_id
     ).all()
-
     quiz_list=[]
     for quiz in quizes:
         quiz_list.append(quiz.to_dict())
@@ -125,6 +132,12 @@ def get_quiz(batch_id):
 @quiz_bp.route("/update/<int:quiz_id>",methods=["PATCH"])
 @jwt_required()
 def update(quiz_id):
+    claims=get_jwt()
+    if claims.get("role") !="owner":
+        return jsonify({
+            "success":False,
+            "message":"owner access only "
+        }),403
     current_user_id=int(get_jwt_identity())
     quiz=Quiz.query.filter_by(
         id=quiz_id
@@ -193,6 +206,12 @@ def update(quiz_id):
 @quiz_bp.route("/delete/<int:quiz_id>",methods=["DELETE"])
 @jwt_required()
 def quiz_delete(quiz_id):
+    claims=get_jwt()
+    if claims.get("role") !="owner":
+        return jsonify({
+            "success":False,
+            "message":"owner access only "
+        }),403
     current_user_id=int(get_jwt_identity())
     quiz=Quiz.query.filter_by(
         id=quiz_id

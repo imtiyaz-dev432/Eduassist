@@ -2,22 +2,25 @@ from flask import Blueprint,request,jsonify
 from flask_jwt_extended import jwt_required,get_jwt_identity
 from datetime import datetime 
 from dbms.db import db
-
 from models.institute import Institution
 from models.batch import Batch
 from models.quize import Quiz
 from models.quiz_question import QuizQuestion
 
-
 quiz_question_bp=Blueprint("quiz_question_bp",__name__,url_prefix='/quiz_question')
 @quiz_question_bp.route("/add/<int:quiz_id>",methods=["POST"])
 @jwt_required()
 def add_quiz_question(quiz_id):
+    claims=get_jwt()
+    if claims.get("role") !="owner":
+        return jsonify({
+            "success":False,
+            "message":"owner access only "
+        }),403
     current_user_id=int(get_jwt_identity())
     quiz=Quiz.query.filter_by(
         id=quiz_id
     ).first()
-
     if not quiz:
         return jsonify({
             "success":False,
@@ -36,7 +39,6 @@ def add_quiz_question(quiz_id):
         }),403
 
     data=request.get_json()
-
     if not data:
         return jsonify({
             "success":False,
@@ -119,6 +121,12 @@ def add_quiz_question(quiz_id):
 @quiz_question_bp.route("/get/<int:quiz_id>",methods=["GET"])
 @jwt_required()
 def get_all_question(quiz_id):
+    claims=get_jwt()
+    if claims.get("role") !="owner":
+        return jsonify({
+            "success":False,
+            "message":"owner access only "
+        }),403
     current_user_id=int(get_jwt_identity())
     quiz=Quiz.query.filter_by(
         id=quiz_id
@@ -160,6 +168,12 @@ def get_all_question(quiz_id):
 @quiz_question_bp.route("/update/<int:quiz_question_id>",methods=["PATCH"])
 @jwt_required()
 def update_question(quiz_question_id):
+    claims=get_jwt()
+    if claims.get("role") !="owner":
+        return jsonify({
+            "success":False,
+            "message":"owner access only "
+        }),403
     current_user_id=int(get_jwt_identity())
     quiz_question=QuizQuestion.query.filter_by(
         id=quiz_question_id
@@ -267,6 +281,12 @@ def update_question(quiz_question_id):
 @quiz_question_bp.route("/delete/<int:quiz_question_id>",methods=["DELETE"])
 @jwt_required()
 def delete_quiz_question(quiz_question_id):
+    claims=get_jwt()
+    if claims.get("role") !="owner":
+        return jsonify({
+            "success":False,
+            "message":"owner access only "
+        }),403
     current_user_id=int(get_jwt_identity())
     quiz_question=QuizQuestion.query.filter_by(
         id=quiz_question_id

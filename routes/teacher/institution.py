@@ -1,13 +1,20 @@
 from flask import Blueprint,request,jsonify
-from flask_jwt_extended import jwt_required,get_jwt_identity
+from flask_jwt_extended import jwt_required,get_jwt_identity,get_jwt
 
 from dbms.db import db
 from models.institute import Institution
 
 institute_bp=Blueprint("institution_bp",__name__,url_prefix="/teacher/institution")
+#add institute
 @institute_bp.route("/register",methods=["POST"])
 @jwt_required()
 def create_institution():
+    claims=get_jwT()
+    if claims.get("role")!="owner":
+        return jsonify({
+            "success":False,
+            "message":"Owner accss only"
+        }),403
     current_user_id=int(get_jwt_identity())
     data=request.get_json()
     if not data:
@@ -58,6 +65,12 @@ def create_institution():
 @institute_bp.route("/get",methods=["GET"])
 @jwt_required()
 def get_institute():
+    claims=get_jwT()
+    if claims.get("role")!="owner":
+        return jsonify({
+            "success":False,
+            "message":"Owner accss only"
+        }),403
     current_user_id=int(get_jwt_identity())
     existing_institutions=Institution.query.filter_by(user_id=current_user_id).all()
     get_institute=[]
@@ -85,7 +98,7 @@ def get_institute():
         "institutions":get_institute
     })   ,200
 
-#Update 
+#Update  institute
 @institute_bp.route("/update/<int:institute_id>",methods=["PATCH"])
 @jwt_required()
 def update_institute(institute_id):
@@ -114,15 +127,12 @@ def update_institute(institute_id):
     institute.website_url = data.get("website_url", institute.website_url)
     institute.opening_hours = data.get("opening_hours", institute.opening_hours)
     institute.logo_url = data.get("logo_url", institute.logo_url)
-
     db.session.commit()
-
     return jsonify({
         "success":True,
-        "message": "Institute updated successfully"
-        
+        "message": "Institute updated successfully"       
     }), 200    
-#delete
+#delete institute
 @institute_bp.route("/delete/<int:institute_id>",methods=["DELETE"]) 
 @jwt_required()
 def delete_institute(institute_id):
@@ -137,7 +147,6 @@ def delete_institute(institute_id):
             "success":False,
             "message":"Institute not found"
         }),404
-
     db.session.delete(institute)
     db.session.commit()
     return jsonify({

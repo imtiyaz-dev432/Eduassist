@@ -1,7 +1,6 @@
 from flask import Blueprint, request, jsonify
 from flask_jwt_extended import jwt_required, get_jwt_identity, get_jwt
 from datetime import datetime
-
 from dbms.db import db
 from models.assignment import Assignment
 from models.assignment_submission import AssignmentSubmission

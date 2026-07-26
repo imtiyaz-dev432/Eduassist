@@ -19,43 +19,32 @@ student_assignment_bp = Blueprint(
     url_prefix="/student/assessments/assignment"
 )
 
-
 @student_assignment_bp.route("/my", methods=["GET"])
 @jwt_required()
 def my_assignments():
-
     claims = get_jwt()
-
     if claims.get("role") != "student":
         return jsonify({
             "success": False,
             "message": "Student access only"
         }), 403
-
     current_student_id = int(get_jwt_identity())
-
     student = Student.query.filter_by(id=current_student_id).first()
-
     if not student:
         return jsonify({
             "success": False,
             "message": "Student not found"
         }), 404
-
     assignments = Assignment.query.filter_by(
         batch_id=student.batch_id,
         status="Active"
     ).all()
-
     data = []
-
     for assignment in assignments:
-
         submission = AssignmentSubmission.query.filter_by(
             assignment_id=assignment.id,
             student_id=student.id
         ).first()
-
         data.append({
             "assignment_id": assignment.id,
             "title": assignment.title,

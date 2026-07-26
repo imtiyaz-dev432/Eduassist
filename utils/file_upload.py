@@ -25,7 +25,7 @@ def save_pdf(file, upload_folder): #this line file and konse folder mein upload 
         raise ValueError("Only PDF files are allowed")
 
     extension = original_filename.rsplit(".", 1)[1].lower() #name of pdf can be divided into two types 
-    unique_filename = f"{uuid4().hex}.{extension}" #give unique  name to every pdf
+    unique_filename = f"{uuid4().hex}.{extension}" #give unique name to every pdf
 
     os.makedirs(upload_folder, exist_ok=True) #check folder is present or not if not then created 
     file_path = os.path.join(upload_folder, unique_filename) #this line can make a path

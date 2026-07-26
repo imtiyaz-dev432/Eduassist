@@ -9,6 +9,12 @@ batch_bp=Blueprint("batch_bp",__name__,url_prefix="/teacher/academics/batch")
 @batch_bp.route("/add/<int:course_id>",methods=["POST"])
 @jwt_required()
 def add_batch(course_id):
+    claims=get_jwt()
+    if claims.get("role")!="owner":
+        return jsonify({
+            "success":False,
+            "message":"Owner access only"
+        }),403
     current_user_id=int(get_jwt_identity())
     course=Course.query.filter_by(
         id=course_id
@@ -82,6 +88,12 @@ def add_batch(course_id):
 @batch_bp.route("/get/<int:course_id>",methods=["GET"])
 @jwt_required()
 def get_course_batch(course_id):
+    claims=get_jwt()
+    if claims.get("role")!="owner":
+        return jsonify({
+            "success":False,
+            "message":"Owner access only"
+        }),403
     current_user_id=int(get_jwt_identity())
     course=Course.query.filter_by(
         
@@ -138,6 +150,12 @@ def get_course_batch(course_id):
 @batch_bp.route("/update/<int:batch_id>",methods=["PATCH"])
 @jwt_required()
 def update_batches(batch_id):
+    claims=get_jwt()
+    if claims.get("role")!="owner":
+        return jsonify({
+            "success":False,
+            "message":"Owner access only"
+        }),403
     current_user_id=int(get_jwt_identity())
     batch=Batch.query.filter_by(
         id=batch_id

@@ -1,5 +1,4 @@
 import os
-
 from flask import (
     Blueprint,
     current_app,
@@ -27,7 +26,6 @@ def add_assignment(batch_id):
     if claims.get("role") !="owner":
         return jsonify({
             "success":False,
-
             "message":"owner access only "
         }),403
     current_user_id=int(get_jwt_identity())
@@ -40,7 +38,6 @@ def add_assignment(batch_id):
             "success":False,
             "message":"Batch not found"
         }),404
-
     institute=Institution.query.filter_by(
         id=batch.institution_id,
         user_id=current_user_id
@@ -51,14 +48,10 @@ def add_assignment(batch_id):
             "success":False,
             "message":"Institute not found"
         }),404
-
     # A file upload must use multipart/form-data. JSON remains supported for
     # clients that create an assignment without uploading a PDF.
     data = request.get_json(silent=True) if request.is_json else request.form
     uploaded_file = request.files.get("file")
-   
-
-
     if not data and not uploaded_file:
         return jsonify({
             "success":False,
@@ -75,7 +68,6 @@ def add_assignment(batch_id):
         return jsonify({
             "success":False,
            "message":"Title is required"}),400
-
     due_date_obj=None
     if due_date:
         try:
@@ -171,16 +163,11 @@ def add_assignment(batch_id):
             "success": False,
             "message": "Unable to create assignment"
         }), 500
-
-
     return jsonify({
         "success": True,
         "message": "Assignment created successfully",
         "assignment": new_assignment.to_dict()
     }), 201               
-
-
-
 #download 
 @assignment_for_student_bp.route(
     "/file/<string:filename>",
@@ -228,108 +215,66 @@ def download_assignment_pdf(filename):
         filename,
         mimetype="application/pdf"
     )
-
+#replace assignment if wrong file is uploaded 
 @assignment_for_student_bp.route(
     "/file/replace/<int:assignment_id>",
     methods=["PATCH"]
 )
 @jwt_required()
 def replace(assignment_id):
-
     claims = get_jwt()
-
     if claims.get("role") != "owner":
         return jsonify({
             "success": False,
             "message": "Owner access only"
         }),403
-
-
     assignment = Assignment.query.filter_by(
         id=assignment_id
     ).first()
-
-
     if not assignment:
         return jsonify({
             "success":False,
             "message":"Assignment not found"
         }),404
-
-
-
     current_user_id = int(get_jwt_identity())
-
-
     institute = Institution.query.filter_by(
         id=assignment.institution_id,
         user_id=current_user_id
     ).first()
-
-
     if not institute:
         return jsonify({
             "success":False,
             "message":"Unauthorized"
         }),403
-
-
-
     uploaded_file = request.files.get("file")
-
-
     if not uploaded_file:
         return jsonify({
             "success":False,
             "message":"PDF file required"
         }),400
-
-
-
     # save new file first
     saved_pdf = save_pdf(
         uploaded_file,
         current_app.config["ASSIGNMENT_UPLOAD_FOLDER"]
     )
-
-
     new_filename = saved_pdf["stored_filename"]
-
-
-
     # delete old file
     if assignment.file_url:
-
         old_filename = assignment.file_url.split("/")[-1]
-
         old_path = os.path.join(
             current_app.config["ASSIGNMENT_UPLOAD_FOLDER"],
             old_filename
         )
-
         if os.path.exists(old_path):
             os.remove(old_path)
-
-
-
     # update database
-
     assignment.file_url = url_for(
         "assignment_for_student_bp.download_assignment_pdf",
         filename=new_filename
     )
-
-
-
     db.session.commit()
-
-
-
     return jsonify({
-
         "success":True,
         "message":"Assignment file replaced successfully",
-
         "file_url":assignment.file_url
-
     }),200

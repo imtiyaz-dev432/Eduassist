@@ -18,13 +18,11 @@ lead_bp = Blueprint(
 @jwt_required()
 def add_lead(institution_id):
     claims = get_jwt()
-
     if claims.get("role") != "owner":
         return jsonify({
             "success": False,
             "message": "Owner access only"
         }), 403
-
     current_user_id = int(get_jwt_identity())
 
     institute = Institution.query.filter_by(

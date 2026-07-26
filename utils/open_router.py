@@ -89,46 +89,43 @@ Institute FAQ Context:
     }
 
     try:
-        response = requests.post(
-            "https://openrouter.ai/api/v1/chat/completions",
-            json=payload,
-            headers=headers,
-            timeout=30
-        )
+     response = requests.post(
+        "https://openrouter.ai/api/v1/chat/completions",
+        json=payload,
+        headers=headers,
+        timeout=30
+    )
 
-        print("Status Code:", response.status_code)
+     print("Status Code:", response.status_code)
 
-        if response.status_code != 200:
-            print("Error Response:", response.text)
+     if response.status_code != 200:
+       print("Error Response:", response.text)
 
-        response.raise_for_status()
+     response.raise_for_status()
 
-        result = response.json()
+     result = response.json()
+     print("OpenRouter Response:", result)
 
-        return result["choices"][0]["message"]["content"].strip()
+     if "choices" not in result:
+        return f"Invalid Response: {result}"
+
+     message = result["choices"][0]["message"]
+     print("Message:", message)
+
+     return message["content"].strip()
 
     except requests.exceptions.Timeout:
-        print("OpenRouter Timeout")
-        return "AI service response dene mein thoda time le rahi hai. Please dobara try karein."
+      print("OpenRouter Timeout")
+      return "AI service response dene mein thoda time le rahi hai. Please dobara try karein."
 
     except requests.exceptions.HTTPError:
-        print("HTTP Error:", response.text)
-        return "AI service temporary unavailable hai. Please kuch der baad try karein."
+      print("HTTP Error:", response.text)
+      return "AI service temporary unavailable hai. Please kuch der baad try karein."
 
     except requests.exceptions.RequestException as e:
-        print("Request Error:", e)
-        return "Network issue ki wajah se AI response nahi mil paaya."
+      print("Request Error:", e)
+      return "Network issue ki wajah se AI response nahi mil paaya."
 
     except Exception as e:
-        print("Unexpected Error:", e)
-        return "Sorry, abhi AI response generate nahi ho pa raha."
-    result = response.json()
-    print("OpenRouter Response:", result)
-
-    if "choices" not in result:
-     return f"Invalid Response: {result}"
-
-    message = result["choices"][0]["message"]
-    print("Message:", message)
-
-    return message["content"].strip()
+      print("Unexpected Error:", e)
+      return "Sorry, abhi AI response generate nahi ho pa raha."
