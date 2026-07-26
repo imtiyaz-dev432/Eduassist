@@ -6,9 +6,11 @@ from dbms.db import db
 from models.user import User
 from utils.security import hash_otp,hash_password,verify_password
 from utils.otp import generate_otp
+from utils.rate import limiter
 
 auth_bp=Blueprint('auth_bp',__name__,url_prefix="/auth")
 @auth_bp.route("/register",methods=["POST"])
+@limiter.limit("3 per minute")
 def register():
     data=request.get_json()
     if not data:
@@ -63,6 +65,7 @@ def register():
 
 #Login Route
 @auth_bp.route("/login",methods=["POST"])
+@limiter.limit("3 per minute")
 def login():
     data=request.get_json()
     if not data:
@@ -118,6 +121,100 @@ def login():
         "mobile_no": user.mobile_no
     }
 }), 200
+
+
+##FORGOT-PASSWORD
+@auth_bp.route("/forgot-password",methods=["POST"])
+@limiter.limit("3 per 10 minutes")
+def forgot_password():
+    data=request.get_json()
+    if not data:
+      return  jsonify({
+        "success":False,
+        "message":"Request body is required"
+    }),400
+    identifier=data.get("identifier")
+
+    if not identifier:
+        return jsonify({
+            "success":False,
+            "message":"Email/Mobile no.. is required"
+        }),400
+    user=User.query.filter((User.email==identifier) | (User.mobile_no==identifier)).first()
+    if not user:
+       return jsonify({
+    "success": True,
+    "message": "If the account exists, a password reset OTP has been sent."
+}), 200
+    plain_otp=generate_otp ()
+    hashed_otp=hash_otp(plain_otp)
+    user.otp=hashed_otp
+    user.otp_created_at=datetime.utcnow()
+    user.otp_expires_at=datetime.utcnow()+timedelta(minutes=5)
+    db.session.commit()
+    return jsonify({
+        "success":True,
+
+        "message": "Reset OTP sent to your registered email/mobile"
+    }),200
+
+#RESET-PASSWORD
+@auth_bp.route("/reset-password",methods=["POST"])
+@limiter.limit("3 per 10 minutes")
+def reset_password():
+    data=request.get_json()
+    if not data:
+      return  jsonify({
+        "success":False,
+        "message":"Request body is required"
+    }),400
+    identifier=data.get("identifier")
+    otp=data.get("otp")
+    new_password=data.get("new_password")
+    if not otp or not new_password:
+      return jsonify({
+        "success": False,
+        "message": "OTP and new password are required"
+    }), 400
+
+    if not identifier:
+        return jsonify({
+            "success":False,
+            "message":"Email/Mobile no.. is required"
+        }),400
+    if len(new_password) < 8:
+      return jsonify({
+        "success": False,
+        "message": "Password must be at least 8 characters long"
+    }), 400    
+    user=User.query.filter((User.email==identifier) | (User.mobile_no==identifier)).first()
+    if not user:
+       return jsonify({
+    "success": True,
+    "message": "If the account exists, a password reset OTP has been sent."
+}), 200
+    if not user.otp or not user.otp_created_at:
+        return jsonify({
+            "success":False,
+            "message": "OTP not generated"}), 400
+
+    if datetime.utcnow()>user.otp_expires_at :        
+        return jsonify({
+            "success":False,
+            "message": "OTP expired. Please request a new OTP."}), 400
+
+    if not verify_hashed_otp(user.otp, otp):
+      return jsonify({"message": "Invalid OTP"}), 400
+    user.otp=None
+    user.otp_created_at=None
+    user.otp_expires_at=None
+    user.password=hash_password(new_password)
+    db.session.commit()
+    return jsonify({
+        "success":True,
+    "message": "Password reset successfully"
+}), 200 
+        
 
 # logout
 @auth_bp.route("/logout",methods=["POST"])

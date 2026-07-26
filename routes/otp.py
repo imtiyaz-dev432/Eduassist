@@ -4,9 +4,11 @@ from dbms.db import db
 from utils.security import verify_otp,hash_otp
 from utils.otp import generate_otp
 from models.user import User
+from utils.rate import limiter
   
 otp_bp = Blueprint("otp_bp", __name__, url_prefix="/otp")
 @otp_bp.route("/verify-otp", methods=["POST"])
+@limiter.limit("3 per 10 minutes")
 def otp_verify():
     data = request.get_json()
     if not data:
@@ -68,6 +70,7 @@ def otp_verify():
 
 #Resend otp Route
 @otp_bp.route("/resend-otp",methods=["POST"])
+@limiter.limit("3 per 10 minutes")
 def resend_otp():
     data=request.get_json()
     if not data:

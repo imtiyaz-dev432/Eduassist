@@ -7,6 +7,7 @@ from dbms.db import db
 from models.institute import Institution
 from models.batch import Batch
 from models.student import Student
+from utils.rate import limiter
 
 
 teacher_student_bp = Blueprint("teacher_student_bp", __name__,  url_prefix="/teacher/academics/student"
@@ -273,6 +274,7 @@ def update_student(student_id):
     }), 200
 #for student
 @teacher_student_bp.route("/enable-login/<int:student_id>", methods=["PATCH"])
+@limiter.limit("3 per minute")
 @jwt_required()
 def enable_student_login(student_id):
     claims=get_jwt()

@@ -3,6 +3,7 @@ from flask_cors import CORS
 from flask_jwt_extended import JWTManager
 from config import Config
 from dbms.db import db
+from utils.rate import limiter
 from flask_migrate import Migrate
 from block import BLOCKLIST
 #models
@@ -65,6 +66,7 @@ CORS(app)
 db.init_app(app)
 migrate=Migrate(app,db)
 jwt=JWTManager(app)
+limiter.init_app(app)
 
 @jwt.token_in_blocklist_loader
 def check_if_token_in_blocklist(jwt_header,jwt_payload):

@@ -2,9 +2,14 @@ Flask
 Flask-SQLAlchemy
 Flask-JWT-Extended
 Flask-CORS
+Flask-Migrate
+Flask-Limiter
+
 python-dotenv
 Werkzeug
 requests
 gunicorn
 psycopg2-binary
-Flask-Migrate
+
+redis
+celery
