@@ -1,5 +1,5 @@
 from flask import Blueprint,request,jsonify
-from flask_jwt_extended import jwt_required,get_jwt_identity
+from flask_jwt_extended import jwt_required,get_jwt_identity,get_jwt
 from datetime import datetime ,timedelta
 from dbms.db import db
 
@@ -7,11 +7,14 @@ from models.institute import Institution
 from models.payment import Payment
 from models.student import Student
 from models.fee import Fee
+from utils.rate import limiter
 
 payment_bp=Blueprint("payment_bp",__name__,url_prefix="/teacher/payment")
 @payment_bp.route("/create/<int:fee_id>",methods=["POST"])
+@limiter.limit("30 per minute")
 @jwt_required()
 def add_payment(fee_id):
+    claims=get_jwt()
     current_user_id=int(get_jwt_identity())
     fee=Fee.query.filter_by(id=fee_id).first()
     if not fee:
@@ -37,7 +40,7 @@ def add_payment(fee_id):
     amount = data.get("amount")
     payment_method = data.get("payment_method")
     transaction_id = data.get("transaction_id")
-
+    payment_status = data.get("payment_status")
     if amount is None or not payment_method:
         return jsonify({
             "message": "Amount and payment method are required"
@@ -57,7 +60,10 @@ def add_payment(fee_id):
             "message": "Invalid payment method"
         }), 400
 
-    amount = float(amount)
+    try:
+        amount = float(amount)
+    except ValueError:
+        return jsonify({"message": "Amount must be a valid number"}), 400
 
     if amount <= 0:
         return jsonify({
@@ -68,7 +74,34 @@ def add_payment(fee_id):
         return jsonify({
             "message": "Payment amount cannot be greater than due amount"
         }), 400
+
+
     receipt_no = f"RCPT-{fee.id}-{int(datetime.utcnow().timestamp())}"
+
+    ##Prevent duplicate payments
+    if transaction_id:
+        existing_payment=Payment.query.filter_by(
+            transaction_id=transaction_id
+        ).first()
+        if existing_payment:
+            return jsonify({
+                "success":False,
+                "message":"Duplicate payment detected. This transaction ID has already been used."
+            }), 409
+    ##recent payment ckecker last 2 min..
+    else:
+        two_minutes_ago=datetime.utcnow()-timedelta(minutes=2)
+        recent_duplicate=Payment.query.filter(
+        Payment.fee_id==fee.id,
+        Payment.amount==amount,
+        Payment.payment_status==payment_status,
+        Payment.payment_date >= two_minutes_ago 
+        ).first()
+        if recent_duplicate:
+            return jsonify({
+                "message": "Please wait a moment. The exact same payment was recorded less than 2 minutes ago. If this is intentional, wait 2 minutes."
+            }), 429
+    final_status = payment_status if payment_status else "Success"  
 
     new_payment = Payment(
         institution_id=fee.institution_id,
@@ -77,13 +110,13 @@ def add_payment(fee_id):
         amount=amount,
         payment_method=payment_method,
         transaction_id=transaction_id,
-        payment_status="Success",
+        payment_status=final_status,
         receipt_no=receipt_no
     )
-
-    fee.paid_amount = fee.paid_amount + amount
-    fee.due_amount = fee.total_fee - fee.paid_amount
-
+    db.session.add(new_payment) #It only tell the sqlalchemy to track the changes
+    if final_status == "Success":
+        fee.paid_amount = fee.paid_amount + amount
+        fee.due_amount = fee.total_fee - fee.paid_amount
     if fee.due_amount == 0:
         fee.status = "Paid"
     elif fee.paid_amount > 0:
@@ -91,7 +124,6 @@ def add_payment(fee_id):
     else:
         fee.status = "Pending"
 
-    db.session.add(new_payment)
     db.session.commit()
 
     return jsonify({

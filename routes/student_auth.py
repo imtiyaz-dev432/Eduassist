@@ -3,8 +3,11 @@ from flask_jwt_extended import create_access_token
 from werkzeug.security import check_password_hash
 
 from models.student import Student
+from utils.rate import limiter
+from utils.validators import is_valid_email,is_valid_mobile
 student_auth_bp=Blueprint("student_auth_bp",__name__,url_prefix="/student_auth")
 @student_auth_bp.route("/login",methods=["POST"])
+@limiter.limit("3 per minute")
 def login_student():
     data=request.get_json()
     if not data:
@@ -12,24 +15,49 @@ def login_student():
             "success":False,
             "message":"Request body is required"
         }),400
-    identifier=data.get("identifier")
+    email=data.get("email")
+    phone=data.get("phone")
+    if email and phone:
+        return jsonify({
+            "success":False,
+            "message":"Either email or mobile no.. is required ,not both"
+        })  ,400
+    if not email and not phone: 
+        return jsonify({
+            "success":False,
+            "message":"Either email or phone is required for login only one field are required"
+        }),400
+    if email:
+        email=email.lower()
+        if not is_valid_email(email):
+            return jsonify({
+                "success":False,
+                "message":"Invalid Email Format"
+            }) ,400
+        student=Student.query.filter_by(email=email).first()
+        if not student:
+            return jsonify({
+                "success":False,
+                "message":"Invalid Credentials"
+            }),400
+    if phone:
+        if not is_valid_mobile(phone):
+            return jsonify({
+                "success":False,
+                "message":"Invalid Mobile no.. Format"
+            })   ,400
+        student=Student.query.filter_by(phone=phone).first()
+        if not student:
+            return jsonify({
+                "success":False,
+                "message":"Invalid Credentials"
+            }) ,400         
     password=data.get("password")
-    if not identifier or not password:
+    if not password:
         return jsonify({
             "success":False,
             "message":"Email/Mobile and password is required"
         }),400
-    identifier = identifier.strip().lower()
-    student=Student.query.filter(
-        (Student.phone==identifier) | (Student.email==identifier)
-    ).first()
-
-    if not student:
-     return jsonify({
-        "success":False,
-        "message":"Invalid phone/email or password"
-    }),401
-    
     if not student.is_login_enabled:
         return jsonify({
             "success": False,
@@ -60,4 +88,3 @@ def login_student():
         "student": student.to_dict()
     }), 200        
 
-#

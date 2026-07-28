@@ -60,6 +60,7 @@ from routes.student.assessments.assignment_view import student_assignment_bp
 from routes.student.assessments.student_assignment_result import student_result_bp
 
 
+
 app=Flask(__name__)
 app.config.from_object(Config)
 CORS(app)

@@ -9,7 +9,7 @@ institute_bp=Blueprint("institution_bp",__name__,url_prefix="/teacher/institutio
 @institute_bp.route("/register",methods=["POST"])
 @jwt_required()
 def create_institution():
-    claims=get_jwT()
+    claims=get_jwt()
     if claims.get("role")!="owner":
         return jsonify({
             "success":False,
@@ -65,7 +65,7 @@ def create_institution():
 @institute_bp.route("/get",methods=["GET"])
 @jwt_required()
 def get_institute():
-    claims=get_jwT()
+    claims=get_jwt()
     if claims.get("role")!="owner":
         return jsonify({
             "success":False,

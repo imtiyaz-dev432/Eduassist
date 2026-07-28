@@ -27,6 +27,7 @@ class AssignmentSubmission(db.Model):
             "id": self.id,
             "assignment_id": self.assignment_id,
             "institution_id": self.institution_id,
+            "stored_filename":self.stored_filename,
             "course_id": self.course_id,
             "batch_id": self.batch_id,
             "student_id": self.student_id,

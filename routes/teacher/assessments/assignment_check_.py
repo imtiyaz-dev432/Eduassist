@@ -63,9 +63,9 @@ def assignment_check(assignment_id):
     })     ,200
 
 #downlaod 
-@teacher_see_student_bp.route("/file/<string:filename>", methods=["GET"])
+@teacher_see_student_bp.route("/file/<int:assignment_submission_id>", methods=["GET"])
 @jwt_required()
-def download_pdf(filename):
+def download_pdf(assignment_submission_id):
 
     if get_jwt().get("role") != "owner":
         return jsonify({
@@ -74,18 +74,8 @@ def download_pdf(filename):
         }), 403
 
     # Find submission by stored filename
-    assignment_submission = AssignmentSubmission.query.filter_by(
-        stored_filename=filename
-    ).first()
-
-    if not assignment_submission:
-        return jsonify({
-            "success": False,
-            "message": "Assignment submission not found"
-        }), 404
-
+    assignment_submission = AssignmentSubmission.query.get_or_404(assignment_submission_id)
     current_user_id = int(get_jwt_identity())
-
     institute = Institution.query.filter_by(
         id=assignment_submission.institution_id,
         user_id=current_user_id
@@ -101,9 +91,7 @@ def download_pdf(filename):
         current_app.config["ASSIGNMENT_UPLOAD_FOLDER"],
         assignment_submission.stored_filename
     )
-    assignment_submission = AssignmentSubmission.query.filter_by(
-    stored_filename=filename
-).first()
+    
     if not os.path.exists(file_path):
         return jsonify({
             "success": False,

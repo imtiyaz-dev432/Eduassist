@@ -95,6 +95,7 @@ def resend_otp():
         })    ,400
 
     plain_otp=generate_otp()
+    print(plain_otp)
     hashed_otp=hash_otp(plain_otp)
     now=datetime.utcnow()
     user.otp=hashed_otp 

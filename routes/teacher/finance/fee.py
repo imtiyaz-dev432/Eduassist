@@ -6,9 +6,11 @@ from dbms.db import db
 from models.institute import Institution
 from models.student import Student
 from models.fee import Fee
+from utils.rate import limiter
 #add fee 
 fee_bp=Blueprint("fee_bp",__name__,url_prefix="/teacher/fees")
 @fee_bp.route("/create/<int:student_id>",methods=["POST"])
+@limiter.limit("30 per minute")
 @jwt_required()
 def add_fees(student_id):
     claims=get_jwt()
