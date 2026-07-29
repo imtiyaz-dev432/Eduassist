@@ -88,7 +88,7 @@ def login_student():
         "access_token": access_token,
         "student": student.to_dict()
     }), 200        
-
+#student logout
 @student_auth_bp.route("/logout",methods=["POST"])
 @jwt_required()
 def student_logout():
@@ -100,10 +100,10 @@ def student_logout():
         "message": "Student not found"
     }), 404
     token=get_jwt()
-    jti=oken['jti']
-    ttl=max(token['jti']-int(time.time()),1)
+    jti=token['jti']
+    ttl=max(token['exp']-int(time.time()),1)
     redis_client.setex(
-       f"Blocklist:{jti}",
+       f"blocklist:{jti}",
        ttl,
        "revoked"
     )

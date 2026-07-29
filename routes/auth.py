@@ -2,8 +2,8 @@ import time
 from flask import Blueprint,request,jsonify
 from flask_jwt_extended import create_access_token,jwt_required,get_jwt
 from datetime import datetime ,timedelta
-from block import BLOCKLIST
 from dbms.db import db
+from datetime import timedelta
 from models.user import User
 from utils.security import hash_otp,hash_password,verify_password,verify_otp
 from utils.otp import generate_otp
@@ -24,7 +24,7 @@ def register():
         }),400
     name=data.get("name")
     mobile_no=data.get("mobile_no")
-    email=data.get("email")    
+    email=data.get("email")
     password=data.get("password")
     if not name or not mobile_no or not email or not password:
         return jsonify({
@@ -56,24 +56,22 @@ def register():
         "success": False,
         "message": "Email or mobile number is already registered"
     }), 409
-    if len(password)<8:
-        return jsonify({
-            "success":False,
-            "message":"Passwird must be of 8 character"
-        }) ,403
-
     plain_otp=generate_otp()
     print(plain_otp)
     hashed_otp=hash_otp(plain_otp)
+    identifier = email.lower() if email else mobile_no
+    redis_client.setex(
+        f"otp:{identifier}",
+        300,
+        str(plain_otp)
+    )
     now=datetime.utcnow()
     new_user=User(
         name=name,
         email=email,
         mobile_no=mobile_no,
-        otp=hashed_otp,
+        
         password=hash_password(password),
-        otp_created_at=now,
-        otp_expires_at=now+timedelta(minutes=5),
         is_verified=False
 
     )
