@@ -10,4 +10,4 @@ def is_valid_mobile(mobile_no):
 
 def is_valid_password(password):
     pattern2=r"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$"
-    return re.match(pattern2,password) is not None
+    return re.match(pattern2,password) is not None 

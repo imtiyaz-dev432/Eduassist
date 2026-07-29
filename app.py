@@ -4,6 +4,7 @@ from flask_jwt_extended import JWTManager
 from config import Config
 from dbms.db import db
 from utils.rate import limiter
+from utils.extensions import redis_client
 from flask_migrate import Migrate
 from block import BLOCKLIST
 #models
@@ -71,8 +72,8 @@ limiter.init_app(app)
 
 @jwt.token_in_blocklist_loader
 def check_if_token_in_blocklist(jwt_header,jwt_payload):
-    return jwt_payload.get('jti') in BLOCKLIST
-
+   jti=jwt_payload['jti']
+   return redis_client.exists(f"blocklist:{jti}")
 @jwt.revoked_token_loader
 def revoked_token_loader(jwt_header,jwt_payload):
       return ({

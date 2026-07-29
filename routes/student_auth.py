@@ -1,10 +1,11 @@
 from flask import Blueprint, request, jsonify
-from flask_jwt_extended import create_access_token
+from flask_jwt_extended import create_access_token,jwt_required,get_jwt,get_jwt_identity
 from werkzeug.security import check_password_hash
-
+import time
 from models.student import Student
 from utils.rate import limiter
 from utils.validators import is_valid_email,is_valid_mobile
+from utils.extensions import redis_client
 student_auth_bp=Blueprint("student_auth_bp",__name__,url_prefix="/student_auth")
 @student_auth_bp.route("/login",methods=["POST"])
 @limiter.limit("3 per minute")
@@ -88,3 +89,25 @@ def login_student():
         "student": student.to_dict()
     }), 200        
 
+@student_auth_bp.route("/logout",methods=["POST"])
+@jwt_required()
+def student_logout():
+    current_student_id=int(get_jwt_identity())    
+    student = Student.query.get(current_student_id)
+    if not student:
+      return jsonify({
+        "success": False,
+        "message": "Student not found"
+    }), 404
+    token=get_jwt()
+    jti=oken['jti']
+    ttl=max(token['jti']-int(time.time()),1)
+    redis_client.setex(
+       f"Blocklist:{jti}",
+       ttl,
+       "revoked"
+    )
+    return jsonify ({
+        "success": True,
+        "message":"Student logged out successfully"
+    }),200

@@ -1,3 +1,4 @@
+import time
 from flask import Blueprint,request,jsonify
 from flask_jwt_extended import create_access_token,jwt_required,get_jwt
 from datetime import datetime ,timedelta
@@ -8,6 +9,8 @@ from utils.security import hash_otp,hash_password,verify_password,verify_otp
 from utils.otp import generate_otp
 from utils.rate import limiter
 from utils.validators import is_valid_email,is_valid_password,is_valid_mobile
+from utils.extensions import redis_client
+
 
 auth_bp=Blueprint('auth_bp',__name__,url_prefix="/auth")
 @auth_bp.route("/register",methods=["POST"])
@@ -332,8 +335,14 @@ def reset_password():
 @auth_bp.route("/logout",methods=["POST"])
 @jwt_required()
 def logout():
-    jti=get_jwt()['jti']
-    BLOCKLIST.add(jti)
+    token=get_jwt()
+    jti=token['jti']
+    ttl=max(token['exp']-int(time.time()),1)
+    redis_client.setex(
+    f"blocklist:{jti}",
+    ttl,
+    "revoked"
+    )
     return jsonify ({
         "success": True,
         "message":"User logged out successfully"
