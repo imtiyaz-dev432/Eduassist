@@ -17,10 +17,10 @@ teacher_student_bp = Blueprint("teacher_student_bp", __name__,  url_prefix="/tea
 @jwt_required()
 def add_student(batch_id):
     claims=get_jwt()
-    if claims.get("role")!="owner":
+    if claims.get("role") not in ["teacher","owner"]:
         return jsonify({
             "success":False,
-            "message":"Owner access only"
+            "message":"Owner/Teacher access only"
         }),403 
     current_user_id = int(get_jwt_identity())
     batch = Batch.query.filter_by(id=batch_id).first()

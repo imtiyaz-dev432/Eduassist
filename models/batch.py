@@ -16,6 +16,7 @@ class Batch(db.Model):
         db.ForeignKey("courses.id"),
         nullable=False
     )
+    teacher_id=db.Column(db.Integer,db.ForeignKey("teachers.id"),nullable=False)
 
     batch_name = db.Column(db.String(150), nullable=False)
     batch_code = db.Column(db.String(50), nullable=True)
@@ -48,7 +49,10 @@ class Batch(db.Model):
         db.DateTime,
         default=datetime.utcnow,
         onupdate=datetime.utcnow)
-
+    teacher = db.relationship(
+    "Teacher",
+    back_populates="batches"
+)
     students = db.relationship(
     "Student",
     backref="batch",

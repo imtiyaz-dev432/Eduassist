@@ -1,4 +1,4 @@
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, jsonify, request,current_app
 from flask_jwt_extended import jwt_required, get_jwt_identity, get_jwt
 
 from dbms.db import db
@@ -6,22 +6,23 @@ from models.faq import Faq
 from models.institute import Institution
 
 
-teacher_faq_bp = Blueprint(
-    "teacher_faq_bp",
+faq_bp = Blueprint(
+    "owner_faq_bp",
     __name__,
-    url_prefix="/teacher/faq"
+    url_prefix="/owner/faq"
 )
 
 
 # add FAQ
-@teacher_faq_bp.route("/add/<int:institution_id>", methods=["POST"])
+@faq_bp.route("/add/<int:institution_id>", methods=["POST"])
 @jwt_required()
 def faq_add(institution_id):
     claims = get_jwt()
-    if claims.get("role") not in ["teacher", "owner"]:
+    if claims.get("role")!="owner":
+
         return jsonify({
             "success": False,
-            "message": "Teacher access only"
+            "message": "Owner access only"
         }), 403
 
     current_user_id = int(get_jwt_identity())
@@ -34,8 +35,8 @@ def faq_add(institution_id):
     if not institute:
         return jsonify({
             "success": False,
-            "message": "Unauthorized to add FAQ"
-        }), 403
+            "message": "Institute not found"
+        }), 404
 
     data = request.get_json()
 
@@ -45,9 +46,9 @@ def faq_add(institution_id):
             "message": "Request body is required"
         }), 400
 
-    question = data.get("question")
-    answer = data.get("answer")
-    category = data.get("category")
+    question = data.get("question", "").strip()
+    answer = data.get("answer", "").strip()
+    category = data.get("category", "").strip() or None
 
     if not question or not answer:
         return jsonify({
@@ -64,25 +65,32 @@ def faq_add(institution_id):
     )
 
     db.session.add(faq)
-    db.session.commit()
-
-    return jsonify({
+    try:
+       db.session.commit()
+       return jsonify({
         "success": True,
         "message": "FAQ added successfully",
         "faq": faq.to_dict()
     }), 201
-
+    except Exception:
+        db.session.rollback()
+        current_app.logger.exception("Failed to add FAQ")
+        return jsonify({
+            "success":False,
+            "message":"Something went wrong"
+        }),500
 
 # get FAQs
-@teacher_faq_bp.route("/view/<int:institution_id>", methods=["GET"])
+@faq_bp.route("/view/<int:institution_id>", methods=["GET"])
 @jwt_required()
 def get_faq(institution_id):
     claims = get_jwt()
 
-    if claims.get("role") not in ["teacher", "owner"]:
+    if claims.get("role")!="owner":
+
         return jsonify({
             "success": False,
-            "message": "Teacher access only"
+            "message": "Owner access only"
         }), 403
 
     current_user_id = int(get_jwt_identity())
@@ -95,8 +103,8 @@ def get_faq(institution_id):
     if not institute:
         return jsonify({
             "success": False,
-            "message": "Unauthorized to get FAQ"
-        }), 403
+            "message": "Institute not found"
+        }), 404
 
     faqs = Faq.query.filter_by(
         institution_id=institution_id
@@ -112,18 +120,17 @@ def get_faq(institution_id):
         "message": "FAQ fetched successfully",
         "faqs": faq_list
     }), 200
-
-
+ 
 # update FAQ
-@teacher_faq_bp.route("/update/<int:faq_id>", methods=["PATCH"])
+@faq_bp.route("/update/<int:faq_id>", methods=["PATCH"])
 @jwt_required()
 def update_faq(faq_id):
     claims = get_jwt()
 
-    if claims.get("role") not in ["teacher", "owner"]:
+    if claims.get("role")!="owner":
         return jsonify({
             "success": False,
-            "message": "Teacher access only"
+            "message": "Owner access only"
         }), 403
 
     current_user_id = int(get_jwt_identity())
@@ -144,7 +151,7 @@ def update_faq(faq_id):
     if not institute:
         return jsonify({
             "success": False,
-            "message": "Unauthorized to update FAQ"
+            "message": "Institute not found"
         }), 403
 
     data = request.get_json()
@@ -154,33 +161,63 @@ def update_faq(faq_id):
             "success": False,
             "message": "Request body is required"
         }), 400
+  
+    if "category" in data:
+       faq.category = data.get("category", "").strip() or None
+    if "question" in data:
+      question = data.get("question").strip()
 
-    faq.question = data.get("question", faq.question)
-    faq.answer = data.get("answer", faq.answer)
-    faq.category = data.get("category", faq.category)
+      if not question:
+        return jsonify({
+            "success": False,
+            "message": "Question cannot be empty"
+        }), 400
 
+      faq.question = question
+
+    if "answer" in data:
+      answer = data.get("answer", "").strip()
+
+      if not answer:
+        return jsonify({
+            "success": False,
+            "message": "Answer cannot be empty"
+        }), 400
+
+      faq.answer = answer
+    
     if "is_active" in data:
-        faq.is_active = data.get("is_active")
-
-    db.session.commit()
-
-    return jsonify({
+        if not isinstance(data["is_active"],bool):
+             return jsonify({
+            "success": False,
+            "message": "is_active must be true or false"
+        }), 400
+        faq.is_active = data["is_active"]
+    try:
+      db.session.commit()
+      return jsonify({
         "success": True,
         "message": "FAQ updated successfully",
         "faq": faq.to_dict()
     }), 200
-
+    except Exception:
+      db.session.rollback()
+      current_app.logger.exception("Failed to update FAQ")
+      return jsonify({
+        "success":False,
+        "message":"Something went wrong"
+      }),500
 
 # delete FAQ
-@teacher_faq_bp.route("/delete/<int:faq_id>", methods=["DELETE"])
+@faq_bp.route("/delete/<int:faq_id>", methods=["DELETE"])
 @jwt_required()
 def delete_faq(faq_id):
     claims = get_jwt()
 
-    if claims.get("role") not in ["teacher", "owner"]:
+    if claims.get("role") !="owner":
         return jsonify({
             "success": False,
-            "message": "Teacher access only"
+            "message": "Owner access only"
         }), 403
 
     current_user_id = int(get_jwt_identity())
@@ -201,13 +238,22 @@ def delete_faq(faq_id):
     if not institute:
         return jsonify({
             "success": False,
-            "message": "Unauthorized to delete FAQ"
+            "message": "Institute not found"
         }), 403
 
-    db.session.delete(faq)
-    db.session.commit()
-
-    return jsonify({
+    
+    try:
+      db.session.delete(faq)   
+      db.session.commit()
+      return jsonify({
         "success": True,
         "message": "FAQ deleted successfully"
     }), 200
+    except Exception:
+        db.session.rollback()
+        current_app.logger.exception("Failed to delete FAQ")
+        return jsonify({
+            "success":False,
+            "message":"Something went wrong"
+        }),500    
+    

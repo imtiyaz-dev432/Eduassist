@@ -4,7 +4,7 @@ from dbms.db import db
 from models.course import Course
 from models.institute import Institution
 
-course_bp=Blueprint("course_bp",__name__,url_prefix="/teacher/academics/courses")
+course_bp=Blueprint("course_bp",__name__,url_prefix="/owner/academics/courses")
 #add course
 @course_bp.route("/add/<int:institution_id>",methods=["POST"])
 @jwt_required()

@@ -29,6 +29,12 @@ class Quiz(db.Model):
     backref="quiz",
     lazy=True,
     cascade="all, delete-orphan")
+
+    batch = db.relationship(
+    "Batch",
+    backref="quizzes",
+    lazy=True
+)
     def to_dict(self):
         return {
             "id": self.id,

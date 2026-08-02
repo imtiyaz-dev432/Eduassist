@@ -1,5 +1,5 @@
 from flask import Blueprint,request,jsonify
-from flask_jwt_extended import jwt_required,get_jwt_identity
+from flask_jwt_extended import jwt_required,get_jwt_identity,get_jwt
 from datetime import datetime 
 from dbms.db import db
 
@@ -15,6 +15,12 @@ teacher_quiz_view_bp=Blueprint("teacher_quiz_view_bp",__name__,url_prefix="/teac
 @teacher_quiz_view_bp.route("/<int:quiz_id>",methods=["GET"])
 @jwt_required()
 def view_quiz(quiz_id):
+    claims=get_jwt()
+    if claims.get("role") not in["teacher","owner"]:
+        return jsonify({
+            "success":False,
+            'message':"Owner/Teacher access only"
+        }),403
     current_user_id=int(get_jwt_identity())
     quiz=Quiz.query.filter_by(
         id=quiz_id

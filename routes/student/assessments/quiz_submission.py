@@ -1,4 +1,4 @@
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, jsonify, request,current_app
 from flask_jwt_extended import jwt_required, get_jwt_identity, get_jwt
 from datetime import datetime
 from dbms.db import db
@@ -77,7 +77,6 @@ def quiz_submission(quiz_id):
         status="Checked"
     )
     db.session.add(new_submission)
-    db.session.flush()
     submitted_question_ids = set()
     for item in answers:
         if not isinstance(item, dict):
@@ -155,10 +154,9 @@ def quiz_submission(quiz_id):
 
     new_submission.total_marks = total_marks
     new_submission.obtained_marks = obtained_marks
-
-    db.session.commit()
-
-    return jsonify({
+    try:
+        db.session.commit()
+        return jsonify({
         "success": True,
         "message": "Quiz submitted successfully",
         "data": {
@@ -168,4 +166,10 @@ def quiz_submission(quiz_id):
         }
     }), 201
 
-
+    except Exception:
+      db.session.rollback()
+      current_app.log_exception("Failded t submit the quiz answer")
+      return jsonify({
+        "success":False,
+        "message":"Something went wrong"
+      }),500

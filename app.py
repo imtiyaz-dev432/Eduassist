@@ -26,22 +26,23 @@ from models.leads import Lead
 from models.chat import ChatHistory
 from models.quizsubmission import QuizSubmission
 from models.quiz_submission_answer import QuizSubmissionAnswer
+from models.teacher import Teacher
 #route
-from routes.auth import auth_bp
-from routes.otp import otp_bp
-from routes.teacher.institution import institute_bp
-from routes.teacher.academics.course import course_bp
-from routes.teacher.academics.batch import batch_bp
+from routes.owner.auth import auth_bp
+from routes.owner.otp import otp_bp
+from routes.owner.institution import institute_bp
+from routes.owner.academic.course import course_bp
+from routes.owner.academic.batch import batch_bp
 from routes.teacher.academics.student import teacher_student_bp
-from routes.teacher.finance.fee import fee_bp
-from routes.teacher.finance.payment import payment_bp
+from routes.owner.finance.fee import fee_bp
+from routes.owner.finance.payment import payment_bp
 from routes.teacher.operations.attendance import attendance_bp
-from routes.teacher.finance.fee_reminder import fee_reminder_bp
+from routes.owner.finance.fee_reminder import fee_reminder_bp
 from routes.teacher.assessments.assignment import assignment_for_student_bp
 from routes.teacher.assessments.assignment_check_ import teacher_see_student_bp
 from routes.teacher.assessments.quize import quiz_bp
 from routes.teacher.assessments.quiz_question import quiz_question_bp
-from routes.student_auth import student_auth_bp
+from routes.student.student_auth import student_auth_bp
 from routes.student.dashboard import student_dashboard_bp
 from routes.student.finance.fee import student_fee_bp
 from routes.student.finance.payment  import student_payment_bp
@@ -51,9 +52,9 @@ from routes.student.assessments.quiz import student_quiz_bp
 from routes.student.assessments.quiz_question import student_quiz_question_bp
 from routes.student.assessments.quiz_submission import student_quiz_submission_bp
 from routes.teacher.assessments.quiz_submission import teacher_quiz_view_bp
-from routes.teacher.leads import lead_bp
-from routes.teacher.faq import teacher_faq_bp
-from routes.teacher.chat_history import chat_history_bp
+from routes.owner.crm.faq import faq_bp
+from routes.owner.crm.leads import lead_bp
+from routes.owner.crm.chat_history import chat_history_bp
 from routes.ai.admission_bot import admission_bot_bp
 from routes.student.assessments.assignment_view_submission import assignment_submission_view_bp
 from routes.student.assessments.assignment_submission import student_assignment_submission_bp
@@ -110,7 +111,7 @@ app.register_blueprint(student_quiz_bp)
 app.register_blueprint(student_quiz_question_bp)
 app.register_blueprint(student_quiz_submission_bp)
 app.register_blueprint(teacher_quiz_view_bp)
-app.register_blueprint(teacher_faq_bp)
+app.register_blueprint(faq_bp)
 app.register_blueprint(lead_bp)
 app.register_blueprint(chat_history_bp)
 app.register_blueprint(admission_bot_bp)

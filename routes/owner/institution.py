@@ -102,6 +102,12 @@ def get_institute():
 @institute_bp.route("/update/<int:institute_id>",methods=["PATCH"])
 @jwt_required()
 def update_institute(institute_id):
+    claims=get_jwt()
+    if claims.get("role")!="owner":
+        return jsonify({
+            "success":False,
+            "message":"Owner access only"
+        }),400
     current_user_id=int(get_jwt_identity())
     data=request.get_json()
     if not data:
@@ -136,6 +142,12 @@ def update_institute(institute_id):
 @institute_bp.route("/delete/<int:institute_id>",methods=["DELETE"]) 
 @jwt_required()
 def delete_institute(institute_id):
+    claims=get_jwt()
+    if claims.get("role")!="owner":
+        return jsonify({
+            "success":False,
+            "message":"Owner access only"
+        }),400
     current_user_id=int(get_jwt_identity())
     institute=Institution.query.filter_by(
         id=institute_id,

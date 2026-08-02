@@ -23,12 +23,11 @@ teacher_see_student_bp=Blueprint("teacher_check_bp",__name__,url_prefix="/teache
 @teacher_see_student_bp.route("/<int:assignment_id>",methods=["GET"])
 @jwt_required()
 def assignment_check(assignment_id):
-    current_user_id=int(get_jwt_identity())
     claims=get_jwt()
-    if claims.get("role")!="owner":
+    if claims.get("role") not in["teacher","owner"]:
         return jsonify({
             "success":False,
-            "message":"Owner access only"
+            "message":"Owner/teacher access only"
         }),403
 
     assignment=Assignment.query.filter_by(
@@ -38,17 +37,28 @@ def assignment_check(assignment_id):
         return  jsonify({
             "success":False,
             "message":"Assignment not found"
-        })
-    institute=Institution.query.filter_by(
+        }),404
+    if claims.get("role")=="owner":   
+       current_user_id=int(get_jwt_identity())   
+       institute=Institution.query.filter_by(
          id=assignment.institution_id,
          user_id=current_user_id
     ).first()
-    if not institute:
-        return jsonify({
+       if not institute:
+         return jsonify({
             "sucess":False,
             "message":"Unauthorized to fetch the data "
         }),403
-
+    if claims.get("role")=="teacher":
+        current_teacher_id=int(get_jwt_identity())
+        batch=Batch.query.filter_by(
+            id=assignment.batch_id
+        ).first()
+        if(not batch or batch.teacher_id!=current_teacher_id):
+            return jsonify({
+                "success":False,
+                "message":"Unauthorized to get submissions "
+            }) ,403
     submissions=AssignmentSubmission.query.filter_by(
         assignment_id=assignment.id
     ).all()
@@ -66,26 +76,37 @@ def assignment_check(assignment_id):
 @teacher_see_student_bp.route("/file/<int:assignment_submission_id>", methods=["GET"])
 @jwt_required()
 def download_pdf(assignment_submission_id):
-
-    if get_jwt().get("role") != "owner":
+    claims=get_jwt()
+    if claims.get("role") not in ["owner","teacher"]:
         return jsonify({
             "success": False,
-            "message": "Owner access only"
+            "message": "Owner/teacher access only"
         }), 403
 
     # Find submission by stored filename
     assignment_submission = AssignmentSubmission.query.get_or_404(assignment_submission_id)
-    current_user_id = int(get_jwt_identity())
-    institute = Institution.query.filter_by(
+    if claims.get("role")=="owner":
+        current_user_id = int(get_jwt_identity())
+        institute = Institution.query.filter_by(
         id=assignment_submission.institution_id,
         user_id=current_user_id
     ).first()
 
-    if not institute:
-        return jsonify({
+        if not institute:
+          return jsonify({
             "success": False,
             "message": "Unauthorized"
         }), 403
+    if claims.get("role")=="teacher":
+        current_teacher_id=int(get_jwt_identity())
+        batch=Batch.query.filter_by(
+            id=assignment_submission.batch_id
+        ).first()
+        if (batch.teacher_id!=current_teacher_id):
+            return jsonify({
+                "success":False,
+                "message":"Unauthorized to fetch submissions"
+            }),403
 
     file_path = os.path.join(
         current_app.config["ASSIGNMENT_UPLOAD_FOLDER"],
@@ -110,10 +131,10 @@ def download_pdf(assignment_submission_id):
 @jwt_required()
 def check(assignment_submission_id):
     claims=get_jwt()
-    if claims.get("role")!="owner":
+    if claims.get("role") not in ["owner","teacher"]:
         return jsonify({
             "success":False,
-            "message":"Owner access only"
+            "message":"Owner/teacher access only"
         }),403
     data=request.get_json()    
     if not data:
@@ -121,7 +142,6 @@ def check(assignment_submission_id):
             "success":False,
             "message":"Request body is required"
         }),400
-    curren_user_id=int(get_jwt_identity())
     assignment_submission=AssignmentSubmission.query.filter_by(
         id=assignment_submission_id
     ).first()
@@ -130,15 +150,27 @@ def check(assignment_submission_id):
             "success":False,
             "message":"Assignment not fetched successfully"
         }),404
-    institute=Institution.query.filter_by(
+    if claims.get("role")=="owner":
+        current_user_id=int(get_jwt_identity())    
+        institute=Institution.query.filter_by(
         user_id=curren_user_id,
         id=assignment_submission.institution_id
     ).first()
-    if not institute:
-        return jsonify({
+        if not institute:
+          return jsonify({
             "success":False,
             "message":"Unaouthorized to fetch the asssignmen"
         }),403
+    if claims.get("role")=="teacher":
+        current_teacher_id=int(get_jwt_identity())
+        batch=Batch.query.filter_by(
+            id=assignment_submission.batch_id
+        ).first()
+        if (not batch or batch.teacher_id!=current_teacher_id):
+            return jsonify({
+            "success":False,
+            "message":"Unauthorized to check this assignment"
+        }),400
     assignment_submission.marks=data.get("marks",assignment_submission.marks)
     assignment_submission.feedback=data.get("feedback",assignment_submission.feedback)
     assignment_submission.status = "Checked"

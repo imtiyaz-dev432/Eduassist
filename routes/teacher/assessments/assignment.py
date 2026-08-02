@@ -23,12 +23,12 @@ assignment_for_student_bp=Blueprint("assignment_for_student_bp",__name__,url_pre
 @jwt_required()
 def add_assignment(batch_id):
     claims=get_jwt()
-    if claims.get("role") !="owner":
+    if claims.get("role") not in ["teacher","owner"]:
         return jsonify({
             "success":False,
-            "message":"owner access only "
+            "message":"owner/teacher access only "
         }),403
-    current_user_id=int(get_jwt_identity())
+    
     batch=Batch.query.filter_by(
         id=batch_id
     ).first()
@@ -38,16 +38,25 @@ def add_assignment(batch_id):
             "success":False,
             "message":"Batch not found"
         }),404
-    institute=Institution.query.filter_by(
+    if claims.get("role")=="owner":
+        current_user_id=int(get_jwt_identity())    
+        institute=Institution.query.filter_by(
         id=batch.institution_id,
         user_id=current_user_id
     ).first()
 
-    if not institute:
-        return jsonify({
+        if not institute:
+           return jsonify({
             "success":False,
             "message":"Institute not found"
         }),404
+    if claims.get("role")=="teacher":
+        current_teacher_id=int(get_jwt_identity())
+        if(batch.teacher_id!=current_teacher_id):
+            return jsonify({
+                "success":False,
+                "messge":"Unauthorized to upload assignment"
+            }),403
     # A file upload must use multipart/form-data. JSON remains supported for
     # clients that create an assignment without uploading a PDF.
     data = request.get_json(silent=True) if request.is_json else request.form
@@ -90,10 +99,10 @@ def add_assignment(batch_id):
                 "message": "Max marks must be a whole number"
             }), 400
 
-        if max_marks < 0:
+        if max_marks < 0 or max_marks>100:
             return jsonify({
                 "success": False,
-                "message": "Max marks cannot be negative"
+                "message": "Max marks cannot be negative or more than 100"
             }), 400
     else:
         max_marks = None
@@ -223,10 +232,10 @@ def download_assignment_pdf(filename):
 @jwt_required()
 def replace(assignment_id):
     claims = get_jwt()
-    if claims.get("role") != "owner":
+    if claims.get("role") not in ["owner","teacher"]:
         return jsonify({
             "success": False,
-            "message": "Owner access only"
+            "message": "Owner/teacher access only"
         }),403
     assignment = Assignment.query.filter_by(
         id=assignment_id
@@ -236,16 +245,27 @@ def replace(assignment_id):
             "success":False,
             "message":"Assignment not found"
         }),404
-    current_user_id = int(get_jwt_identity())
-    institute = Institution.query.filter_by(
+    if claims.get("role")=="owner":    
+       current_user_id = int(get_jwt_identity())
+       institute = Institution.query.filter_by(
         id=assignment.institution_id,
         user_id=current_user_id
     ).first()
-    if not institute:
+       if not institute:
         return jsonify({
             "success":False,
             "message":"Unauthorized"
         }),403
+    if claims.get("role")=="teacher":
+        current_teacher_id=int(get_jwt_identity())
+        batch=Batch.query.filter_by(
+            id=assignment.batch_id
+        ).first()
+        if(not batch or batch.teacher_id!=current_teacher_id):
+            return jsonify({
+                "success":False,
+                "message":"Unauthorize to update the assignment"
+            })   ,403
     uploaded_file = request.files.get("file")
     if not uploaded_file:
         return jsonify({
