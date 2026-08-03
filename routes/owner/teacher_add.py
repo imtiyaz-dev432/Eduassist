@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify,current_app
-from flask_jwt_extended import jwt_required, get_jwt_identity,get_jwt,access_token,create_access_token
+from flask_jwt_extended import jwt_required, get_jwt_identity,get_jwt,create_access_token
 from datetime import datetime
 from dbms.db import db
 from utils.validators import is_valid_email,is_valid_mobile,is_valid_password
@@ -38,7 +38,7 @@ def teacher_add(institution_id):
     name=data.get("name")
     email=data.get("email")
     mobile_no=data.get("mobile_no")
-    if not name or not email or not mobile_no or not password:
+    if not name or not email or not mobile_no :
         return  jsonify({
             "success":False,
             "message":"All fields are required"
@@ -206,7 +206,7 @@ def update_teacher(teacher_id):
         return jsonify({
         "success": True,
         "message": "Teacher updated successfully",
-        "teacher": teacher_schema.dump(teacher)
+        
     }), 200
 
     except Exception as e:

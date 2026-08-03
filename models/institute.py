@@ -98,3 +98,8 @@ class Institution(db.Model):
     backref="institution",
     lazy=True,
     cascade="all, delete-orphan")
+    teachers = db.relationship(
+    "Teacher",
+    back_populates="institution",
+    cascade="all, delete-orphan"
+)

@@ -9,7 +9,7 @@ from models.student import Student
 from models.fee import Fee
 from utils.rate import limiter
 
-payment_bp=Blueprint("payment_bp",__name__,url_prefix="/teacher/payment")
+payment_bp=Blueprint("payment_bp",__name__,url_prefix="/owner/payment")
 @payment_bp.route("/create/<int:fee_id>",methods=["POST"])
 @limiter.limit("30 per minute")
 @jwt_required()

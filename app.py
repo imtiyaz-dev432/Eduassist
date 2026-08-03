@@ -60,7 +60,8 @@ from routes.student.assessments.assignment_view_submission import assignment_sub
 from routes.student.assessments.assignment_submission import student_assignment_submission_bp
 from routes.student.assessments.assignment_view import student_assignment_bp
 from routes.student.assessments.student_assignment_result import student_result_bp
-
+from routes.owner.teacher_add import teacher_add_bp
+from routes.teacher.teacher_login import teacher_login_bp
 
 
 app=Flask(__name__)
@@ -115,6 +116,8 @@ app.register_blueprint(faq_bp)
 app.register_blueprint(lead_bp)
 app.register_blueprint(chat_history_bp)
 app.register_blueprint(admission_bot_bp)
+app.register_blueprint(teacher_add_bp)
+app.register_blueprint(teacher_login_bp)
 
 @app.route("/",methods=["GET"])
 def home():

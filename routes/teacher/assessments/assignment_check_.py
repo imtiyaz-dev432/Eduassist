@@ -19,7 +19,7 @@ from models.assignment_submission import AssignmentSubmission
 from models.student import Student
 from utils.file_upload import save_pdf
 
-teacher_see_student_bp=Blueprint("teacher_check_bp",__name__,url_prefix="/teacher/check")
+teacher_see_student_bp=Blueprint("teacher_check_bp",__name__,url_prefix="/teacher/owner/check")
 @teacher_see_student_bp.route("/<int:assignment_id>",methods=["GET"])
 @jwt_required()
 def assignment_check(assignment_id):

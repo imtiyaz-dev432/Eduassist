@@ -6,7 +6,7 @@ from models.chat import ChatHistory
 from models.institute import Institution
 from models.leads import Lead
 
-chat_history_bp=Blueprint("chat_history_bp",__name__,url_prefix="/teacher/chat_history")
+chat_history_bp=Blueprint("chat_history_bp",__name__,url_prefix="/owner/chat_history")
 #view
 @chat_history_bp.route("/get/<int:institution_id>",methods=["GET"])
 @jwt_required()

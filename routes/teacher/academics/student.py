@@ -10,7 +10,7 @@ from models.student import Student
 from utils.rate import limiter
 from utils.validators import is_valid_email,is_valid_mobile,is_valid_password
 
-teacher_student_bp = Blueprint("teacher_student_bp", __name__,  url_prefix="/teacher/academics/student"
+teacher_student_bp = Blueprint("teacher_student_bp", __name__,  url_prefix="/owner/teacher/academics/student"
 )
 @teacher_student_bp.route("/add/<int:batch_id>", methods=["POST"])
 @limiter.limit("20 per minute")
@@ -22,7 +22,7 @@ def add_student(batch_id):
             "success":False,
             "message":"Owner/Teacher access only"
         }),403 
-    current_user_id = int(get_jwt_identity())
+    
     batch = Batch.query.filter_by(id=batch_id).first()
 
     if not batch:
@@ -30,18 +30,25 @@ def add_student(batch_id):
             "success": False,
             "message": "Batch not found"
         }), 404
-
-    institution = Institution.query.filter_by(
+    if claims.get("role")=="owner":
+        current_user_id = int(get_jwt_identity())
+        institution = Institution.query.filter_by(
         id=batch.institution_id,
         user_id=current_user_id
     ).first()
 
-    if not institution:
-        return jsonify({
+        if not institution:
+         return jsonify({
             "success": False,
-            "message": "Unauthorized to add student in this batch"
+            "message": "Unauthorized to add student  in this batch"
         }), 403
-
+    if claims.get("role")=="teacher":
+        current_teacher_id=int(get_jwt_identity())
+        if (batch.teacher_id!=current_teacher_id):
+            return jsonify({
+                "success":False,
+                "message":"Unauthorized to add student in the batch  "
+            }),403
     data = request.get_json(silent=True)
 
     if not data:
@@ -148,6 +155,7 @@ def add_student(batch_id):
       }),201
     except Exception:
         db.session.rollback()
+        current_app.logger.exception("unable to add the student")
         return jsonify({
         "success": False,
         "message": "Something went wrong."
@@ -159,10 +167,10 @@ def add_student(batch_id):
 @jwt_required()
 def get_student(batch_id):
     claims=get_jwt()
-    if claims.get("role")!="owner":
+    if claims.get("role") not in["teacher","owner"]:
         return jsonify({
             "success":False,
-            "message":"Owner access only"
+            "message":"Owner/teacher access only"
         }),403
     current_user_id = int(get_jwt_identity())
     batch = Batch.query.filter_by(id=batch_id).first()
@@ -205,28 +213,40 @@ def get_student(batch_id):
 @jwt_required()
 def update_student(student_id):
     claims=get_jwt()
-    if claims.get("role")!="owner":
+    if claims.get("role") not in ["owner","teacher"]:
         return jsonify({
             "success":False,
-            "message":"Owner access only"
+            "message":"Owner/teacher access only"
         }),403
-    current_user_id = int(get_jwt_identity())
     student = Student.query.filter_by(id=student_id).first()
     if not student:
         return jsonify({
             "success": False,
             "message": "Student not found"
         }), 404
-    institution = Institution.query.filter_by(
+    if claims.get("role")=="owner":
+        current_user_id = int(get_jwt_identity())    
+        institution = Institution.query.filter_by(
         id=student.institution_id,
         user_id=current_user_id
     ).first()
 
-    if not institution:
-        return jsonify({
+        if not institution:
+           return jsonify({
             "success": False,
             "message": "Unauthorized to update this student"
         }), 403
+
+    if claims.get("role")=='teacher':
+        current_teacher_id=int(get_jwt_identity())
+        batch=Batch.query.filter_by(
+            id=student.batch_id
+        ) .first()
+        if (not batch or batch.teacher_id !=current_teacher_id) :
+            return jsonify({
+                "succes":False,
+                "message":"Unauthorized to update student details "
+            }),403
     data = request.get_json(silent=True)
     if not data:
         return jsonify({
@@ -326,12 +346,11 @@ def update_student(student_id):
 @jwt_required()
 def enable_student_login(student_id):
     claims=get_jwt()
-    if claims.get("role")!="owner":
+    if claims.get("role")not in ["owner","teacher"]:
         return jsonify({
             "success":False,
-            "message":"Owner access only"
+            "message":"Owner/teacher access only"
         }),403
-    current_user_id = int(get_jwt_identity())
     student = Student.query.filter_by(
         id=student_id
     ).first()
@@ -341,17 +360,31 @@ def enable_student_login(student_id):
             "success": False,
             "message": "Student not found"
         }), 404
-
-    institution = Institution.query.filter_by(
+    if claims.get("role")=="owner":
+        current_user_id = int(get_jwt_identity())    
+        institution = Institution.query.filter_by(
         id=student.institution_id,
         user_id=current_user_id
     ).first()
 
-    if not institution:
-        return jsonify({
+        if not institution:
+           return jsonify({
             "success": False,
-            "message": "Unauthorized to enable login for this student"
+            "message": "Unauthorized to enable student login this student"
         }), 403
+
+    if claims.get("role")=='teacher':
+        current_teacher_id=int(get_jwt_identity())
+        batch=Batch.query.filter_by(
+            id=student.batch_id
+        ) .first()
+        if (not batch or batch.teacher_id !=current_teacher_id) :
+            return jsonify({
+                "succes":False,
+                "message":"Unauthorized to enable student login student details "
+            }),403
+    
+ 
 
     data = request.get_json()
     if not data:
@@ -395,30 +428,52 @@ def enable_student_login(student_id):
 @jwt_required()
 def delete_student(student_id):
     claims=get_jwt()
-    if claims.get("role")!="owner":
+    if claims.get("role") not in["owner","teacher"]:
         return jsonify({
             "success":False,
-            "message":"Owner access only"
+            "message":"Owner/teacher access only"
         }),403
-    current_user_id = int(get_jwt_identity())
+    
     student = Student.query.filter_by(id=student_id).first()
     if not student:
         return jsonify({
             "success": False,
             "message": "Student not found"
         }), 404
-    institution = Institution.query.filter_by(
+    if claims.get("role")=="owner":
+        current_user_id = int(get_jwt_identity())    
+        institution = Institution.query.filter_by(
         id=student.institution_id,
         user_id=current_user_id
     ).first()
-    if not institution:
-        return jsonify({
+
+        if not institution:
+           return jsonify({
             "success": False,
-            "message": "Unauthorized to delete this student"
+            "message": "Unauthorized to update this student"
         }), 403
-    db.session.delete(student)
-    db.session.commit()
-    return jsonify({
+
+    if claims.get("role")=='teacher':
+        current_teacher_id=int(get_jwt_identity())
+        batch=Batch.query.filter_by(
+            id=student.batch_id
+        ) .first()
+        if (not batch or batch.teacher_id !=current_teacher_id) :
+            return jsonify({
+                "succes":False,
+                "message":"Unauthorized to update student details "
+            }),403 
+    try:            
+          db.session.delete(student)
+          db.session.commit()
+          return jsonify({
         "success": True,
         "message": "Student record deleted successfully"
     }), 200
+    except Exception :
+        db.session.rollback()
+        current_app.logger.exception("Unable to delete student")
+        return jsonify({
+            "success":False,
+            "message":"Something went wrong"
+        }),500

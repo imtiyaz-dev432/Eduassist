@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify,current_app
-from flask_jwt_extended import create_access_token
+from flask_jwt_extended import create_access_token,jwt_required
 from datetime import datetime
 from dbms.db import db
 import time
@@ -79,7 +79,7 @@ def teacher_login():
             "success":False,
             "message":"Password is not set by Owner ,Please contact your institute "
         })  ,400
-    if not verify_password(password, teacher.password):
+    if not verify_password(teacher.password, password):
       return jsonify({
         "success": False,
         "message": "Invalid credentials"

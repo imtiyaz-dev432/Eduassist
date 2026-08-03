@@ -18,7 +18,7 @@ from models.assignment import Assignment
 from models.student import Student
 from utils.file_upload import save_pdf
 
-assignment_for_student_bp=Blueprint("assignment_for_student_bp",__name__,url_prefix="/teacher/assessments/assignment")
+assignment_for_student_bp=Blueprint("assignment_for_student_bp",__name__,url_prefix="/teacher/owner/assessments/assignment")
 @assignment_for_student_bp.route("/add/<int:batch_id>",methods=['POST'])
 @jwt_required()
 def add_assignment(batch_id):

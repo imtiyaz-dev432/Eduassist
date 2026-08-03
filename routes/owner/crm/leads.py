@@ -9,7 +9,7 @@ from models.institute import Institution
 lead_bp = Blueprint(
     "lead_bp",
     __name__,
-    url_prefix="/teacher/leads"
+    url_prefix="/owner/leads"
 )
 
 

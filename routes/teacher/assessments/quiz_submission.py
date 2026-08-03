@@ -11,7 +11,7 @@ from models.quiz_submission_answer import QuizSubmissionAnswer
 from models.student import Student
 from models.quizsubmission import QuizSubmission
 
-teacher_quiz_view_bp=Blueprint("teacher_quiz_view_bp",__name__,url_prefix="/teacher/quiz/submission/view")  
+teacher_quiz_view_bp=Blueprint("teacher_quiz_view_bp",__name__,url_prefix="/teacher/owner/quiz/submission/view")  
 @teacher_quiz_view_bp.route("/<int:quiz_id>",methods=["GET"])
 @jwt_required()
 def view_quiz(quiz_id):

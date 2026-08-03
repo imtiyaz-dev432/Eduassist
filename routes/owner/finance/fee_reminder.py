@@ -7,7 +7,7 @@ from models.student import Student
 from models.fee import Fee
 from models.fee_reminder import FeeReminder
 
-fee_reminder_bp=Blueprint("fee_reminder_bp",__name__,url_prefix="/teacher/fee_reminder")
+fee_reminder_bp=Blueprint("fee_reminder_bp",__name__,url_prefix="/owner/fee_reminder")
 @fee_reminder_bp.route("/add/<int:fee_id>",methods=["POST"])
 @jwt_required()
 def fee_reminder(fee_id):
