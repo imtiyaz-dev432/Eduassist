@@ -9,7 +9,9 @@ class Config:
     JWT_SECRET_KEY=os.getenv('JWT_SECRET_KEY')
     REDIS_URL=os.getenv("REDIS_URL")
     SQLALCHEMY_DATABASE_URI = os.getenv("DATABASE_URL")    
-    SQLALCHEMY_TRACK_MODIFICATIONS=False    
+    SQLALCHEMY_TRACK_MODIFICATIONS=False   
+    BROKER=os.getenv("CELERY_BROKER_URL")
+    CELERY_BACKEND_URL=os.getenv("CELERY_BACKEND_URL")
     OPENROUTER_API_KEY=os.getenv("OPENROUTER_API_KEY")
     ASSIGNMENT_UPLOAD_FOLDER = os.path.join(
         os.path.dirname(os.path.abspath(__file__)), "uploads", "assignments"

@@ -10,6 +10,7 @@ from utils.otp import generate_otp
 from utils.rate import limiter
 from utils.validators import is_valid_email,is_valid_password,is_valid_mobile
 from utils.extensions import redis_client
+from utils.email_otp import send_async_otp_email
 
 
 auth_bp=Blueprint('auth_bp',__name__,url_prefix="/auth")
@@ -77,11 +78,21 @@ def register():
     )
 
     db.session.add(new_user)
-    db.session.commit()
-    return jsonify({
+    try:
+       db.session.commit()
+       send_async_otp_email.delay(email, plain_otp, purpose="verification")
+       return jsonify({
         "message":"User registered successfully"
-
     }),201
+    except Exception as e:
+        db.session.rollback()
+        redis_client.delete(f"otp:{identifier}")        
+        return jsonify({
+            "success": False,
+            "message": "Database error during registration",
+            "error": str(e)
+        }), 500
+
 
 #Login Route
 @auth_bp.route("/login",methods=["POST"])
@@ -218,6 +229,7 @@ def forgot_password():
       
     plain_otp=generate_otp ()
     print(plain_otp) ##only for development 
+    send_async_otp_email.delay(user.email,plain_otp,purpose="forgot-password")
     hashed_otp=hash_otp(plain_otp)
     user.otp=hashed_otp
     now = datetime.utcnow()

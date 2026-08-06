@@ -6,7 +6,6 @@ from dbms.db import db
 from utils.rate import limiter
 from utils.extensions import redis_client
 from flask_migrate import Migrate
-from block import BLOCKLIST
 #models
 from models.user import User
 from models.institute import Institution
@@ -62,10 +61,14 @@ from routes.student.assessments.assignment_view import student_assignment_bp
 from routes.student.assessments.student_assignment_result import student_result_bp
 from routes.owner.teacher_add import teacher_add_bp
 from routes.teacher.teacher_login import teacher_login_bp
-
+from routes.teacher.dashboard import teacher_dashboard_bp
+from routes.owner.dashboard import owner_dashboard_bp
+from utils.celery import make_celery
+from routes.student.notification import notif_bp
 
 app=Flask(__name__)
 app.config.from_object(Config)
+celery=make_celery(app)
 CORS(app)
 db.init_app(app)
 migrate=Migrate(app,db)
@@ -118,6 +121,9 @@ app.register_blueprint(chat_history_bp)
 app.register_blueprint(admission_bot_bp)
 app.register_blueprint(teacher_add_bp)
 app.register_blueprint(teacher_login_bp)
+app.register_blueprint(teacher_dashboard_bp)
+app.register_blueprint(owner_dashboard_bp)
+app.register_blueprint(notif_bp)
 
 @app.route("/",methods=["GET"])
 def home():

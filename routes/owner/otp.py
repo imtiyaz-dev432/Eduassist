@@ -7,6 +7,7 @@ from models.user import User
 from utils.rate import limiter
 from utils.validators import is_valid_email,is_valid_mobile
 from utils.extensions import redis_client
+from utils.email_otp import send_async_otp_email
   
 otp_bp = Blueprint("otp_bp", __name__, url_prefix="/otp")
 @otp_bp.route("/verify-otp", methods=["POST"])
@@ -133,6 +134,7 @@ def resend_otp():
 
     plain_otp=generate_otp()
     print(plain_otp)
+    send_async_otp_email.delay(user.email,plain_otp,purpose="verification")
     redis_client.setex(
         f"otp:{identifier}",
         300,

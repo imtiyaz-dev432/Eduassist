@@ -11,10 +11,10 @@ batch_bp=Blueprint("batch_bp",__name__,url_prefix="/owner/academics/batch")
 @jwt_required()
 def add_batch(course_id):
     claims=get_jwt()
-    if claims.get("role")!="owner":
+    if claims.get("role") not in ["owner","teacher"]:
         return jsonify({
             "success":False,
-            "message":"Owner access only"
+            "message":"Owner/teacher access only"
         }),403
     current_user_id=int(get_jwt_identity())
     course=Course.query.filter_by(
