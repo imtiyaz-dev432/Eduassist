@@ -1,5 +1,6 @@
 import time
 from flask import Blueprint,request,jsonify
+from flask import current_app
 from flask_jwt_extended import create_access_token,jwt_required,get_jwt
 from datetime import datetime ,timedelta
 from dbms.db import db
@@ -11,7 +12,6 @@ from utils.rate import limiter
 from utils.validators import is_valid_email,is_valid_password,is_valid_mobile
 from utils.extensions import redis_client
 from utils.email_otp import send_async_otp_email
-
 
 auth_bp=Blueprint('auth_bp',__name__,url_prefix="/auth")
 @auth_bp.route("/register",methods=["POST"])
@@ -58,25 +58,21 @@ def register():
         "message": "Email or mobile number is already registered"
     }), 409
     plain_otp=generate_otp()
-    print(plain_otp)
     hashed_otp=hash_otp(plain_otp)
     identifier = email.lower() if email else mobile_no
     redis_client.setex(
         f"otp:{identifier}",
         300,
-        str(plain_otp)
+        str(hashed_otp)
     )
     now=datetime.utcnow()
     new_user=User(
         name=name,
         email=email,
-        mobile_no=mobile_no,
-        
+        mobile_no=mobile_no,        
         password=hash_password(password),
         is_verified=False
-
     )
-
     db.session.add(new_user)
     try:
        db.session.commit()
@@ -92,7 +88,7 @@ def register():
             "message": "Database error during registration",
             "error": str(e)
         }), 500
-
+    
 
 #Login Route
 @auth_bp.route("/login",methods=["POST"])
@@ -111,7 +107,11 @@ def login():
     if not password:
         return jsonify({ "success": False,
         "message":"passwod is required for login"}),400
-
+    if not email and not mobile_no:
+        return jsonify({
+            "success": False,
+            "message": "Either email or mobile number is required for login"
+        }), 400
     if email and mobile_no:
         return jsonify({
             "succes":False,
@@ -130,15 +130,6 @@ def login():
             "success":False,
             "message":"Invalid Email"
         }),400
-    if not is_valid_password(password):
-        return jsonify({
-            "success":False,
-            "message":("Password must be at least 8 characters long and include an"
-              " uppercase letter, lowercase letter, number, and special"
-              " character (@$!%*?&)" 
-        ),}),400  
-
-
     user=User.query.filter((User.email==email) | (User.mobile_no==mobile_no)).first()
 
     if not user:
@@ -228,19 +219,27 @@ def forgot_password():
                  "message": "If the account exists, a password reset OTP has been sent."}),200
       
     plain_otp=generate_otp ()
-    print(plain_otp) ##only for development 
-    send_async_otp_email.delay(user.email,plain_otp,purpose="forgot-password")
     hashed_otp=hash_otp(plain_otp)
-    user.otp=hashed_otp
-    now = datetime.utcnow()
-    user.otp_created_at=now
-    user.otp_expires_at=now+timedelta(minutes=5)
-    db.session.commit()
-    return jsonify({
+    identifier = email.lower() if email else mobile_no
+
+    redis_client.setex(
+        f"forgot_password_otp:{identifier}",
+        300,
+        hashed_otp
+    )
+    try:
+     send_async_otp_email.delay(user.email,plain_otp,purpose="forgot-password")
+     return jsonify({
         "success":True,
 
         "message":"If an account with those details exists, a password reset OTP has been sent."
     }),200
+    except Exception as e:
+        current_app.logger.error(f"Forgot password failed: {str(e)}", exc_info=True)
+        return jsonify({
+            "success":False,
+            "message":"Something went wrong"
+        }),500 
 
 #RESET-PASSWORD
 @auth_bp.route("/reset-password",methods=["POST"])
@@ -308,34 +307,30 @@ def reset_password():
             return jsonify({
                  "success": False,
                  "message": "Invalid credentials or OTP."}),400        
-    
-    if not user.otp or not user.otp_created_at or not user.otp_expires_at:
-        return jsonify({
-            "success":False,
-            "message": "Invalid credentials or OTP"}), 400
+    identifier=email.lower() if email else mobile_no 
+    stored_otp=redis_client.get(f"forgot_password_otp:{identifier}")
+    if not stored_otp:
+            return jsonify({
+                "success":False,
+                "message":"OTP expired or not found"
+            }),400
+    stored_otp_hash = stored_otp.decode('utf-8')
+    if not verify_otp(str(otp), stored_otp_hash):     
+                 return jsonify({
+                "message":"Invalid OTP"    
+          }),400 
 
-    if  datetime.utcnow()>user.otp_expires_at :        
-        return jsonify({
-            "success":False,
-            "message": "OTP expired. Please request a new OTP."}), 400
-
-    if not verify_otp(user.otp, otp):
-
-      return jsonify({
-        "success":False,
-        "message": "Invalid OTP"}), 400
-    user.otp=None
-    user.otp_created_at=None
-    user.otp_expires_at=None
     user.password=hash_password(new_password)
     try:
        db.session.commit()
+       redis_client.delete(f"forgot_password_otp:{identifier}")
        return jsonify({
         "success":True,
         "message":"Password updated successfully"
        })
-    except Exception:
+    except Exception as e:
        db.session.rollback()
+       current_app.logger.error(f"Reset password failed: {str(e)}", exc_info=True)
        return jsonify({
         "success": False,
         "message": "Something went wrong."

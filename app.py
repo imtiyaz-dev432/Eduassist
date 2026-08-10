@@ -69,7 +69,7 @@ from routes.student.notification import notif_bp
 app=Flask(__name__)
 app.config.from_object(Config)
 celery=make_celery(app)
-CORS(app)
+CORS(app, resources={r"/*": {"origins": "*"}}, supports_credentials=True)
 db.init_app(app)
 migrate=Migrate(app,db)
 jwt=JWTManager(app)

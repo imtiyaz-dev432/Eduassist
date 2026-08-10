@@ -18,7 +18,6 @@ def otp_verify():
         return jsonify({
             "message": "Request body is required"
         }), 400
-
     email=data.get("email")
     mobile_no=data.get("mobile_no"
     )
@@ -79,19 +78,15 @@ def otp_verify():
             "success":False,
             "message":"OTP expired or not found"
         }),400
-
-    if stored_otp!=str(otp):      
+    stored_otp_hash = stored_otp.decode('utf-8')
+    if not verify_otp(str(otp), stored_otp_hash):     
              return jsonify({
-            "message":"Invalid OTP"
-    
+            "message":"Invalid OTP"    
       }),400
     try:
-
        user.is_verified = True
-       user.otp = None
-       user.otp_created_at = None
-       user.otp_expires_at = None
        db.session.commit()
+       redis_client.delete(f"otp:{identifier}")
        return jsonify({
         "message": "User verified successfully",
         }), 200
@@ -115,12 +110,12 @@ def resend_otp():
         return jsonify({
             "message":"request body is required"
         }),400
-    identifier=data.get("identifier").lower()
+    identifier=data.get("identifier")
     if not identifier:
         return jsonify({
             "message":"mobile no and email is required"
         }),400
-
+    identifier=identifier.lower()
     user=User.query.filter((User.email==identifier) | (User.mobile_no==identifier)).first()
     if not user:
         return jsonify({
@@ -133,13 +128,25 @@ def resend_otp():
         })    ,400
 
     plain_otp=generate_otp()
-    print(plain_otp)
-    send_async_otp_email.delay(user.email,plain_otp,purpose="verification")
-    redis_client.setex(
-        f"otp:{identifier}",
-        300,
-        str(plain_otp)
-    )
-    return jsonify({
-        "message":"New otp sent successfully"
-    }),200
+    hashed_otp=hash_otp(plain_otp)
+    try:
+        
+        redis_client.setex(
+            f"otp:{identifier}",
+            300,
+            hashed_otp        
+        )
+       
+        send_async_otp_email.delay(user.email, plain_otp, purpose="verification")
+        
+        return jsonify({
+            "success": True,
+            "message": "New otp sent successfully"
+        }), 200
+
+    except Exception as e:
+        current_app.logger.error(f"Failed to resend OTP: {str(e)}")
+        return jsonify({
+            "success": False,
+            "message": "Something went wrong. Please try again."
+        }), 500

@@ -1,4 +1,4 @@
-from flask import Blueprint,request,jsonify
+from flask import Blueprint,request,jsonify,current_app
 from flask_jwt_extended import jwt_required,get_jwt_identity,get_jwt
 
 from dbms.db import db
@@ -13,7 +13,7 @@ def create_institution():
     if claims.get("role")!="owner":
         return jsonify({
             "success":False,
-            "message":"Owner accss only"
+            "message":"Owner access only"
         }),403
     current_user_id=int(get_jwt_identity())
     data=request.get_json()
@@ -54,13 +54,20 @@ def create_institution():
         opening_hours=opening_hours,
         logo_url=logo_url
     )
-
-    db.session.add(new_institution)
-    db.session.commit()
-    return jsonify({
+    try:
+       db.session.add(new_institution)
+       db.session.commit()
+       return jsonify({
         "success":True,
         "message": "Institution created successfully"
     }), 201
+    except Exception as e:
+        db.session.rollback()
+        current_app.logger.error(f"Failed to create institution for user {current_user_id}. Error: {str(e)}")
+        return jsonify({
+            "success":False,
+            "message":"Something went wrong "
+        }),500
 #get institute
 @institute_bp.route("/get",methods=["GET"])
 @jwt_required()
@@ -133,11 +140,19 @@ def update_institute(institute_id):
     institute.website_url = data.get("website_url", institute.website_url)
     institute.opening_hours = data.get("opening_hours", institute.opening_hours)
     institute.logo_url = data.get("logo_url", institute.logo_url)
-    db.session.commit()
-    return jsonify({
+    try:
+      db.session.commit()
+      return jsonify({
         "success":True,
         "message": "Institute updated successfully"       
     }), 200    
+    except Exception as e:
+        db.session.rollback()
+        current_app.logger.error(f"Failed to update institution for user {current_user_id}. Error: {str(e)}")
+        return jsonify({
+                     "success":False,
+                     "message":"Something went wrong "
+                 }),500
 #delete institute
 @institute_bp.route("/delete/<int:institute_id>",methods=["DELETE"]) 
 @jwt_required()
@@ -159,9 +174,17 @@ def delete_institute(institute_id):
             "success":False,
             "message":"Institute not found"
         }),404
-    db.session.delete(institute)
-    db.session.commit()
-    return jsonify({
+    try: 
+         db.session.delete(institute)
+         db.session.commit()
+         return jsonify({
         "success":True,
         "message":"Institute deleted successfully"
     })    ,200
+    except Exception as e:
+        db.session.rollback()
+        current_app.logger.error(f"Failed to update institution for user {current_user_id}. Error: {str(e)}")
+        return jsonify({
+                             "success":False,
+                             "message":"Something went wrong "
+                         }),500

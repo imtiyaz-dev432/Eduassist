@@ -33,7 +33,7 @@ def teacher_add(institution_id):
     if  not data:
         return jsonify({
             'success':False,
-            "message":"Request body is required for login"
+            "message":"Request body is required "
         }),400
     name=data.get("name")
     email=data.get("email")
@@ -59,8 +59,8 @@ def teacher_add(institution_id):
         mobile_no=mobile_no,
         institution_id=institution_id
     )
-    db.session.add(teacher)
     try:
+        db.session.add(teacher)
         db.session.commit()
         return jsonify({
             "success":True,
