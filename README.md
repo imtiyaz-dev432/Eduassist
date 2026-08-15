@@ -21,10 +21,10 @@ EduAssist AI is a Flask-based backend system for coaching institutes that helps 
 ## 🚀 Project Status
 Currently, this repository contains the core **Backend, Database, and Monitoring (Prometheus, Grafana, Sentry)** setup. 
 - [x] Backend API Development
-- [x] Error Tracking & Monitoring (Coming Soon)
-- [x] Metrics & Dashboard (Coming Soon)
+- [ ] Error Tracking & Monitoring (Coming Soon)
+- [ ] Metrics & Dashboard (Coming Soon)
 - [ ] Frontend Integration (Coming Soon)
-- [ ] 
+
 ## Tech Stack
 
 - Python
