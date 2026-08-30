@@ -1,3 +1,4 @@
+import os
 from flask import Flask,jsonify
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager
@@ -6,6 +7,13 @@ from dbms.db import db
 from utils.rate import limiter
 from utils.extensions import redis_client
 from flask_migrate import Migrate
+from prometheus_flask_exporter import PrometheusMetrics
+from opentelemetry import trace
+from opentelemetry.sdk.trace import TracerProvider
+from opentelemetry.sdk.trace.export import BatchSpanProcessor
+from opentelemetry.sdk.resources import Resource
+from opentelemetry.exporter.otlp.proto.grpc.trace_exporter import OTLPSpanExporter
+from opentelemetry.instrumentation.flask import FlaskInstrumentor
 #models
 from models.user import User
 from models.institute import Institution
@@ -73,8 +81,20 @@ CORS(app, resources={r"/*": {"origins": "*"}}, supports_credentials=True)
 db.init_app(app)
 migrate=Migrate(app,db)
 jwt=JWTManager(app)
-limiter.init_app(app)
+# Service name define karein taaki Grafana/Tempo mein alag se dikhe
+resource = Resource.create(attributes={"service.name": "eduassist-flask-app"})
+# Tracer provider set karein
+provider = TracerProvider(resource=resource)
+trace.set_tracer_provider(provider)
 
+# Collector / Tempo endpoint set karein (Docker container name ya localhost)
+otlp_endpoint = os.getenv("OTEL_EXPORTER_OTLP_ENDPOINT", "http://localhost:4317")
+exporter = OTLPSpanExporter(endpoint=otlp_endpoint, insecure=True)
+processor = BatchSpanProcessor(exporter)
+provider.add_span_processor(processor)
+FlaskInstrumentor().instrument_app(app)
+# limiter.init_app(app)
+metrics=PrometheusMetrics(app)
 @jwt.token_in_blocklist_loader
 def check_if_token_in_blocklist(jwt_header,jwt_payload):
    jti=jwt_payload['jti']
@@ -85,7 +105,10 @@ def revoked_token_loader(jwt_header,jwt_payload):
         "description":"user has been logged out",
         "error":"token-revoked"
       },401)
-
+#for testuing
+# @app.route("/test-error")
+# def test_error():
+#     raise Exception("Test 500 error")
 #register blueprint
 app.register_blueprint(auth_bp)
 app.register_blueprint(otp_bp)
