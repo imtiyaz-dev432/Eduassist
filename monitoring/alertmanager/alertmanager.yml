@@ -1,0 +1,16 @@
+global:
+  resolve_timeout: 5m
+
+  smtp_smarthost: 'smtp.gmail.com:587'
+  smtp_from: 'is4082833@gmail.com'
+  smtp_auth_username: 'is4082833@gmail.com'
+  smtp_auth_password: 'qlxhtuzpwzncecos'
+  smtp_require_tls: true
+
+route:
+  receiver: gmail
+
+receivers:
+  - name: gmail
+    email_configs:
+      - to: 'imtiyazmohommad7@gmail.com'
