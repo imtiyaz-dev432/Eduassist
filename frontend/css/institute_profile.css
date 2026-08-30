@@ -1,0 +1,305 @@
+/* =========================================
+   Import Modern Font (Poppins)
+========================================= */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
+
+/* =========================================
+   Global & Body Styles
+========================================= */
+body { 
+    font-family: 'Poppins', sans-serif; 
+    background: #f0f4f8; 
+    margin: 0; 
+    padding: 0; 
+    overflow-x: hidden;
+}
+
+/* =========================================
+   Unique Hero Header (Curved Bottom)
+========================================= */
+.header { 
+    background: linear-gradient(135deg, #1e3a8a, #0ea5e9); 
+    color: white; 
+    padding: 80px 20px; 
+    text-align: center; 
+    /* Unique Curve Effect */
+    border-radius: 0 0 30% 30% / 0 0 40px 40px;
+    box-shadow: 0 10px 20px rgba(14, 165, 233, 0.2);
+}
+
+.header h1 { 
+    margin: 0; 
+    font-size: 36px; 
+    font-weight: 700;
+    letter-spacing: 1px;
+}
+
+.header p { 
+    margin: 10px 0 0 0; 
+    font-size: 16px; 
+    font-weight: 300;
+    opacity: 0.85; 
+}
+
+/* =========================================
+   Chat Widget Container
+========================================= */
+.chat-widget { 
+    position: fixed; 
+    bottom: 30px; 
+    right: 30px; 
+    z-index: 1000; 
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+}
+
+/* =========================================
+   Pulsing Chat Button (Unique)
+========================================= */
+.chat-btn { 
+    background: linear-gradient(135deg, #0ea5e9, #2563eb); 
+    color: white; 
+    border: none; 
+    border-radius: 30px; 
+    padding: 15px 30px; 
+    font-size: 16px; 
+    font-weight: 600; 
+    cursor: pointer; 
+    box-shadow: 0 4px 15px rgba(37, 99, 235, 0.4); 
+    transition: all 0.3s ease;
+    /* Pulsing Animation */
+    animation: pulseGlow 2s infinite;
+}
+
+.chat-btn:hover { 
+    transform: translateY(-5px) scale(1.05); 
+}
+
+@keyframes pulseGlow {
+    0% { box-shadow: 0 0 0 0 rgba(37, 99, 235, 0.5); }
+    70% { box-shadow: 0 0 0 15px rgba(37, 99, 235, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(37, 99, 235, 0); }
+}
+
+/* =========================================
+   Glassmorphism Chat Box (Unique UI)
+========================================= */
+.chat-box { 
+    display: none; /* JS will change this to flex */
+    flex-direction: column; 
+    width: 380px; 
+    height: 600px; 
+    /* Glass Effect */
+    background: rgba(255, 255, 255, 0.85); 
+    backdrop-filter: blur(12px); 
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    
+    border-radius: 20px; 
+    box-shadow: 0 20px 40px rgba(0,0,0,0.15); 
+    margin-bottom: 20px; 
+    overflow: hidden; 
+    
+    /* Pop-up Animation */
+    animation: popUp 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes popUp {
+    from { opacity: 0; transform: translateY(30px) scale(0.95); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* Chat Header */
+.chat-header { 
+    background: transparent; 
+    color: #1e3a8a; 
+    padding: 20px; 
+    font-weight: 700; 
+    font-size: 18px;
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center; 
+    border-bottom: 1px solid rgba(0,0,0,0.05);
+}
+
+.close-btn { 
+    background: #f1f5f9; 
+    border: none; 
+    color: #64748b; 
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    font-size: 14px; 
+    font-weight: bold;
+    cursor: pointer; 
+    transition: all 0.2s;
+}
+
+.close-btn:hover {
+    background: #fee2e2;
+    color: #ef4444;
+    transform: rotate(90deg);
+}
+
+/* =========================================
+   Sleek Minimalist Lead Form
+========================================= */
+.lead-form { 
+    background: rgba(248, 250, 252, 0.6); 
+    padding: 15px 25px; 
+}
+
+.lead-form p { 
+    margin: 0 0 15px 0; 
+    font-size: 12px; 
+    color: #64748b; 
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-weight: 700; 
+}
+
+/* Line style inputs */
+.lead-form input { 
+    width: 100%; 
+    box-sizing: border-box; 
+    padding: 8px 0; 
+    margin-bottom: 15px; 
+    border: none;
+    border-bottom: 2px solid #cbd5e1; 
+    background: transparent;
+    font-size: 14px; 
+    font-family: 'Poppins', sans-serif;
+    outline: none;
+    transition: border-color 0.3s ease;
+}
+
+.lead-form input:focus {
+    border-bottom: 2px solid #0ea5e9;
+}
+
+.lead-form input::placeholder {
+    color: #94a3b8;
+}
+
+.lead-form input:last-child {
+    margin-bottom: 5px;
+}
+
+/* =========================================
+   Chat Messages Area
+========================================= */
+.chat-messages { 
+    flex: 1; 
+    padding: 20px 25px; 
+    overflow-y: auto; 
+    display: flex; 
+    flex-direction: column; 
+    gap: 15px; 
+}
+
+/* Hide scrollbar for clean look */
+.chat-messages::-webkit-scrollbar { width: 5px; }
+.chat-messages::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+
+.message { 
+    padding: 12px 18px; 
+    border-radius: 18px; 
+    max-width: 80%; 
+    font-size: 13.5px; 
+    line-height: 1.5; 
+    word-wrap: break-word; 
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+/* AI Message Gradient */
+.ai-message { 
+    background: linear-gradient(135deg, #ffffff, #f1f5f9); 
+    color: #334155; 
+    align-self: flex-start; 
+    border-bottom-left-radius: 4px; 
+    border: 1px solid #e2e8f0;
+}
+
+/* User Message Modern Blue */
+.user-message { 
+    background: #0ea5e9; 
+    color: white; 
+    align-self: flex-end; 
+    border-bottom-right-radius: 4px; 
+}
+
+.loading { 
+    font-style: normal; 
+    color: #0ea5e9; 
+    background: none; 
+    box-shadow: none;
+    padding: 0; 
+    font-size: 12px;
+    font-weight: 600;
+    animation: blink 1s infinite alternate;
+}
+
+@keyframes blink {
+    from { opacity: 0.5; }
+    to { opacity: 1; }
+}
+
+/* =========================================
+   Floating Input Area (Bottom)
+========================================= */
+.chat-input { 
+    display: flex; 
+    padding: 15px 20px; 
+    background: transparent; 
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.chat-input input { 
+    flex: 1; 
+    padding: 15px 20px; 
+    border: none; 
+    background: #f1f5f9;
+    border-radius: 30px; 
+    outline: none; 
+    font-size: 14px;
+    font-family: 'Poppins', sans-serif;
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
+}
+
+.chat-input button { 
+    background: #1e3a8a; 
+    color: white; 
+    border: none; 
+    padding: 15px 20px; 
+    border-radius: 30px; 
+    cursor: pointer; 
+    font-weight: 600; 
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 10px rgba(30, 58, 138, 0.3);
+}
+
+.chat-input button:hover { 
+    background: #0ea5e9; 
+    transform: translateY(-2px);
+}
+
+/* =========================================
+   Mobile Responsiveness
+========================================= */
+@media (max-width: 480px) {
+    .chat-widget {
+        bottom: 10px;
+        right: 10px;
+        left: 10px;
+        align-items: flex-end;
+    }
+    
+    .chat-box {
+        width: 100%; 
+        height: 85vh; 
+        border-radius: 20px;
+    }
+}

@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Teacher Portal - Login</title>
+
+    <link rel="stylesheet" href="../css/teacher_login.css">
+</head>
+
+<body>
+
+    <div class="bg-shape shape-1"></div>
+    <div class="bg-shape shape-2"></div>
+
+    <div class="login-container">
+
+        <div class="login-card">
+
+            <!-- Logo -->
+            <div class="logo-area">
+                <h2>EduAssist</h2>
+                <p>Teacher Portal</p>
+            </div>
+
+            <!-- Login Message -->
+            <p id="loginMessage" class="message"></p>
+
+            <!-- Teacher Login Form -->
+            <form id="teacherLoginForm" autocomplete="off">
+
+                <!-- Email / Mobile -->
+                <div class="input-group">
+                    <label for="loginId">Email ID or Mobile Number</label>
+
+                    <input
+                        type="text"
+                        id="loginId"
+                        name="loginId"
+                        autocomplete="off"
+                        placeholder="e.g. 9876543210 or email@domain.com"
+                        required
+                    >
+                </div>
+
+                <!-- Password -->
+                <div class="input-group">
+                    <label for="password">Password</label>
+
+                    <input
+                        type="password"
+                        id="password"
+                        name="password"
+                        autocomplete="new-password"
+                        placeholder="Enter your password"
+                        required
+                    >
+                </div>
+
+                <!-- Forgot Password -->
+                <div class="forgot-password">
+                    <a href="#" id="forgotPwdLink">
+                        Forgot Password?
+                    </a>
+                </div>
+
+                <!-- Login Button -->
+                <button
+                    type="submit"
+                    class="login-btn"
+                    id="loginBtn"
+                >
+                    Login to Portal
+                </button>
+
+            </form>
+
+            <!-- Footer -->
+            <div class="footer-links">
+                <p>
+                    Are you the Owner?
+                    <a href="login.html">Admin Login</a>
+                </p>
+            </div>
+
+        </div>
+    </div>
+
+
+    <!-- ========================= -->
+    <!-- FORGOT PASSWORD MODAL -->
+    <!-- ========================= -->
+
+    <div
+        id="forgotPwdModal"
+        class="modal"
+        aria-hidden="true"
+    >
+
+        <div
+            class="modal-content"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="modalTitle"
+        >
+
+            <!-- Close Button -->
+            <button
+                type="button"
+                class="close-btn"
+                id="closeForgotPwdModal"
+                aria-label="Close"
+            >
+                &times;
+            </button>
+
+            <!-- Modal Title -->
+            <h3 id="modalTitle">
+                Reset Password
+            </h3>
+
+            <p class="subtitle">
+                We will send an OTP to verify your identity.
+            </p>
+
+            <!-- Modal Message -->
+            <p id="modalMessage" class="message"></p>
+
+
+            <!-- ========================= -->
+            <!-- STEP 1: REQUEST OTP -->
+            <!-- ========================= -->
+
+            <form
+                id="requestOtpForm"
+                autocomplete="off"
+            >
+
+                <div class="input-group">
+
+                    <label for="resetIdentifier">
+                        Email or Mobile Number
+                    </label>
+
+                    <div class="input-with-icon">
+
+                        <span class="icon">👤</span>
+
+                        <input
+                            type="text"
+                            id="resetIdentifier"
+                            name="resetIdentifier"
+                            placeholder="Enter Email or Mobile No."
+                            autocomplete="off"
+                            required
+                        >
+
+                    </div>
+
+                </div>
+
+                <button
+                    type="submit"
+                    class="submit-btn"
+                    id="sendOtpBtn"
+                >
+                    Send OTP
+                </button>
+
+            </form>
+
+
+            <!-- ========================= -->
+            <!-- STEP 2: VERIFY OTP -->
+            <!-- ========================= -->
+
+            <form
+                id="resetPasswordForm"
+                autocomplete="off"
+                style="display: none;"
+            >
+
+                <!-- OTP -->
+                <div class="input-group">
+
+                    <label for="resetOtp">
+                        OTP
+                    </label>
+
+                    <div class="input-with-icon">
+
+                        <span class="icon">🔢</span>
+
+                        <input
+                            type="text"
+                            id="resetOtp"
+                            name="resetOtp"
+                            placeholder="Enter 6-digit OTP"
+                            maxlength="6"
+                            inputmode="numeric"
+                            autocomplete="one-time-code"
+                            required
+                        >
+
+                    </div>
+
+                </div>
+
+
+                <!-- New Password -->
+                <div class="input-group">
+
+                    <label for="newPassword">
+                        New Password
+                    </label>
+
+                    <div class="input-with-icon">
+
+                        <span class="icon">🔒</span>
+
+                        <input
+                            type="password"
+                            id="newPassword"
+                            name="newPassword"
+                            placeholder="Enter New Password"
+                            autocomplete="new-password"
+                            required
+                        >
+
+                    </div>
+
+                </div>
+
+
+                <!-- Update Password -->
+                <button
+                    type="submit"
+                    class="submit-btn"
+                    id="resetPwdBtn"
+                >
+                    Update Password
+                </button>
+
+            </form>
+
+        </div>
+    </div>
+
+
+    <!-- JavaScript -->
+    <script src="../js/teacher_login.js"></script>
+
+</body>
+</html>

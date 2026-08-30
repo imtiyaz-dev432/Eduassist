@@ -62,7 +62,7 @@ def student_dashboard():
         "due_amount": fee.due_amount if fee else 0,
         "status": fee.status if fee else "Not Created",
         "due_date": fee.due_date.isoformat() if fee and fee.due_date else None,
-        "is_due":True if fee.due_amount>0 else False
+        "is_due":fee.due_amount if fee and fee.due_amount else 0
         
     }
       

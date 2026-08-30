@@ -72,34 +72,44 @@ def otp_verify():
             "message": "User is already verified"
         }), 200
     identifier=email.lower() if email else mobile_no    
-    stored_otp=redis_client.get(f"otp:{identifier}")
+    stored_otp = redis_client.get(f"otp:{identifier}")
+    
     if not stored_otp:
         return jsonify({
-            "success":False,
-            "message":"OTP expired or not found"
-        }),400
-    stored_otp_hash = stored_otp.decode('utf-8')
-    if not verify_otp(str(otp), stored_otp_hash):     
-             return jsonify({
-            "message":"Invalid OTP"    
-      }),400
+            "success": False,
+            "message": "OTP expired or not found"
+        }), 400
+        
+    
+    if isinstance(stored_otp, bytes):
+        stored_otp_hash = stored_otp.decode('utf-8')
+    else:
+        stored_otp_hash = stored_otp
+        
+    
+    if not verify_otp(stored_otp, str(otp)):     
+        return jsonify({
+            "success": False,
+            "message": "Invalid OTP"    
+        }), 400  
+        
+    
     try:
-       user.is_verified = True
-       db.session.commit()
-       redis_client.delete(f"otp:{identifier}")
-       return jsonify({
-        "message": "User verified successfully",
+        user.is_verified = True
+        db.session.commit()
+        redis_client.delete(f"otp:{identifier}")
+        return jsonify({
+            "success": True,
+            "message": "User verified successfully",
         }), 200
 
     except Exception as e:
         db.session.rollback()
-        current_app.logger.error(
-        f"OTP verification failed: {str(e)}",
-        exc_info=True)
+        current_app.logger.error(f"OTP verification failed: {str(e)}", exc_info=True)
         return jsonify({
             "success": False,
-        "message": "Something went wrong. Please try again later."
-    }), 500      
+            "message": "Something went wrong. Please try again later."
+        }), 500
  
 #Resend otp Route
 @otp_bp.route("/resend-otp",methods=["POST"])

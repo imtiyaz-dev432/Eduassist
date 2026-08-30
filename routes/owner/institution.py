@@ -3,6 +3,7 @@ from flask_jwt_extended import jwt_required,get_jwt_identity,get_jwt
 
 from dbms.db import db
 from models.institute import Institution
+from utils.validators import is_valid_mobile
 
 institute_bp=Blueprint("institution_bp",__name__,url_prefix="/teacher/institution")
 #add institute
@@ -38,6 +39,11 @@ def create_institution():
         return jsonify({
             "message": "Institution name, type, city, state and country are required"
         }), 400
+    if not is_valid_mobile(phone):
+        return jsonify({
+            "success":False,
+            "message":"Invalid Mobile No. Format"
+        })    ,400 
     
     new_institution=Institution(
         user_id=current_user_id,

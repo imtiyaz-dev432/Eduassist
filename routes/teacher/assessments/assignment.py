@@ -16,6 +16,7 @@ from models.institute import Institution
 from models.batch import Batch
 from models.assignment import Assignment
 from models.student import Student
+from models.teacher import Teacher
 from utils.file_upload import save_pdf
 
 assignment_for_student_bp=Blueprint("assignment_for_student_bp",__name__,url_prefix="/teacher/owner/assessments/assignment")
@@ -134,10 +135,9 @@ def add_assignment(batch_id):
             }), 500
 
         if saved_pdf:
-            file_url = url_for(
-                "assignment_for_student_bp.download_assignment_pdf",
+                       
                 filename=saved_pdf["stored_filename"]
-            )
+            
         
     new_assignment = Assignment(
         institution_id=batch.institution_id,
@@ -178,15 +178,61 @@ def add_assignment(batch_id):
         "assignment": new_assignment.to_dict()
     }), 201               
 #download 
-@assignment_for_student_bp.route(
-    "/file/<string:filename>",
+@assignment_for_student_bp.route("/list/<int:batch_id>",methods=["GET"])
+@jwt_required()
+def get_assignment(batch_id):
+    claims=get_jwt()
+
+    if claims.get("role") not in ["teacher","owner"]:
+        return jsonify({
+            "success":False,
+            "message":"Teacher/Owner access only"
+        }),403
+
+    batch=Batch.query.filter_by(
+        id=batch_id
+    ).first()
+    if not batch:
+        return jsonify({
+            "success":False,
+            "message":"Batch not found"
+        }),404
+    if claims.get("role")=="teacher":
+        current_teacher_id=int(get_jwt_identity())
+        if batch.teacher_id!=current_teacher_id:
+            return jsonify({
+                "success":False,
+                "message":"Unauthorized"
+            }),403
+    assignments=Assignment.query.filter_by(
+        batch_id=batch_id
+    ).all()
+    assignment_list=[]
+    for a in assignments:
+        assignment_list.append({
+            "id": a.id,
+            "title": a.title,
+            "due_date": a.due_date.strftime("%Y-%m-%d") if a.due_date else None,
+            "max_marks": a.max_marks,
+            "status": a.status,
+            "file_url": a.file_url
+        })
+
+    return jsonify({
+        "success": True,
+        "assignments": assignment_list
+    }), 200
+
+
+@assignment_for_student_bp.route(    
+    "/file/<int:assignment_id>",
     methods=["GET"]
 )
 @jwt_required()
-def download_assignment_pdf(filename):
+def download_assignment_pdf(assignment_id):
 
-    assignment = Assignment.query.filter(
-        Assignment.file_url.like(f"%{filename}")
+    assignment = Assignment.query.filter_by(
+        id=assignment_id
     ).first()
 
 
@@ -207,6 +253,10 @@ def download_assignment_pdf(filename):
             id=assignment.institution_id,
             user_id=current_user_id
         ).first()
+    if role=="teacher":
+        current_teacher_id=int(get_jwt_identity())
+        authorized=Teacher.query.filter_by(
+            id=current_teacher_id        )
 
     else:
         authorized = False
@@ -217,11 +267,10 @@ def download_assignment_pdf(filename):
             "success":False,
             "message":"Unauthorized"
         }),403
-
-
+    filename=str(assignment.file_url)
     return send_from_directory(
         current_app.config["ASSIGNMENT_UPLOAD_FOLDER"],
-        filename,
+        filename,       
         mimetype="application/pdf"
     )
 #replace assignment if wrong file is uploaded 
@@ -271,14 +320,7 @@ def replace(assignment_id):
         return jsonify({
             "success":False,
             "message":"PDF file required"
-        }),400
-    # save new file first
-    saved_pdf = save_pdf(
-        uploaded_file,
-        current_app.config["ASSIGNMENT_UPLOAD_FOLDER"]
-    )
-    new_filename = saved_pdf["stored_filename"]
-    # delete old file
+        }),400        
     if assignment.file_url:
         old_filename = assignment.file_url.split("/")[-1]
         old_path = os.path.join(
@@ -286,12 +328,21 @@ def replace(assignment_id):
             old_filename
         )
         if os.path.exists(old_path):
-            os.remove(old_path)
-    # update database
-    assignment.file_url = url_for(
-        "assignment_for_student_bp.download_assignment_pdf",
-        filename=new_filename
+            os.remove(old_path)        
+    
+    # save new file first
+    saved_pdf = save_pdf(
+        uploaded_file,
+        current_app.config["ASSIGNMENT_UPLOAD_FOLDER"]
     )
+    new_filename = saved_pdf["stored_filename"]
+    # delete old file
+    
+    # update database
+ 
+   
+    assignment.file_url = new_filename
+
     db.session.commit()
     return jsonify({
         "success":True,

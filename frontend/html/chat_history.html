@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Chat History - EduAssist</title>
+    <!-- Global Dashboard CSS -->
+    <link rel="stylesheet" href="../css/owner_dashboard.css">
+    <!-- Specific Chat History CSS -->
+    <link rel="stylesheet" href="../css/chat_history.css">
+</head>
+<body>
+
+    <!-- Navigation Bar -->
+    <nav class="global-navbar">
+        <div class="nav-brand">🎓 EduAssist Dashboard</div>
+        <div class="nav-links">
+            <a href="owner_dashboard.html">Dashboard</a>
+            <a href="add_course.html">Courses</a>
+            <a href="add_batch.html">Batches</a>
+            <a href="manage_leads.html">Student Leads</a>
+            <a href="add_faq.html">AI FAQs</a>
+            <a href="chat_history.html" class="active" style="color: #0ea5e9; font-weight:bold;">Chat History</a>
+        </div>
+        <button id="globalLogoutBtn" class="nav-logout-btn">Logout</button>
+    </nav>
+
+    <div class="dashboard-container">
+        <div class="welcome-banner">
+            <div>
+                <h1>💬 AI Chat History</h1>
+                <p>Monitor conversations between visitors and your AI bot in real-time.</p>
+            </div>
+        </div>
+
+        <div id="msgBox" class="alert-box"></div>
+
+        <div class="section-card">
+            <h2>Recent Conversations</h2>
+            <div class="table-responsive">
+                <table class="chat-table">
+                    <thead>
+                        <tr>
+                            <th width="15%">Date & Time</th>
+                            <th width="10%">Status</th>
+                            <th width="30%">Visitor Message</th>
+                            <th width="45%">AI Response</th>
+                        </tr>
+                    </thead>
+                    <tbody id="chatTableBody">
+                        <tr><td colspan="4" style="text-align: center;">Loading chat history...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script src="../js/chat_history.js"></script>
+</body>
+</html>

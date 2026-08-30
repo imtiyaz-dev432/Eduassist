@@ -26,7 +26,8 @@ def add_course(institution_id):
         id=institution_id,
         user_id=current_user_id
     ).first()
-
+    print(institution_id)
+    print(current_user_id)
     if not institution:
         return jsonify({
             "success":False,
@@ -89,7 +90,7 @@ def get_course(institution_id):
     id=institution_id,
     user_id=current_user_id
 ).first()
-
+    
     if not institution:
         return jsonify({
             "message":"Institution not found"
@@ -117,7 +118,7 @@ def get_course(institution_id):
         "placement_support": course.placement_support,
         "created_at": course.created_at.isoformat() if course.created_at else None
     })
-    
+    print(f"Checking for Institution ID: {institution_id}, Current User ID: {current_user_id}",flush=True)
     return jsonify({
     "success": True,
     "message": "Courses fetched successfully",

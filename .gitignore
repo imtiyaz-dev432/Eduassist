@@ -1,23 +1,61 @@
-# Environment variables
-.env
-
-# Virtual environment
+# ==========================================
+# PYTHON & VIRTUAL ENVIRONMENT
+# ==========================================
+venv/
 .venv/
-
-# Python cache
+ENV/
+env/
 __pycache__/
 *.pyc
+*.pyo
+*.pyd
+*.py.class
+*.whl
 
-# Flask instance folder
+# ==========================================
+# FLASK & DATABASES
+# ==========================================
 instance/
+*.db
+*.sqlite
+*.sqlite3
+migrations/
 
-# Uploads (agar user-uploaded files hain)
+# ==========================================
+# USER UPLOADS & MEDIA (PDFs, Images)
+# ==========================================
 uploads/
+media/
+*.pdf
+*.jpg
+*.jpeg
+*.png
 
-# VS Code (optional)
+# ==========================================
+# ENVIRONMENT & SECRETS
+# ==========================================
+.env
+.env.*
+*.local
+
+# ==========================================
+# IDEs & EDITORS (VS Code, PyCharm)
+# ==========================================
 .vscode/
+.idea/
+*.swp
+*.swo
+*.sublime-project
+*.sublime-workspace
 
-# OS files
 .DS_Store
+.DS_Store?
+._*
 Thumbs.db
-uploads/
+Desktop.ini
+
+logs/
+*.log
+npm-debug.log*
+celerybeat-schedule
+.pytest_cache/

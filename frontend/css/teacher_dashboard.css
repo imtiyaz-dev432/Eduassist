@@ -1,0 +1,202 @@
+/* --- Reset and Base Styles --- */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    background-color: #f4f7f9;
+    color: #1f2937;
+    min-height: 100vh;
+}
+
+/* --- Navbar (Standard Theme) --- */
+.navbar {
+    background: white;
+    padding: 15px 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+.nav-brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.nav-brand h2 {
+    color: #1f2937;
+    font-size: 22px;
+}
+.badge {
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    color: white;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+}
+.nav-actions {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+.nav-actions span {
+    font-weight: 500;
+    color: #4b5563;
+}
+.logout-btn {
+    background: transparent;
+    border: 1px solid #ef4444;
+    color: #ef4444;
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.2s;
+}
+.logout-btn:hover {
+    background: #ef4444;
+    color: white;
+}
+
+/* --- Main Container --- */
+.dashboard-container {
+    max-width: 1100px;
+    margin: 30px auto;
+    padding: 0 20px;
+}
+
+.dashboard-header {
+    margin-bottom: 25px;
+}
+.dashboard-header h3 {
+    font-size: 24px;
+    margin-bottom: 5px;
+}
+.dashboard-header p {
+    color: #6b7280;
+}
+
+/* --- Metrics Grid --- */
+.metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+    margin-bottom: 30px;
+}
+.metric-card {
+    background: white;
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    border-left: 5px solid #4facfe; /* Standard Blue Accent */
+}
+.metric-icon {
+    font-size: 35px;
+    background: #f0f9ff;
+    width: 60px;
+    height: 60px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 12px;
+}
+.metric-info p {
+    color: #6b7280;
+    font-size: 14px;
+    font-weight: 500;
+    margin-bottom: 5px;
+}
+.metric-info h2 {
+    font-size: 28px;
+    color: #1f2937;
+}
+
+/* --- Batches Section --- */
+.card {
+    background: white;
+    border-radius: 12px;
+    padding: 25px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
+}
+.card-header {
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #f3f4f6;
+}
+.batches-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+}
+
+/* --- Individual Batch Card --- */
+.batch-card {
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+    padding: 20px;
+    background: #f9fafb;
+    transition: 0.2s;
+}
+.batch-card:hover {
+    border-color: #4facfe;
+    background: white;
+    box-shadow: 0 4px 10px rgba(79, 172, 254, 0.1);
+}
+.batch-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+.batch-header h4 {
+    font-size: 18px;
+    color: #111827;
+}
+.status-badge {
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+}
+.batch-details {
+    color: #6b7280;
+    font-size: 14px;
+    margin-bottom: 20px;
+}
+
+/* Action Buttons inside Batch Card */
+.batch-actions {
+    display: flex;
+    gap: 10px;
+}
+.batch-actions button {
+    flex: 1;
+    padding: 8px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    transition: 0.2s;
+}
+.view-btn {
+    background: #f3f4f6;
+    color: #4b5563;
+}
+.view-btn:hover { background: #e5e7eb; }
+
+.action-btn {
+    background: #e0f2fe;
+    color: #0284c7; /* Standard Blue */
+}
+.action-btn:hover { background: #bae6fd; }

@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Owner Dashboard - EduAssist</title>
+    <link rel="stylesheet" href="../css/owner_dashboard.css">
+</head>
+<body>
+
+    <!-- Background Decorative Shapes -->
+    <div class="bg-shape shape-1"></div>
+    <div class="bg-shape shape-2"></div>
+
+    <!-- Global Navigation Bar -->
+    <nav class="global-navbar">
+        <div class="nav-brand">🎓 EduAssist Dashboard</div>
+        <div class="nav-links">
+            <a href="owner_dashboard.html" class="active">Dashboard</a>
+            <a href="add_institute.html">Institute</a>
+            <a href="add_course.html" id="navCourseLink">Courses</a>
+            <a href="add_batch.html" id="navBatchLink">Batches</a>
+            <a href="add_faq.html" id="navFaqLink" style="font-weight: bold; color: #0ea5e9;">AI FAQs</a>
+            <a href="manages_leads.html" id="navFaqLink" style="font-weight: bold; color: #0ea5e9;">Leads</a>
+            <a href="chat_history.html" class="active" style="color: #0ea5e9; font-weight:bold;">Chat History</a>
+
+
+        </div>
+        <button id="globalLogoutBtn" class="nav-logout-btn">Logout</button>
+    </nav>
+
+    <!-- Main Content Container -->
+    <div class="dashboard-container">
+
+        <!-- Error Alert Box -->
+        <div id="dashboardError" class="error-msg"></div>
+
+        <!-- Welcome Banner -->
+        <div class="welcome-banner">
+            <div>
+                <h1 id="welcomeText">Welcome back, Owner!</h1>
+                <p>Here is the complete overview of your institute's academic performance.</p>
+            </div>
+            <div id="topbarInstName" class="institute-badge">Loading Institute...</div>
+        </div>
+
+        <!-- Metrics Overview Grid -->
+        <div class="metrics-grid">
+            <div class="metric-card">
+                <h3>Total Teachers</h3>
+                <div class="number" id="totalTeachers">0</div>
+            </div>
+            <div class="metric-card" style="border-left-color: #10b981;">
+                <h3>Total Students</h3>
+                <div class="number" id="totalStudents">0</div>
+            </div>
+            <div class="metric-card" style="border-left-color: #f59e0b;">
+                <h3>Total Courses</h3>
+                <div class="number" id="totalCourses">0</div>
+            </div>
+            <div class="metric-card" style="border-left-color: #8b5cf6;">
+                <h3>Total Batches</h3>
+                <div class="number" id="totalBatches">0</div>
+            </div>
+            <div class="metric-card" style="border-left-color: #ec4899;">
+                <h3>Active Batches</h3>
+                <div class="number" id="activeBatches">0</div>
+            </div>
+        </div>
+
+        <!-- 🔥 Public Link Share Box 🔥 -->
+        <div class="share-box" style="background: #e0f2fe; padding: 20px; border-radius: 10px; margin-bottom: 20px; border: 1px dashed #0284c7; display: flex; flex-direction: column; gap: 10px;">
+            <div>
+                <h3 style="color: #0369a1; margin: 0 0 5px 0;">🔗 Your Institute's Public AI Link</h3>
+                <p style="font-size: 14px; color: #4b5563; margin: 0;">Share this link on WhatsApp or Instagram for Admissions & AI Chatbot.</p>
+            </div>
+            <div style="display: flex; gap: 10px;">
+                <input type="text" id="publicLinkInput" readonly style="flex: 1; padding: 12px; border-radius: 6px; border: 1px solid #cbd5e1; outline: none; background: #f8fafc; font-size: 14px; color: #333;">
+                <button onclick="copyPublicLink()" style="background: #0284c7; color: white; border: none; padding: 10px 24px; border-radius: 6px; cursor: pointer; font-weight: bold; transition: 0.2s;">Copy Link</button>
+            </div>
+        </div>
+
+        <!-- Quick Actions Card -->
+        <div class="action-card">
+            <div>
+                <h3>Manage Academics</h3>
+                <p>Quickly add new courses or create upcoming batches for your students.</p>
+            </div>
+            <div class="btn-group">
+                <a href="add_course.html" id="actionCourseBtn" class="primary-btn">+ Add Course</a>
+                <a href="add_batch.html" id="actionBatchBtn" class="primary-btn">+ Add Batch</a>
+            </div>
+        </div>
+
+        <!-- Recent Batches Table -->
+        <div class="section-card">
+            <h2>Recent Batches</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Batch Name</th>
+                        <th>Total Seats</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody id="recentBatchesBody">
+                    <tr>
+                        <td colspan="3" style="text-align: center; color: #6b7280;">Loading recent batches...</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+
+    <script src="../js/owner_dashboard.js"></script>
+</body>
+</html>

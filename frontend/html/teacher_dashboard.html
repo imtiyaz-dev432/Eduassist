@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teacher Dashboard - EduAssist</title>
+    <link rel="stylesheet" href="../css/teacher_dashboard.css">
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar" style="display: flex; justify-content: space-between; align-items: center; padding: 15px 30px; background: #1e293b; color: white;">
+        <div class="nav-brand" style="display: flex; align-items: center; gap: 10px;">
+            <h2 style="margin: 0;">EduAssist</h2>
+            <span class="badge" style="background: #3b82f6; padding: 4px 8px; border-radius: 4px; font-size: 12px;">Teacher Portal</span>
+        </div>
+        
+        <!-- 🔥 Yahan Naye Links Add Kiye Hain 🔥 -->
+      
+
+        <div class="nav-actions" style="display: flex; align-items: center; gap: 15px;">
+            <span id="welcomeName">Welcome, Teacher</span>
+            <button onclick="logoutTeacher()" class="logout-btn" style="background: #ef4444; color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer;">Log Out ➔</button>
+        </div>
+    </nav>
+
+    <div class="dashboard-container">
+        <!-- Dashboard Header -->
+        <div class="dashboard-header">
+            <h3>My Dashboard Overview</h3>
+            <p>Here is the summary of your assigned batches and students.</p>
+            <p id="dashboardMessage" style="color: #ef4444; display: none;"></p>
+        </div>
+
+        <!-- Metrics Cards (Top Section) -->
+        <div class="metrics-grid">
+            <div class="metric-card">
+                <div class="metric-icon">📚</div>
+                <div class="metric-info">
+                    <p>My Batches</p>
+                    <h2 id="totalBatches">-</h2>
+                </div>
+            </div>
+            
+            <div class="metric-card">
+                <div class="metric-icon">👨‍🎓</div>
+                <div class="metric-info">
+                    <p>Total Students</p>
+                    <h2 id="totalStudents">-</h2>
+                </div>
+            </div>
+
+            <div class="metric-card">
+                <div class="metric-icon">📝</div>
+                <div class="metric-info">
+                    <p>Pending Grading</p>
+                    <h2 id="pendingGrading">-</h2>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card">
+            <div class="card-header">
+                <h3>My Assigned Batches</h3>
+            </div>
+            <div id="batchesList" class="batches-grid">
+                <p style="text-align: center; color: #6b7280; width: 100%;">Loading your batches...</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="../js/teacher_dashboard.js"></script>
+</body>
+</html>

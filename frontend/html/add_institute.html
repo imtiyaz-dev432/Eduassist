@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Institutes - EduAssist AI</title>
+    <link rel="stylesheet" href="../css/add_institute.css">
+</head>
+<body>
+    <!-- --- Global Navigation Bar --- -->
+<nav class="global-navbar">
+    <div class="nav-brand">🎓 EduAssist</div>
+    <div class="nav-links">
+        <a href="owner_dashboard.html">Dashboard</a>
+        <a href="add_institute.html">Institute</a>
+        <a href="add_course.html" id="navCourseLink">Courses</a>
+        <a href="add_batch.html" id="navBatchLink">Batches</a>
+        <a href="add_faq.html" id="navFaqLink" style="font-weight: bold; color: #0ea5e9;">AI FAQs</a>
+    </div>
+    <button id="globalLogoutBtn" class="nav-logout-btn">Logout</button>
+</nav>
+
+<style>
+    /* Global Navbar Styling (Matches your theme) */
+    .global-navbar {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        padding: 12px 30px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 1px solid #e5e7eb;
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.03);
+    }
+    .nav-brand {
+        font-weight: 700;
+        font-size: 18px;
+        color: #1f2937;
+    }
+    .nav-links {
+        display: flex;
+        gap: 20px;
+    }
+    .nav-links a {
+        text-decoration: none;
+        color: #4b5563;
+        font-size: 14px;
+        font-weight: 600;
+        transition: color 0.2s;
+    }
+    .nav-links a:hover {
+        color: #4facfe;
+    }
+    .nav-logout-btn {
+        background: #fee2e2;
+        color: #ef4444;
+        border: none;
+        padding: 6px 14px;
+        border-radius: 6px;
+        font-size: 13px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background 0.2s;
+    }
+    .nav-logout-btn:hover {
+        background: #fecaca;
+    }
+</style>
+
+<script>
+    // Automatic Dynamic Link Fixer (Loads correct Institution ID)
+    document.addEventListener("DOMContentLoaded", () => {
+        const instId = localStorage.getItem("institution_id") || "1";
+        
+        const courseLink = document.getElementById("navCourseLink");
+        const batchLink = document.getElementById("navBatchLink");
+        
+        if (courseLink) courseLink.href = `add_course.html?institution_id=${instId}`;
+        if (batchLink) batchLink.href = `add_batch.html?institution_id=${instId}`;
+        
+        // Global Logout Action
+        const logoutBtn = document.getElementById("globalLogoutBtn");
+        if (logoutBtn) {
+            logoutBtn.addEventListener("click", () => {
+                if (confirm("Are you sure you want to log out?")) {
+                    localStorage.clear();
+                    window.location.href = "login.html";
+                }
+            });
+        }
+    });
+</script>
+   
+
+    <div class="dashboard-container">
+    
+        <div class="card form-card">
+            <h3>Add New Coaching</h3>
+            <p id="formMessage" class="message"></p>
+            
+            <form id="instituteForm">
+                <div class="form-grid">
+                    <div class="input-group">
+                        <label>Coaching Name: </label>
+                        <input type="text" id="instName" required>
+                    </div>
+                    <div class="input-group">
+                        <label>Type:</label>
+                        <select id="instType" required>
+                            <option value="">Select Type</option>
+                            <option value="Coaching">Coaching</option>
+                                                </select>
+                    </div>
+                    <div class="input-group">
+                        <label>City:</label>
+                        <input type="text" id="instCity" required>
+                    </div>
+                    <div class="input-group">
+                        <label>State:</label>
+                        <input type="text" id="instState" required>
+                    </div>
+                    <div class="input-group">
+                        <label>Country:</label>
+                        <input type="text" id="instCountry" required>
+                    </div>
+                    <div class="input-group">
+                        <label>Phone Number:</label>
+                        <input type="text" id="instPhone">
+                    </div>
+                    <div class="input-group full-width">
+                        <label>Address:</label>
+                        <input type="text" id="instAddress">
+                    </div>
+                </div>
+                <button type="submit" class="submit-btn" id="saveInstBtn">Save Institute</button>
+            </form>
+        </div>
+
+        <div class="card list-card">
+            <h3>My Coachings</h3>
+            <div id="institutesList" class="institutes-list">
+                <p>Loading your institutes...</p>
+                
+            </div>
+        </div>
+    </div>
+
+    <script src="../js/add_institute.js"></script>
+</body>
+</html>

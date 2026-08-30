@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verify OTP - EduAssist</title>
+    <link rel="stylesheet" href="../css/verify_otp.css">
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <h2>Verify Your Account</h2>
+            <p class="subtitle">Enter your details and the 6-digit OTP.</p>
+            
+            <p id="messageBox" class="message"></p>
+
+            <form id="verifyForm">
+                <!-- Naya Identifier Input -->
+                <div class="input-group">
+                    <label>Email or Mobile Number</label>
+                    <input 
+                        type="text" 
+                        id="identifierInput" 
+                        placeholder="Enter your email or phone" 
+                        
+                    >
+                </div>
+
+                <!-- OTP Input -->
+                <div class="input-group">
+                    <label>Enter 6-digit OTP</label>
+                    <input 
+                        type="text" 
+                        id="otpInput" 
+                        maxlength="6" 
+                        placeholder="                    Enter 6-digit OTP" 
+                        required 
+                        autocomplete="off"
+                    >
+                </div>
+
+                <button type="submit" class="submit-btn" id="verifyBtn">Verify OTP</button>
+            </form>
+            
+            <!-- Resend Section -->
+            <div class="resend-container">
+                <p class="bottom-text">
+                    Didn't receive the code? 
+                    <a href="#" id="resendBtn">Resend OTP</a>
+                    <span id="resendTimer" class="active-timer" style="display: none;">(Wait 60s)</span>
+                </p>
+            </div>
+        </div>
+    </div>
+    
+    <script src="../js/verify_otp.js"></script>
+</body>
+</html>

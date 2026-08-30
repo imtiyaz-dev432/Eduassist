@@ -1,4 +1,4 @@
-from flask import Flask,jsonify
+from flask import Flask,jsonify,request
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager
 from config import Config
@@ -65,11 +65,16 @@ from routes.teacher.dashboard import teacher_dashboard_bp
 from routes.owner.dashboard import owner_dashboard_bp
 from utils.celery import make_celery
 from routes.student.notification import notif_bp
+from routes.teacher.teacher_student import teacher_batch_student_bp
 
 app=Flask(__name__)
 app.config.from_object(Config)
 celery=make_celery(app)
-CORS(app, resources={r"/*": {"origins": "*"}}, supports_credentials=True)
+CORS(app, resources={r"/*": {"origins": "*"}})
+@app.before_request
+def handle_preflight():
+    if request.method == "OPTIONS":
+        return '', 200
 db.init_app(app)
 migrate=Migrate(app,db)
 jwt=JWTManager(app)
@@ -124,7 +129,10 @@ app.register_blueprint(teacher_login_bp)
 app.register_blueprint(teacher_dashboard_bp)
 app.register_blueprint(owner_dashboard_bp)
 app.register_blueprint(notif_bp)
-
+app.register_blueprint(teacher_batch_student_bp)
+@app.before_request
+def log_request_info():
+    print(f"Incoming Request -> URL: {request.path}, Method: {request.method}", flush=True)
 @app.route("/",methods=["GET"])
 def home():
     return jsonify({

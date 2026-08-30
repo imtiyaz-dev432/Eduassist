@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Dashboard - EduAssist</title>
+    <link rel="stylesheet" href="../css/student_dashboard.css">
+</head>
+<body>
+    <!-- Navbar -->
+     <nav class="navbar">
+        <div class="nav-brand">🎓 EduAssist Student</div>
+        <div class="nav-links">
+            <a href="student_dashboard.html">Dashboard</a>
+            <a href="student_assignments.html" class="active">My Assignments</a>
+            <a href="student_quizzes.html">My Quizzes</a>
+        
+     
+            <button onclick="logoutStudent()" class="logout-btn">Log Out ➔</button>
+        </div>
+    </nav>
+
+    <div class="dashboard-container">
+        <!-- Error Message Box -->
+        <p id="dashboardMessage" class="message" style="display: none;"></p>
+
+        <!-- Header Section -->
+        <div class="profile-header">
+            <div class="profile-info">
+                <h2 id="studentName">Loading Profile...</h2>
+                <p id="instituteName">Institute: ---</p>
+                <div class="tags">
+                    <span class="tag blue-tag" id="courseName">Course: ---</span>
+                    <span class="tag purple-tag" id="batchName">Batch: ---</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 3 Main Analytics Cards -->
+        <div class="metrics-grid">
+            
+            <!-- 1. Attendance Card -->
+            <div class="metric-card">
+                <div class="card-title">
+                    <span class="icon">📅</span> 
+                    <h3>Attendance</h3>
+                </div>
+                <div class="main-stat">
+                    <h1 id="attPercentage">0%</h1>
+                    <p>Overall Attendance</p>
+                </div>
+                <div class="stat-details">
+                    <div class="stat-item"><span class="dot green"></span> Present: <b id="attPresent">0</b></div>
+                    <div class="stat-item"><span class="dot red"></span> Absent: <b id="attAbsent">0</b></div>
+                    <div class="stat-item"><span class="dot yellow"></span> Late: <b id="attLate">0</b></div>
+                </div>
+            </div>
+
+            <!-- 2. Fee Summary Card -->
+            <div class="metric-card">
+                <div class="card-title">
+                    <span class="icon">💳</span> 
+                    <h3>Fee Summary</h3>
+                    <span id="feeAlert" class="alert-badge red-badge" style="display: none;">DUE</span>
+                </div>
+                <div class="main-stat">
+                    <h1 id="feeDue">₹0</h1>
+                    <p>Amount Due</p>
+                </div>
+                <div class="stat-details">
+                    <div class="stat-item">Total Fee: <b id="feeTotal">₹0</b></div>
+                    <div class="stat-item">Paid: <b id="feePaid">₹0</b></div>
+                    <div class="stat-item">Status: <b id="feeStatus">---</b></div>
+                </div>
+            </div>
+
+            <!-- 3. Assignments Card -->
+            <div class="metric-card">
+                <div class="card-title">
+                    <span class="icon">📝</span> 
+                    <h3>Assignments</h3>
+                    <span id="assignmentAlert" class="alert-badge yellow-badge" style="display: none;">PENDING</span>
+                </div>
+                <div class="main-stat">
+                    <h1 id="assignPending">0</h1>
+                    <p>Pending Assignments</p>
+                </div>
+                <div class="stat-details">
+                    <div class="stat-item">Total: <b id="assignTotal">0</b></div>
+                    <div class="stat-item">Submitted: <b id="assignSubmitted">0</b></div>
+                     
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script src="../js/student_dashboard.js"></script>
+</body>
+</html>

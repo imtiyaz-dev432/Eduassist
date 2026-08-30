@@ -1,16 +1,22 @@
 from flask import Blueprint,request,jsonify
-from flask_jwt_extended import jwt_required,get_jwt_identity
+from flask_jwt_extended import jwt_required,get_jwt_identity,get_jwt
 from datetime import datetime 
 from dbms.db import db
 
 from models.institute import Institution
 from models.student import Student
 from models.attendance import Attendance
-
+from models.batch import Batch
 attendance_bp=Blueprint("attendance_bp",__name__,url_prefix="/teacher/operation/attendance")
 @attendance_bp.route("/mark/<int:student_id>",methods=["POST"])
 @jwt_required()
 def mark_attendence(student_id):
+    claims=get_jwt()
+    if claims.get("role") not in["teacher","owner"]:
+        return jsonify({
+            "success":False,
+            "message":"Owner or teacher access only"
+        }),403
     current_user_id=int(get_jwt_identity())
     student=Student.query.filter_by(
         id=student_id
@@ -21,16 +27,14 @@ def mark_attendence(student_id):
             "message":"Student not found"
         }),404
 
-    institute=Institution.query.filter_by(
-        id=student.institution_id,
-        user_id=current_user_id
-    ).first()
-
-    if not institute:
-     return jsonify({
-        "success":False,
-        "message":"Institue not found"
-    }),403
+    if claims.get("role") == "teacher":
+        batch = Batch.query.filter_by(id=student.batch_id, teacher_id=current_user_id).first()
+        if not batch:
+            return jsonify({"success": False, "message": "Teacher not authorized for this student"}), 403
+    else:
+        institute = Institution.query.filter_by(id=student.institution_id, user_id=current_user_id).first()
+        if not institute:
+            return jsonify({"success": False, "message": "Institute not found"}), 403
 
     data=request.get_json()
     if not data:
@@ -91,6 +95,12 @@ def mark_attendence(student_id):
 @attendance_bp.route("/get/<int:student_id>",methods=["GET"])
 @jwt_required()
 def get_attendance(student_id):
+    claims=get_jwt()
+    if claims.get("role") not in["teacher","owner"]:
+        return jsonify({
+            "success":False,
+            "message":"Owner/Teacher access only"
+        }),403
     current_user_id=int(get_jwt_identity())
     student=Student.query.filter_by(
         id=student_id
@@ -102,17 +112,14 @@ def get_attendance(student_id):
             "message":"Student not found"
         }),404
 
-    institute=Institution.query.filter_by(
-        id=student.institution_id,
-        user_id=current_user_id
-    ).first()
-
-    if not institute:
-        return jsonify({
-            "success":False,
-            "message": "Unauthorized to view attendance for this student"
-
-        }),403
+    if claims.get("role") == "teacher":
+        batch = Batch.query.filter_by(id=student.batch_id, teacher_id=current_user_id).first()
+        if not batch:
+            return jsonify({"success": False, "message": "Teacher not authorized"}), 403
+    else:
+        institute = Institution.query.filter_by(id=student.institution_id, user_id=current_user_id).first()
+        if not institute:
+            return jsonify({"success": False, "message": "Institute not found"}), 403
     attendance_records=Attendance.query.filter_by(
         student_id=student_id
     ).all()
@@ -130,6 +137,7 @@ def get_attendance(student_id):
 @attendance_bp.route("/update/<int:attendance_id>",methods=["PATCH"])
 @jwt_required()
 def update_attendance(attendance_id):
+    claims=get_jwt()
     current_user_id=int(get_jwt_identity())
     attendance=Attendance.query.filter_by(
         id=attendance_id
@@ -140,15 +148,14 @@ def update_attendance(attendance_id):
             "message":"Attendance not found"
         }),400
 
-    institute=Institution.query.filter_by(
-        id=attendance.institution_id,
-        user_id=current_user_id
-    ).first()
-
-    if not institute:
-        return jsonify({
-            "success":False,
-            "message": "Unauthorized to update attendance for this student"}),403
+    if claims.get("role") == "teacher":
+        batch = Batch.query.filter_by(id=attendance.batch_id, teacher_id=current_user_id).first()
+        if not batch:
+            return jsonify({"success": False, "message": "Teacher not authorized"}), 403
+    else:
+        institute = Institution.query.filter_by(id=attendance.institution_id, user_id=current_user_id).first()
+        if not institute:
+            return jsonify({"success": False, "message": "Institute not found"}), 403
 
     data=request.get_json()
     if not data:
@@ -220,14 +227,18 @@ def delete_attendance(attendance_id):
             "message":"Attendance not found"
         }),400
 
-    institute=Institution.query.filter_by(
-        id=attendance.institution_id,
-        user_id=current_user_id
-    ).first()
-    if not institute:
-        return jsonify({
-            "message":"Unauthorized to delete this attendance"
-        }),403
+    claims = get_jwt()
+    
+    print("🔥 TOKEN CLAIMS:", claims)
+    print("🔥 LOGGED IN USER ID:", get_jwt_identity())
+    if claims.get("role") == "teacher":
+        batch = Batch.query.filter_by(id=attendance.batch_id, teacher_id=current_user_id).first()
+        if not batch:
+            return jsonify({"success": False, "message": "Teacher not authorized"}), 403
+    else:
+        institute = Institution.query.filter_by(id=attendance.institution_id, user_id=current_user_id).first()
+        if not institute:
+            return jsonify({"success": False, "message": "Institute not found"}), 403
 
     db.session.delete(attendance)   
     db.session.commit()

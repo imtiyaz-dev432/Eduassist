@@ -50,7 +50,7 @@ def my_assignments():
         if assignment.file_url:
             file_download_url = url_for(
                 "student_assignment_bp.download_assignment_pdf", 
-                filename=assignment.file_url, 
+                assignment_id=assignment.id, 
                 _external=True
             )
 
@@ -84,7 +84,7 @@ def my_assignments():
 
 @student_assignment_bp.route("/file/<int:assignment_id>", methods=["GET"])
 @jwt_required()
-def download_assignment__pdf(assignment_id):
+def download_assignment_pdf(assignment_id):
     assignment = Assignment.query.get_or_404(assignment_id)
 
     student = Student.query.get(int(get_jwt_identity()))
@@ -105,22 +105,34 @@ def download_assignment__pdf(assignment_id):
             "success": False,
             "message": "Assignment is not active"
         }), 403
+    if not assignment.file_url:
+        return jsonify({
+            "success": False,
+            "message": "No file was attached to this assignment by the teacher."
+        }), 404    
 
-    filename = os.path.basename(assignment.file_url)
+    filename = os.path.basename(str(assignment.file_url))
 
     path = os.path.join(
         current_app.config["ASSIGNMENT_UPLOAD_FOLDER"],
         filename
     )
+    print(path)
+    print("-----------------------------------------")
+    print("DEBUG 1: DB se mila URL ->", assignment.file_url)
+    print("DEBUG 2: Nikala gaya Naam ->", filename)
+    print("DEBUG 3: Poora Rasta (Path) ->", path)
+    print("DEBUG 4: Kya file sach mein hai? ->", os.path.exists(path))
+    print("-----------------------------------------")
 
     if not os.path.exists(path):
         return jsonify({
             "success": False,
             "message": "Assignment file not found"
         }), 404
-
-    return send_file(
-        path,
-        mimetype="application/pdf",
-        as_attachment=False
+    
+    return send_from_directory(
+        current_app.config["ASSIGNMENT_UPLOAD_FOLDER"],
+        filename,       
+        mimetype="application/pdf"
     )

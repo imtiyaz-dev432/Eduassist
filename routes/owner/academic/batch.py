@@ -75,6 +75,11 @@ def add_batch(course_id):
             "success": False,
             "message": "Invalid teacher or teacher does not belong to your institute"
         }), 400
+    if start_time>=end_time:
+        return jsonify({
+            "success":False,
+            "message":"Start time is less than end time"
+        })  ,400
     new_batch=Batch(
         institution_id=course.institution_id,
         course_id=course_id,
@@ -111,9 +116,9 @@ def add_batch(course_id):
 
 
 #get 
-@batch_bp.route("/get/<int:course_id>",methods=["GET"])
+@batch_bp.route("/get/<int:institution_id>",methods=["GET"])
 @jwt_required()
-def get_course_batch(course_id):
+def get_course_batch(institution_id):
     claims=get_jwt()
     if claims.get("role")!="owner":
         return jsonify({
@@ -121,18 +126,9 @@ def get_course_batch(course_id):
             "message":"Owner access only"
         }),403
     current_user_id=int(get_jwt_identity())
-    course=Course.query.filter_by(
-        
-        id=course_id
-    ).first()
-
-    if not course:
-      return jsonify({
-        "message":"Course not found"
-      }),404
 
     institution=Institution.query.filter_by(
-        id=course.institution_id,
+        id=institution_id,
         user_id=current_user_id
     ).first()
     if not institution:
@@ -140,7 +136,7 @@ def get_course_batch(course_id):
             "message":"institute not found"
         }),404
 
-    batches = Batch.query.filter_by(course_id=course_id).all()
+    batches = Batch.query.filter_by(institution_id=institution_id).all()
 
     batch_list = []
 
@@ -149,6 +145,7 @@ def get_course_batch(course_id):
     "id": batch.id,
     "institution_id": batch.institution_id,
     "course_id": batch.course_id,
+    "teacher_id":batch.teacher_id,
     "batch_name": batch.batch_name,
     "batch_code": batch.batch_code,
     "start_date": batch.start_date.isoformat() if batch.start_date else None,
@@ -222,6 +219,11 @@ def update_batches(batch_id):
     batch.fee_amount = data.get("fee_amount", batch.fee_amount)
     batch.monthly_fee = data.get("monthly_fee", batch.monthly_fee)
     batch.status = data.get("status", batch.status).strip()    
+    if batch.start_time>=batch.end_time:
+        return jsonify({
+            "success":False,
+            "message":"Start time is less than end time"
+        })  ,400
     if "teacher_id" in data:
         teacher_id=data.get("teacher_id")
         teacher=Teacher.query.filter_by(

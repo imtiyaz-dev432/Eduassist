@@ -83,5 +83,40 @@ def view_quiz_questions(quiz_id):
         "questions": question_list
     }), 200
 
+@student_quiz_question_bp.route("/list",methods=["GET"])
+@jwt_required()
+def get_quiz_list():
+    claims=get_jwt()
+    if claims.get("role")!="student":
+        return jsonify({
+            "success":False,
+            "message":"Student access only"
+        }),404
+    current_student_id=int(get_jwt_identity())
+    student=Student.query.filter_by(
+        id=current_student_id
+    )    .first()
+    if not student:
+        return jsonify({
+            "success":False,
+            "message":"Student not found"
+        }),404
+    
+    quizzes=Quiz.query.filter_by(batch_id=student.batch_id).all()
+    quiz_list=[]
+    for q in quizzes:
+        quiz_list.append({
+            "id": q.id,
+            "title": q.title,
+            "topic": q.topic if hasattr(q, "topic") else "General",
+            "difficulty": q.difficulty if hasattr(q, "difficulty") else "Normal",
+            "total_marks": q.total_marks,
+            "status": q.status
+        })
 
- 
+    return jsonify({
+         "success": True,
+        "message": "Quiz list fetched successfully",
+        "quizzes": quiz_list
+    })
+       

@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage AI FAQs - EduAssist</title>
+    <!-- Hum purani CSS hi use kar rahe hain 👇 -->
+    <link rel="stylesheet" href="../css/owner_dashboard.css">
+    <style>
+        /* Thodi extra styling form aur table ke liye */
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; font-weight: bold; margin-bottom: 5px; color: #374151; }
+        .form-control { width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 14px; font-family: inherit; }
+        textarea.form-control { resize: vertical; min-height: 80px; }
+        .alert-box { padding: 15px; border-radius: 6px; margin-bottom: 20px; display: none; font-weight: bold; }
+        .alert-success { background: #dcfce7; color: #16a34a; border: 1px solid #bbf7d0; }
+        .alert-error { background: #fee2e2; color: #dc2626; border: 1px solid #fecaca; }
+        .delete-btn { background: #fee2e2; color: #dc2626; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-weight: bold; }
+        .delete-btn:hover { background: #fca5a5; }
+    </style>
+</head>
+<body>
+
+    <!-- Background Decorative Shapes -->
+    <div class="bg-shape shape-1"></div>
+    <div class="bg-shape shape-2"></div>
+
+    <!-- Global Navigation Bar -->
+    <nav class="global-navbar">
+        <div class="nav-brand">🎓 EduAssist Dashboard</div>
+        <div class="nav-links">
+            <a href="owner_dashboard.html">Dashboard</a>
+            <a href="add_institute.html">Institute</a>
+            <a href="add_course.html">Courses</a>
+            <a href="add_batch.html">Batches</a>
+            <a href="add_faq.html" class="active">AI FAQs</a> <!-- Yeh naya link hai -->
+        </div>
+        <button id="globalLogoutBtn" class="nav-logout-btn">Logout</button>
+    </nav>
+
+    <div class="dashboard-container">
+        
+        <div class="welcome-banner">
+            <div>
+                <h1>🤖 Train Your AI Assistant</h1>
+                <p>Add questions and answers here. Your AI bot will use this to chat with students.</p>
+            </div>
+        </div>
+
+        <!-- Alert Message Box -->
+        <div id="msgBox" class="alert-box"></div>
+
+        <!-- FAQ Form Section -->
+        <div class="section-card">
+            <h2 style="margin-bottom: 20px; color: #0369a1;">Add New FAQ</h2>
+            <form id="faqForm">
+                <div class="form-group">
+                    <label>Category (Optional)</label>
+                    <select id="faqCategory" class="form-control">
+                        <option value="General">General</option>
+                        <option value="Fees">Fees & Payments</option>
+                        <option value="Courses">Courses & Eligibility</option>
+                        <option value="Timings">Batch Timings</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Student's Question</label>
+                    <input type="text" id="faqQuestion" class="form-control" placeholder="e.g. 12th Maths batch ki fees kitni hai?" required>
+                </div>
+                <div class="form-group">
+                    <label>AI's Answer</label>
+                    <textarea id="faqAnswer" class="form-control" placeholder="e.g. 12th Maths batch ki fees ₹5000 per year hai." required></textarea>
+                </div>
+                <button type="submit" id="submitBtn" style="background: #0284c7; color: white; border: none; padding: 12px 24px; border-radius: 6px; cursor: pointer; font-weight: bold; width: 100%;">➕ Save FAQ to AI</button>
+            </form>
+        </div>
+
+        <!-- FAQ List Section -->
+        <div class="section-card" style="margin-top: 30px;">
+            <h2>📚 Current AI Knowledge (Existing FAQs)</h2>
+            <table style="margin-top: 15px; width: 100%;">
+                <thead>
+                    <tr>
+                        <th style="width: 15%;">Category</th>
+                        <th style="width: 35%;">Question</th>
+                        <th style="width: 40%;">Answer</th>
+                        <th style="width: 10%;">Action</th>
+                    </tr>
+                </thead>
+                <tbody id="faqListBody">
+                    <tr>
+                        <td colspan="4" style="text-align: center; color: #6b7280;">Loading FAQs...</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+
+    <script src="../js/add_faq.js"></script>
+</body>
+</html>

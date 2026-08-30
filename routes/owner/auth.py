@@ -92,7 +92,7 @@ def register():
 
 #Login Route
 @auth_bp.route("/login",methods=["POST"])
-@limiter.limit("3 per minute")
+# @limiter.limit("3 per minute")
 def login():
     data=request.get_json()
     if not data:
@@ -124,16 +124,22 @@ def login():
             "success":False,
             "message":"Invalid Mobile No.."
         }),400
+        user = User.query.filter_by(email=email).first()
+        if not user:
+            return jsonify({
+            "message":"Invalid email/mobile no.. or password"
+        }),401
     if email:
+        
         if not is_valid_email(email):
           return jsonify({
             "success":False,
             "message":"Invalid Email"
         }),400
-    user=User.query.filter((User.email==email) | (User.mobile_no==mobile_no)).first()
+        user = User.query.filter_by(email=email).first()
 
-    if not user:
-        return jsonify({
+        if not user:
+           return jsonify({
             "message":"Invalid email/mobile no.. or password"
         }),401
     
@@ -314,8 +320,11 @@ def reset_password():
                 "success":False,
                 "message":"OTP expired or not found"
             }),400
-    stored_otp_hash = stored_otp.decode('utf-8')
-    if not verify_otp(str(otp), stored_otp_hash):     
+    if isinstance(stored_otp,bytes):
+        stored_otp_hash=stored_otp.decode('utf-8')
+    else:
+        stored_otp_hash = stored_otp     
+    if not verify_otp(stored_otp_hash,str(otp)):     
                  return jsonify({
                 "message":"Invalid OTP"    
           }),400 

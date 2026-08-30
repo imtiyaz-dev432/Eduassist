@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Leads - EduAssist</title>
+    <link rel="stylesheet" href="../css/owner_dashboard.css">
+    <link rel="stylesheet" href="../css/manage_leads.css">
+</head>
+<body>
+
+    <!-- Navigation Bar -->
+    <nav class="global-navbar">
+        <div class="nav-brand">🎓 EduAssist Dashboard</div>
+        <div class="nav-links">
+            <a href="owner_dashboard.html">Dashboard</a>
+            <a href="add_course.html">Courses</a>
+            <a href="add_batch.html">Batches</a>
+            <a href="manage_leads.html" class="active" style="color: #0ea5e9; font-weight:bold;">Student Leads</a>
+            <a href="add_faq.html">AI FAQs</a>
+        </div>
+        <button id="globalLogoutBtn" class="nav-logout-btn">Logout</button>
+    </nav>
+
+    <div class="dashboard-container">
+        <div class="welcome-banner leads-header">
+            <div>
+                <h1>📈 Student Leads & Inquiries</h1>
+                <p>Track students from AI Chatbot or add them manually.</p>
+            </div>
+            <button class="btn-add" onclick="openAddModal()">➕ Add Manual Lead</button>
+        </div>
+
+        <div id="msgBox" class="alert-box"></div>
+
+        <div class="section-card">
+            <h2>All Inquiries</h2>
+            <div class="table-responsive">
+                <table class="leads-table">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Contact Info</th>
+                            <th>Course Int.</th>
+                            <th>Source</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="leadsTableBody">
+                        <tr><td colspan="6" style="text-align: center;">Loading leads...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- 🟢 ADD LEAD MODAL -->
+    <div id="addModal" class="modal-overlay">
+        <div class="modal-content">
+            <h3>Add New Lead</h3>
+            <form id="addLeadForm">
+                <label>Student Name *</label>
+                <input type="text" id="addName" required placeholder="e.g. Rahul Kumar">
+
+                <label>Phone Number *</label>
+                <input type="text" id="addPhone" required placeholder="10-digit number">
+
+                <label>Email (Optional)</label>
+                <input type="email" id="addEmail" placeholder="rahul@example.com">
+
+                <label>Course Interest (Optional)</label>
+                <input type="text" id="addCourse" placeholder="e.g. Python, JEE, Class 12">
+
+                <label>Message/Notes (Optional)</label>
+                <textarea id="addMessage" rows="2" placeholder="Any specific requirement..."></textarea>
+
+                <div class="modal-actions">
+                    <button type="button" class="btn-cancel" onclick="closeAddModal()">Cancel</button>
+                    <button type="submit" class="btn-save">Save Lead</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 🔵 EDIT STATUS MODAL -->
+    <div id="editModal" class="modal-overlay">
+        <div class="modal-content">
+            <h3>Update Lead Status</h3>
+            <form id="editLeadForm">
+                <input type="hidden" id="editLeadId">
+                <p id="editLeadName" class="highlight-name"></p>
+                
+                <label>Lead Status</label>
+                <select id="editStatus">
+                    <option value="New">New (Pending)</option>
+                    <option value="Contacted">Contacted</option>
+                    <option value="Converted">Converted (Admission Done)</option>
+                    <option value="Closed">Closed (Not Interested)</option>
+                </select>
+
+                <div class="modal-actions">
+                    <button type="button" class="btn-cancel" onclick="closeEditModal()">Cancel</button>
+                    <button type="submit" class="btn-save">Update Status</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="../js/manage_leads.js"></script>
+</body>
+</html>

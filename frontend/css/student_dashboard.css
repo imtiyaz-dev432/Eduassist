@@ -1,0 +1,197 @@
+/* --- Reset and Base Styles --- */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    background-color: #f4f7f9;
+    color: #1f2937;
+    min-height: 100vh;
+}
+
+/* --- Navbar (Standard Theme) --- */
+.navbar {
+    background: white;
+    padding: 15px 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+.nav-brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.nav-brand h2 {
+    color: #1f2937;
+    font-size: 22px;
+}
+.badge {
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    color: white;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+}
+.nav-actions {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+.nav-actions span {
+    font-weight: 500;
+    color: #4b5563;
+}
+.logout-btn {
+    background: transparent;
+    border: 1px solid #ef4444;
+    color: #ef4444;
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.2s;
+}
+.logout-btn:hover {
+    background: #ef4444;
+    color: white;
+}
+
+/* --- Main Container --- */
+.dashboard-container {
+    max-width: 1100px;
+    margin: 30px auto;
+    padding: 0 20px;
+}
+
+/* --- Profile Header --- */
+.profile-header {
+    background: white;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
+    margin-bottom: 30px;
+    border-left: 5px solid #4facfe;
+}
+.profile-info h2 {
+    font-size: 26px;
+    color: #111827;
+    margin-bottom: 5px;
+}
+.profile-info p {
+    color: #6b7280;
+    margin-bottom: 15px;
+    font-size: 15px;
+}
+.tags {
+    display: flex;
+    gap: 10px;
+}
+.tag {
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 600;
+}
+.blue-tag { background: #e0f2fe; color: #0284c7; }
+.purple-tag { background: #f3e8ff; color: #7e22ce; }
+
+/* --- Metrics Grid --- */
+.metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+}
+
+/* --- Metric Cards --- */
+.metric-card {
+    background: white;
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+.metric-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.06);
+}
+.card-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+    border-bottom: 1px solid #f3f4f6;
+    padding-bottom: 15px;
+}
+.card-title .icon {
+    font-size: 20px;
+}
+.card-title h3 {
+    font-size: 16px;
+    color: #374151;
+    flex-grow: 1;
+}
+
+/* Badges for Due/Pending */
+.alert-badge {
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: bold;
+}
+.red-badge { background: #fee2e2; color: #ef4444; }
+.yellow-badge { background: #fef3c7; color: #d97706; }
+
+/* Stats Display */
+.main-stat {
+    text-align: center;
+    margin-bottom: 25px;
+}
+.main-stat h1 {
+    font-size: 42px;
+    color: #1f2937;
+    margin-bottom: 5px;
+}
+.main-stat p {
+    color: #6b7280;
+    font-size: 14px;
+}
+
+/* Detailed List */
+.stat-details {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.stat-item {
+    display: flex;
+    justify-content: space-between;
+    font-size: 14px;
+    color: #4b5563;
+    background: #f9fafb;
+    padding: 10px 15px;
+    border-radius: 6px;
+}
+.stat-item b {
+    color: #111827;
+}
+
+/* Colored Dots for Attendance */
+.dot {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    margin-right: 5px;
+}
+.green { background: #10b981; }
+.red { background: #ef4444; }
+.yellow { background: #f59e0b; }

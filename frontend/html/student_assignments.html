@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Assignments - EduAssist</title>
+    <link rel="stylesheet" href="../css/student_assignment.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <!-- Student Navigation Bar -->
+    <nav class="navbar">
+        <div class="nav-brand">🎓 EduAssist Student</div>
+        <div class="nav-links">
+            <a href="student_dashboard.html">Dashboard</a>
+            <a href="student_assignments.html" class="active">My Assignments</a>
+        </div>
+        <button id="logoutBtn" class="logout-btn">Logout</button>
+    </nav>
+
+    <div class="container">
+        <div class="header-banner">
+            <h1>📚 My Assignments</h1>
+            <p>View assignments given by your teachers for your batch.</p>
+        </div>
+
+        <div id="msgBox" class="alert-box"></div>
+
+        <!-- Assignments Grid -->
+        <div class="assignments-grid" id="assignmentsGrid">
+            <p class="loading-text">Loading your assignments...</p>
+        </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- ASSIGNMENT SUBMISSION MODAL (POPUP) -->
+    <!-- ========================================== -->
+    <div id="submitModal" class="modal-overlay hidden">
+        <div class="modal-content">
+            <h2>📤 Submit Assignment</h2>
+            
+            <!-- Hidden input to store Assignment ID -->
+            <input type="hidden" id="uploadAssignmentId">
+            
+            <div class="form-group mt-4">
+                <label for="assignmentPdf">Select PDF File:</label>
+                <input type="file" id="assignmentPdf" accept="application/pdf" class="file-input">
+                <p class="help-text">Only .pdf files are allowed. Max size 5MB.</p>
+            </div>
+
+            <div id="uploadMessage" class="upload-msg hidden"></div>
+
+            <div class="modal-actions">
+                <button onclick="closeSubmitModal()" class="btn cancel-btn">Cancel</button>
+                <button onclick="submitAssignmentFile()" id="submitBtn" class="btn submit-btn">Submit Answer</button>
+            </div>
+        </div>
+    </div>
+    <!-- ========================================== -->
+
+    <script src="../js/student_assignment.js"></script>
+</body>
+</html>

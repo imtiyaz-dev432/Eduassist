@@ -64,6 +64,7 @@ def get_dashboard_stats():
             "message": "Dashboard data fetched successfully",
             "data": {
                 # FIXED: Changed institute.name to institute.institution_name based on your model
+                "id":institute.id,
                 "institution_name": institute.institution_name, 
                 "metrics": {
                     "total_teachers": total_teachers,

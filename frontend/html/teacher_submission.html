@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Check Submissions - EduAssist</title>
+    <link rel="stylesheet" href="../css/teacher_submission.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="nav-brand">👨‍🏫 EduAssist Teacher</div>
+        <div class="nav-links">
+            <a href="teacher_dashboard.html">Dashboard</a>
+            <a href="batch_assignments.html">Assignments</a>
+        </div>
+        <button id="logoutBtn" class="logout-btn">Logout</button>
+    </nav>
+
+    <div class="container">
+        <div class="header-banner">
+            <h1>📄 Check Submissions</h1>
+            <p>View student PDFs and assign marks.</p>
+            <button onclick="window.history.back()" class="btn-back">⬅ Go Back</button>
+        </div>
+
+        <div id="msgBox" class="alert-box hidden"></div>
+
+        <!-- Submissions Table -->
+        <div class="table-container">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Student ID</th>
+                        <th>Status</th>
+                        <th>Marks</th>
+                        <th>Feedback</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="submissionsTableBody">
+                    <tr><td colspan="5" class="loading-text">Loading submissions...</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- GRADING MODAL (POPUP) -->
+    <!-- ========================================== -->
+    <div id="gradeModal" class="modal-overlay hidden">
+        <div class="modal-content">
+            <h2>📝 Grade Assignment</h2>
+            
+            <input type="hidden" id="gradeSubmissionId">
+            
+            <div class="form-group">
+                <label for="marksInput">Marks Awarded:</label>
+                <input type="number" id="marksInput" class="form-input" placeholder="Enter marks (e.g. 85)">
+            </div>
+
+            <div class="form-group">
+                <label for="feedbackInput">Teacher Feedback:</label>
+                <textarea id="feedbackInput" class="form-input" rows="3" placeholder="Great job! / Needs improvement..."></textarea>
+            </div>
+
+            <div id="gradeMessage" class="upload-msg hidden"></div>
+
+            <div class="modal-actions">
+                <button onclick="closeGradeModal()" class="btn cancel-btn">Cancel</button>
+                <button onclick="submitGrade()" id="submitGradeBtn" class="btn submit-btn">Save Grade</button>
+            </div>
+        </div>
+    </div>
+    <!-- ========================================== -->
+
+    <script src="../js/teacher_submission.js"></script>
+</body>
+</html>

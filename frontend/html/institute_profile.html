@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Institute Profile & AI Assistant</title>
+     <link rel="stylesheet" href="../css/institute_profile.css">
+</head>
+<body>
+
+    <div class="header">
+        <h1 id="instName">Loading Institute...</h1>
+        <p id="instAddress">Welcome to our official admission portal.</p>
+    </div>
+
+    <!-- AI Chat Widget -->
+    <div class="chat-widget">
+        <div class="chat-box" id="chatBox">
+            <div class="chat-header">
+                <span>🤖 EduAssist Bot</span>
+                <button class="close-btn" onclick="toggleChat()">✖</button>
+            </div>
+            
+            <!-- 🔥 Student Detail Form 🔥 -->
+            <div class="lead-form">
+                <p>Register for detailed info & admissions:</p>
+                <input type="text" id="visitorName" placeholder="Your Name">
+                <input type="text" id="visitorPhone" placeholder="Your 10-digit Phone No.">
+            </div>
+
+            <div class="chat-messages" id="chatMessages">
+                <div class="message ai-message">Namaste! Main is institute ka AI Assistant hu. Aap course, fees, ya admission ke baare mein kuch bhi puch sakte hain!</div>
+            </div>
+            <div class="chat-input">
+                <input type="text" id="userInput" placeholder="Type your question..." onkeypress="handleKeyPress(event)">
+                <button onclick="sendMessage()">Send</button>
+            </div>
+        </div>
+        <button class="chat-btn" onclick="toggleChat()">💬 Chat with AI</button>
+    </div>
+
+    <script src="../js/institute_profile.js"></script>
+</body>
+</html>

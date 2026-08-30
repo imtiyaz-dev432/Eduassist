@@ -1,0 +1,79 @@
+/* Table Layout for Chats */
+.table-responsive {
+    overflow-x: auto;
+}
+
+.chat-table { 
+    width: 100%; 
+    border-collapse: collapse; 
+    margin-top: 15px; 
+    background: white; 
+    border-radius: 8px; 
+    overflow: hidden; 
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+}
+
+.chat-table th { 
+    background: #f8fafc; 
+    padding: 15px; 
+    text-align: left; 
+    font-size: 14px; 
+    color: #475569; 
+    border-bottom: 2px solid #e2e8f0; 
+}
+
+.chat-table td { 
+    padding: 15px; 
+    border-bottom: 1px solid #e2e8f0; 
+    font-size: 14px; 
+    color: #334155; 
+    vertical-align: top;
+}
+
+.chat-table tr:hover { 
+    background: #f1f5f9; 
+}
+
+/* Chat Bubbles Style Inside Table */
+.visitor-msg {
+    background: #f1f5f9;
+    padding: 10px 12px;
+    border-radius: 8px;
+    border-left: 4px solid #94a3b8;
+    word-wrap: break-word;
+}
+
+.ai-msg {
+    background: #e0f2fe;
+    padding: 10px 12px;
+    border-radius: 8px;
+    border-left: 4px solid #0ea5e9;
+    word-wrap: break-word;
+}
+
+/* Lead Status Badges */
+.badge {
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: bold;
+    display: inline-block;
+}
+
+.badge-lead { background: #dcfce7; color: #15803d; } /* Green - If lead was captured */
+.badge-anon { background: #fef2f2; color: #b91c1c; } /* Red - If anonymous chat */
+
+/* Date Text */
+.date-text {
+    font-size: 12px;
+    color: #64748b;
+    font-weight: 500;
+}
+
+.alert-box { 
+    padding: 15px; 
+    border-radius: 6px; 
+    margin-bottom: 20px; 
+    display: none; 
+    font-weight: bold; 
+}

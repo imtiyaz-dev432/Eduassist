@@ -62,7 +62,7 @@ def get_teacher_dashboard():
                 "batch_id": batch.id,
                 "batch_name": batch.batch_name,
                 "status": batch.status,
-                "total_seats": batch.total_seats
+                "total_seats": batch.total_seats if batch.total_seats else "N/A"
             })
 
         # 5. Return the aggregated data
@@ -85,3 +85,6 @@ def get_teacher_dashboard():
             "success": False,
             "message": "Server error while fetching dashboard data"
         }), 500
+
+
+

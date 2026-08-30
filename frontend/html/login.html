@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Account</title>
+    <link rel="stylesheet" href="../css/register.css">
+</head>
+<body>
+
+    
+    <div class="bg-shape shape-1"></div>
+    <div class="bg-shape shape-2"></div>
+
+    <div class="auth-container">
+        <h2>Welcome Back</h2>
+        <p class="subtitle">Sign in to continue to your account</p>
+
+        <div class="form-container">
+            <!-- Form mein autocomplete="off" lagayein -->
+<form class="auth-form" id="loginForm" autocomplete="off">
+    
+    <div class="input-group">
+        <span class="icon">✉️</span>
+        <!-- Input mein autocomplete="off" lagayein -->
+        <input type="text" id="identifier" placeholder="Email OR Mobile Number" autocomplete="off" required>
+    </div>
+    
+    <div class="input-group">
+        <span class="icon">🔒</span>
+        <!-- Yahan bhi autocomplete="new-password" lagayein taaki browser save kiya hua password na dale -->
+        <input type="password" id="password" placeholder="Password" autocomplete="new-password" required>
+    </div>
+    <p id="messageBox" class="message" style="display: none;"></p>
+    
+    <button type="submit" id="loginBtn" class="submit-btn">Login</button>
+</form>
+        </div>
+
+        <!-- Action Links: Forgot Password & Verify OTP -->
+        <div class="action-links">
+            <a href="forgot-password.html">Forgot Password?</a>
+            <span class="divider">•</span>
+            <a href="verify-otp.html">Verify OTP?</a>
+        </div>
+
+        <!-- Register Link -->
+        <div class="footer-link">
+            Don't have an account? <a href="register.html">Register here</a>
+        </div>
+    </div>
+
+
+    <script src="../js/login.js"></script>
+</body>
+</html>

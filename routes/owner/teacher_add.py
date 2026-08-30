@@ -52,7 +52,12 @@ def teacher_add(institution_id):
         return jsonify({
             "success":False,
             "message":"Invalid mobile no.. format"}),400
-  
+    existing_teacher=Teacher.query.filter((Teacher.email==email)|(Teacher.mobile_no==mobile_no)).first()
+    if existing_teacher:
+        return jsonify({
+            "success":False,
+            "message":"Teacher with this email or mobile_no already exist"
+        }),409
     teacher=Teacher(
         name=name,
         email=email,
@@ -285,3 +290,45 @@ def enable_teacher(teacher_id):
         "success": False,
         "message": "Something went wrong"
     }), 500   
+
+@teacher_add_bp.route("/delete/<int:teacher_id>",methods=["DELETE"])
+@jwt_required()
+def delete_teacher(teacher_id):
+    claims=get_jwt()
+    if claims.get("role")!="owner":
+        return jsonify({
+            "success":False,
+            "message":"Only owner access only "
+        }),403
+    current_user_id=int(get_jwt_identity())
+    teacher=Teacher.query.filter_by(
+        id=teacher_id
+    ).first()
+    if not teacher:
+        return jsonify({
+            "success":False,
+            "message":"Teacher not found"
+        }),404
+    institute=Institution.query.filter_by(
+        user_id=current_user_id,
+        id=teacher.institution_id        
+    ).first()
+    if not institute:
+        return jsonify({
+            "success":False,
+            "message":"Unauthorized to delete the teacher"
+        }),403
+    try:
+        db.session.delete(teacher)
+        db.session.commit()    
+        return  jsonify({
+            "success":True,
+            "message":"Teacher deleted successfully"
+        }),200
+    except Exception as e:
+        db.session.rollback()
+        current_app.logger.exception(f"Failed to delete the teacher: {str(e)}")
+        return jsonify({
+            "success":False,
+            "message":'Something went wrong'
+        }) ,500
