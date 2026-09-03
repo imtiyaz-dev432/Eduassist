@@ -1,6 +1,6 @@
-# EduAssist AI
+# EduAssist 
 
-EduAssist AI is a Flask-based backend system for coaching institutes that helps manage students, fees, attendance, assignments, quizzes, and notifications.
+EduAssist  is a Flask-based backend system for coaching institutes that helps manage students, fees, attendance, assignments, quizzes, and notifications.
 
 ## Features
 
