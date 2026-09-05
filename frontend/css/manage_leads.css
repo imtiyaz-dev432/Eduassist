@@ -1,11 +1,11 @@
-/* Header alignment */
+
 .leads-header {
     display: flex; 
     justify-content: space-between; 
     align-items: center;
 }
 
-/* Table Styles */
+
 .table-responsive {
     overflow-x: auto;
 }
@@ -36,7 +36,7 @@
     background: #f1f5f9; 
 }
 
-/* Status Badges */
+
 .status-badge { 
     padding: 4px 10px; 
     border-radius: 20px; 
@@ -48,7 +48,7 @@
 .status-Converted { background: #dcfce7; color: #15803d; }
 .status-Closed { background: #fee2e2; color: #b91c1c; }
 
-/* Action Buttons */
+
 .btn-add { 
     background: #10b981; 
     color: white; 
@@ -83,7 +83,7 @@
 }
 .btn-delete:hover { background: #fca5a5; }
 
-/* Modal (Popup) Styles */
+
 .modal-overlay { 
     display: none; 
     position: fixed; 

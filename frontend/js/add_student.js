@@ -1,12 +1,35 @@
 document.addEventListener("DOMContentLoaded", function () {
     const token = localStorage.getItem("access_token");
-    if (!token) {
+    if (!token || token === "null") {
         alert("Please login first!");
         window.location.href = "login.html";
         return;
     }
 
-    // URL se Batch ID nikalna zaroori hai
+    // ==========================================
+    // Navbar Link Fixing & Logout Logic
+    // ==========================================
+    const instId = localStorage.getItem("institution_id") || "1";
+    
+    const courseLink = document.getElementById("navCourseLink");
+    const batchLink = document.getElementById("navBatchLink");
+    
+    if (courseLink) courseLink.href = `add_course.html?institution_id=${instId}`;
+    if (batchLink) batchLink.href = `add_batch.html?institution_id=${instId}`;
+    
+    const logoutBtn = document.getElementById("globalLogoutBtn");
+    if (logoutBtn) {
+        logoutBtn.addEventListener("click", () => {
+            if (confirm("Are you sure you want to log out?")) {
+                localStorage.clear();
+                window.location.href = "login.html";
+            }
+        });
+    }
+
+    // ==========================================
+    // Student Logic
+    // ==========================================
     const urlParams = new URLSearchParams(window.location.search);
     const batchId = urlParams.get("batch_id");
 
@@ -66,7 +89,7 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 
-    fetchStudents(); // Page load hote hi data fetch karo
+    fetchStudents(); // Load data on initialization
 
     // --- 2. ADD OR UPDATE STUDENT ---
     studentForm.addEventListener("submit", async (e) => {
@@ -136,7 +159,6 @@ document.addEventListener("DOMContentLoaded", function () {
         document.getElementById("studentEmail").value = student.email || "";
         document.getElementById("studentPhone").value = student.phone || "";
         document.getElementById("parentPhone").value = student.parent_phone || "";
-        // date format backend se "YYYY-MM-DD" aana chahiye <input type="date"> ke liye
         document.getElementById("admissionDate").value = student.admission_date || ""; 
         document.getElementById("studentStatus").value = student.status || "Active";
         document.getElementById("studentAddress").value = student.address || "";
@@ -178,7 +200,7 @@ document.addEventListener("DOMContentLoaded", function () {
             const data = await response.json();
             
             if (response.ok || data.success) {
-                alert(" " + (data.message || "Login enabled successfully!"));
+                alert("✅ " + (data.message || "Login enabled successfully!"));
             } else {
                 alert("❌ " + (data.message || "Failed to enable login. Check password requirements."));
             }

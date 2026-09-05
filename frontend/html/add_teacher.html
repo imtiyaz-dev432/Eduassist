@@ -4,106 +4,47 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Manage Teachers - EduAssist</title>
-    <!-- Hum same student wali CSS use kar sakte hain list styling ke liye -->
-    <link rel="stylesheet" href="../css/add_student.css">
+    
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" 
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" 
+          crossorigin="anonymous" 
+          referrerpolicy="no-referrer" />
+    
+    <!-- Theme Stylesheet -->
+    <link rel="stylesheet" href="../css/add_teacher.css">
 </head>
 <body>
-    <!-- --- Global Navigation Bar --- -->
-<nav class="global-navbar">
-    <div class="nav-brand">🎓 EduAssist</div>
-    <div class="nav-links">
-        <a href="owner_dashboard.html">Dashboard</a>
-        <a href="add_institute.html">Institute</a>
-        <a href="add_course.html" id="navCourseLink">Courses</a>
-        <a href="add_batch.html" id="navBatchLink">Batches</a>
-    </div>
-    <button id="globalLogoutBtn" class="nav-logout-btn">Logout</button>
-</nav>
-
-<style>
-    /* Global Navbar Styling (Matches your theme) */
-    .global-navbar {
-        background: rgba(255, 255, 255, 0.95);
-        backdrop-filter: blur(10px);
-        padding: 12px 30px;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        border-bottom: 1px solid #e5e7eb;
-        position: sticky;
-        top: 0;
-        z-index: 1000;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.03);
-    }
-    .nav-brand {
-        font-weight: 700;
-        font-size: 18px;
-        color: #1f2937;
-    }
-    .nav-links {
-        display: flex;
-        gap: 20px;
-    }
-    .nav-links a {
-        text-decoration: none;
-        color: #4b5563;
-        font-size: 14px;
-        font-weight: 600;
-        transition: color 0.2s;
-    }
-    .nav-links a:hover {
-        color: #4facfe;
-    }
-    .nav-logout-btn {
-        background: #fee2e2;
-        color: #ef4444;
-        border: none;
-        padding: 6px 14px;
-        border-radius: 6px;
-        font-size: 13px;
-        font-weight: 600;
-        cursor: pointer;
-        transition: background 0.2s;
-    }
-    .nav-logout-btn:hover {
-        background: #fecaca;
-    }
-</style>
-
-<script>
-    // Automatic Dynamic Link Fixer (Loads correct Institution ID)
-    document.addEventListener("DOMContentLoaded", () => {
-        const instId = localStorage.getItem("institution_id") || "1";
-        
-        const courseLink = document.getElementById("navCourseLink");
-        const batchLink = document.getElementById("navBatchLink");
-        
-        if (courseLink) courseLink.href = `add_course.html?institution_id=${instId}`;
-        if (batchLink) batchLink.href = `add_batch.html?institution_id=${instId}`;
-        
-        // Global Logout Action
-        const logoutBtn = document.getElementById("globalLogoutBtn");
-        if (logoutBtn) {
-            logoutBtn.addEventListener("click", () => {
-                if (confirm("Are you sure you want to log out?")) {
-                    localStorage.clear();
-                    window.location.href = "login.html";
-                }
-            });
-        }
-    });
-</script>
+    
+    <!-- Decorative Glow Shapes -->
     <div class="bg-shape shape-1"></div>
     <div class="bg-shape shape-2"></div>
 
+    <!-- Global Navigation Bar -->
+    <nav class="global-navbar">
+        <div class="nav-brand">🎓 EduAssist</div>
+        <div class="nav-links">
+             <a href="owner_dashboard.html" >Dashboard</a>
+            <a href="add_institute.html">Institute</a>
+            <a href="add_course.html" id="navCourseLink">Courses</a>
+            <a href="add_batch.html" id="navBatchLink">Batches</a>
+            <a href="add_faq.html" >AI FAQs</a>
+            <a href="manages_leads.html">Leads</a>
+            <a href="chat_history.html">Chat History</a>
+        </div>
+        <button id="globalLogoutBtn" class="nav-logout-btn">Logout</button>
+    </nav>
+
+    <!-- Sub Navbar -->
     <nav class="navbar">
         <h2>EduAssist Setup</h2>
         <button onclick="window.location.href='add_institute.html'" class="back-btn">Back to Coachings</button>
     </nav>
 
+    <!-- Main Container -->
     <div class="dashboard-container">
         
-        <!-- TOP SECTION: ADD TEACHER FORM -->
+        <!-- Step Form Card -->
         <div class="card form-card">
             <h3>Step 2: Add Teachers</h3>
             <p class="subtitle">Add faculty members for your institute.</p>
@@ -128,27 +69,27 @@
                     </div>
                 </div>
  
-                <div style="display: flex; gap: 15px; margin-top: 20px;">
+                <div class="action-btn-group">
                     <button type="submit" class="submit-btn" id="saveTeacherBtn">💾 Save Teacher</button>
-                    <!-- NEXT BUTTON: TO GO TO COURSES -->
-                    <button type="button" class="cancel-btn" onclick="goToCourse()">Next: Add Course ➔</button>
+                    <button type="button" class="next-step-btn" id="nextCourseBtn" onclick="goToCourse()">Next: Add Course ➔</button>
                 </div>
             </form>
         </div>
 
-        <!-- BOTTOM SECTION: LIST OF TEACHERS -->
-        <div class="card list-card" style="margin-top: 30px;">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+        <!-- Faculty List Card -->
+        <div class="card list-card">
+            <div class="list-header">
                 <h3>Faculty Members</h3>
             </div>
             
             <div id="teachersList" class="data-list">
-                <p style="text-align: center; color: #6b7280;">Loading teachers...</p>
+                <p class="loading-text">Loading teachers...</p>
             </div>
         </div>
 
     </div>
 
+    <!-- Main Logic Script -->
     <script src="../js/add_teacher.js"></script>
 </body>
 </html>

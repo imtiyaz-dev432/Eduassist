@@ -15,14 +15,36 @@ document.addEventListener("DOMContentLoaded", function () {
 
     if (!institutionId) {
         alert("Institution ID is missing! Please select or create a coaching first.");
-        window.location.href = "add_institute.html"; // Ya jahan se coaching select hoti hai
+        window.location.href = "add_institute.html"; 
         return;
     }
 
     // Save it back to localStorage for consistency
     localStorage.setItem("institution_id", institutionId);
 
-    // Form elements
+    // ==========================================
+    // Navbar Logic & Link Fixing
+    // ==========================================
+    const courseLink = document.getElementById("navCourseLink");
+    const batchLink = document.getElementById("navBatchLink");
+    
+    if (courseLink) courseLink.href = `add_course.html?institution_id=${institutionId}`;
+    if (batchLink) batchLink.href = `add_batch.html?institution_id=${institutionId}`;
+    
+    // Global Logout Action
+    const logoutBtn = document.getElementById("globalLogoutBtn");
+    if (logoutBtn) {
+        logoutBtn.addEventListener("click", () => {
+            if (confirm("Are you sure you want to log out?")) {
+                localStorage.clear();
+                window.location.href = "login.html";
+            }
+        });
+    }
+
+    // ==========================================
+    // Course Logic
+    // ==========================================
     const courseForm = document.getElementById("courseForm");
     const coursesList = document.getElementById("coursesList");
     const formMessage = document.getElementById("formMessage");
@@ -62,7 +84,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         courses.forEach(c => {
             const card = document.createElement("div");
-            card.className = "course-item-card"; // Agar aapki CSS mein ye class hai
+            card.className = "course-item-card"; 
             card.style.cssText = "background: #f9fafb; border: 1px solid #e5e7eb; padding: 15px; border-radius: 8px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center;";
             
             card.innerHTML = `

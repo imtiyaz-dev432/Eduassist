@@ -1,233 +1,85 @@
-// document.addEventListener("DOMContentLoaded", function () {
-//     const token = localStorage.getItem("access_token");
-//     if (!token) {
-//         alert("Please login first!");
-//         window.location.href = "login.html";
-//         return;
-//     }
+// ==========================================================================
+// Global Scope Functions (Edit & Delete handlers)
+// ==========================================================================
+let isEditMode = false;
+let editBatchId = null;
 
-//     const urlParams = new URLSearchParams(window.location.search);
-//     const instituteId = urlParams.get("inst_id");
+window.fillEditForm = function (batch) {
+    isEditMode = true;
+    editBatchId = batch.id;
 
-//     if (!instituteId) {
-//         alert("Coaching ID missing!");
-//         window.location.href = "add_institute.html";
-//         return;
-//     }
+    const formTitle = document.querySelector(".form-card h3");
+    const formSub = document.querySelector(".form-card .subtitle");
+    const submitBtn = document.getElementById("saveBatchBtn");
+    const cancelEditBtn = document.getElementById("cancelEditBtn");
 
-//     let isEditMode = false;
-//     let editBatchId = null;
+    if (formTitle) formTitle.textContent = "Update Batch";
+    if (formSub) formSub.textContent = "Modify details for " + batch.batch_name;
 
-//     const batchForm = document.getElementById("batchForm");
-//     const msgEl = document.getElementById("formMessage");
-//     const submitBtn = document.getElementById("saveBatchBtn");
-//     const cancelEditBtn = document.getElementById("cancelEditBtn");
-//     const batchesList = document.getElementById("batchesList");
-//     const courseSelect = document.getElementById("courseSelect");
-//     const teacherSelect = document.getElementById("teacherSelect");
+    document.getElementById("batchName").value = batch.batch_name || "";
+    document.getElementById("courseSelect").value = batch.course_id || "";
+    document.getElementById("teacherSelect").value = batch.teacher_id || "";
+    document.getElementById("startTime").value = batch.start_time || "";
+    document.getElementById("endTime").value = batch.end_time || "";
 
-//     // --- 1. LOAD COURSES & TEACHERS FOR DROPDOWN ---
-//     async function loadDropdowns() {
-//         try {
-//             // A. Load Courses
-//             const courseRes = await fetch(`http://127.0.0.1:5000/owner/academics/courses/get/${instituteId}`, { 
-//                 headers: { "Authorization": `Bearer ${token}` } 
-//             });
-//             const courseData = await courseRes.json();
-//             courseSelect.innerHTML = '<option value="">-- Select Course --</option>';
-//             if (courseRes.ok && courseData.courses) {
-//                 courseData.courses.forEach(c => {
-//                     courseSelect.innerHTML += `<option value="${c.id}">${c.course_name}</option>`;
-//                 });
-//             }
+    if (submitBtn) {
+        submitBtn.textContent = "Update Batch";
+        submitBtn.style.background = "linear-gradient(135deg, #f59e0b 0%, #d97706 100%)";
+    }
+    if (cancelEditBtn) cancelEditBtn.style.display = "inline-block";
+    window.scrollTo({ top: 0, behavior: "smooth" });
+};
 
-//             // B. Load Teachers
-//             const teacherRes = await fetch(`http://127.0.0.1:5000/teacher/get/${instituteId}`, { 
-//                 headers: { "Authorization": `Bearer ${token}` } 
-//             });
-//             const teacherData = await teacherRes.json();
-//             teacherSelect.innerHTML = '<option value="">-- Assign Teacher --</option>';
-            
-//             if (teacherRes.ok && teacherData.teacher_list) {
-//                 if (teacherData.teacher_list.length === 0) {
-//                     teacherSelect.innerHTML += '<option value="" disabled>No teachers found. Add a teacher first!</option>';
-//                 } else {
-//                     teacherData.teacher_list.forEach(t => {
-//                         teacherSelect.innerHTML += `<option value="${t.id}">${t.name}</option>`;
-//                     });
-//                 }
-//             }
-//         } catch (error) {
-//             console.error("Error loading dropdowns:", error);
-//         }
-//     }
+window.cancelEdit = function () {
+    isEditMode = false;
+    editBatchId = null;
+    const batchForm = document.getElementById("batchForm");
+    const submitBtn = document.getElementById("saveBatchBtn");
+    const cancelEditBtn = document.getElementById("cancelEditBtn");
 
-//     // --- 2. FETCH & DISPLAY BATCHES ---
-//     async function fetchBatches() {
-//         try {
-//             const response = await fetch(`http://127.0.0.1:5000/owner/academics/batch/get/${instituteId}`, {
-//                 method: "GET",
-//                 headers: { "Authorization": `Bearer ${token}` }
-//             });
-//             const data = await response.json();
+    if (batchForm) batchForm.reset();
 
-//             if (response.ok && data.batches) {
-//                 batchesList.innerHTML = "";
-//                 if (data.batches.length === 0) {
-//                     batchesList.innerHTML = `<p style="text-align: center; color: #6b7280;">No batches created yet.</p>`;
-//                     return;
-//                 }
-                
-//                 data.batches.forEach(batch => {
-//                     const div = document.createElement("div");
-//                     div.className = "course-item"; 
-                    
-//                     // 🔥 Yahan par Batch details ke sath naya button add kiya gaya hai 🔥
-//                     div.innerHTML = `
-//                         <div class="course-info">
-//                             <h4>${batch.batch_name} <span class="badge">🕒 ${batch.start_time || 'N/A'} - ${batch.end_time || 'N/A'}</span></h4>
-//                             <p>Course ID: ${batch.course_id} | Teacher ID: ${batch.teacher_id}</p>
-//                         </div>
-//                         <div class="action-buttons">
-//                             <!-- NAYA ADD STUDENT BUTTON -->
-//                             <button style="background: #10b981; color: white; padding: 6px 12px; border: none; border-radius: 6px; cursor: pointer; font-weight: 500;" 
-//                                     onclick="window.location.href='add_student.html?batch_id=${batch.id}'">
-//                                 👨‍🎓 Add/View Students
-//                             </button>
-                            
-//                             <button class="edit-btn" onclick='fillEditForm(${JSON.stringify(batch).replace(/'/g, "&#39;")})'>✏️ Edit</button>
-//                             <button class="del-btn" onclick="deleteBatch(${batch.id})">🗑️ Delete</button>
-//                         </div>
-//                     `;
-//                     batchesList.appendChild(div);
-//                 });
-//             }
-//         } catch (error) {
-//             batchesList.innerHTML = `<p style="color:red; text-align:center;">Failed to load batches.</p>`;
-//         }
-//     }
+    const formTitle = document.querySelector(".form-card h3");
+    const formSub = document.querySelector(".form-card .subtitle");
+    if (formTitle) formTitle.textContent = "Step 4: Create Batches";
+    if (formSub) formSub.textContent = "Assign a Teacher and a Course to create a new Batch.";
 
-//     // Load initial data
-//     loadDropdowns();
-//     fetchBatches();
+    if (submitBtn) {
+        submitBtn.textContent = "Create Batch";
+        submitBtn.style.background = "linear-gradient(135deg, #1e3a8a, #0ea5e9)";
+    }
+    if (cancelEditBtn) cancelEditBtn.style.display = "none";
+};
 
-//     // --- 3. CREATE OR UPDATE BATCH ---
-//     batchForm.addEventListener("submit", async (e) => {
-//         e.preventDefault();
-//         submitBtn.disabled = true;
-//         submitBtn.textContent = isEditMode ? "Updating Batch..." : "Creating Batch...";
+window.deleteBatch = async function (id) {
+    const token = localStorage.getItem("access_token");
+    if (!confirm("Are you sure you want to delete this batch?")) return;
 
-//         const payload = {
-//             batch_name: document.getElementById("batchName").value.trim(),
-//             teacher_id: document.getElementById("teacherSelect").value,
-//             start_time: document.getElementById("startTime").value,
-//             end_time: document.getElementById("endTime").value,
-//             mode: "Offline" 
-//         };
+    try {
+        const response = await fetch(`http://127.0.0.1:5000/owner/academics/batch/delete/${id}`, {
+            method: "DELETE",
+            headers: { "Authorization": `Bearer ${token}` }
+        });
 
-//         const selectedCourseId = document.getElementById("courseSelect").value;
-//         if (!selectedCourseId) {
-//             alert("Please select a course!");
-//             submitBtn.disabled = false;
-//             submitBtn.textContent = "Create Batch";
-//             return;
-//         }
+        if (response.ok) {
+            if (typeof window.reloadBatches === "function") {
+                window.reloadBatches();
+            } else {
+                window.location.reload();
+            }
+        } else {
+            alert("Failed to delete batch.");
+        }
+    } catch (error) {
+        alert("Error deleting batch.");
+    }
+};
 
-//         const apiUrl = isEditMode 
-//             ? `http://127.0.0.1:5000/owner/academics/batch/update/${editBatchId}` 
-//             : `http://127.0.0.1:5000/owner/academics/batch/add/${selectedCourseId}`;
-        
-//         const apiMethod = isEditMode ? "PATCH" : "POST";
-
-//         try {
-//             const response = await fetch(apiUrl, {
-//                 method: apiMethod,
-//                 headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
-//                 body: JSON.stringify(payload)
-//             });
-
-//             const data = await response.json();
-//             msgEl.style.display = "block";
-
-//             if (response.ok || data.success) {
-//                 msgEl.style.color = "#4ade80";
-//                 msgEl.textContent = isEditMode ? "Batch Updated Successfully!" : "Batch Created Successfully!";
-                
-//                 batchForm.reset();
-//                 cancelEdit();
-//                 fetchBatches(); 
-
-//                 setTimeout(() => { msgEl.style.display = "none"; }, 3000);
-//             } else {
-//                 msgEl.style.color = "#ef4444";
-//                 msgEl.textContent = data.message || "Failed to save batch.";
-//             }
-//         } catch (error) {
-//             msgEl.style.color = "#ef4444";
-//             msgEl.textContent = "Server error!";
-//         } finally {
-//             submitBtn.disabled = false;
-//             submitBtn.textContent = isEditMode ? "Update Batch" : "Create Batch";
-//         }
-//     });
-
-//     // --- 4. FILL EDIT FORM ---
-//     window.fillEditForm = function(batch) {
-//         isEditMode = true;
-//         editBatchId = batch.id;
-
-//         document.querySelector(".form-card h3").textContent = "Update Batch";
-//         document.querySelector(".form-card .subtitle").textContent = "Modify details for " + batch.batch_name;
-        
-//         document.getElementById("batchName").value = batch.batch_name;
-//         document.getElementById("courseSelect").value = batch.course_id;
-//         document.getElementById("teacherSelect").value = batch.teacher_id;
-//         document.getElementById("startTime").value = batch.start_time || "";
-//         document.getElementById("endTime").value = batch.end_time || "";
-
-//         submitBtn.textContent = "Update Batch";
-//         submitBtn.style.background = "linear-gradient(135deg, #f59e0b 0%, #d97706 100%)";
-//         cancelEditBtn.style.display = "inline-block";
-//         window.scrollTo(0, 0);
-//     };
-
-//     // --- 5. CANCEL EDIT MODE ---
-//     window.cancelEdit = function() {
-//         isEditMode = false;
-//         editBatchId = null;
-//         batchForm.reset();
-        
-//         document.querySelector(".form-card h3").textContent = "Step 4: Create Batches";
-//         document.querySelector(".form-card .subtitle").textContent = "Assign a Teacher and a Course to create a new Batch.";
-        
-//         submitBtn.textContent = "Create Batch";
-//         submitBtn.style.background = "linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)";
-//         cancelEditBtn.style.display = "none";
-//     };
-
-//     // --- 6. DELETE BATCH ---
-//     window.deleteBatch = async function(id) {
-//         if (!confirm("Are you sure you want to delete this batch?")) return;
-        
-//         try {
-//             const response = await fetch(`http://127.0.0.1:5000/owner/academics/batch/delete/${id}`, {
-//                 method: "DELETE",
-//                 headers: { "Authorization": `Bearer ${token}` }
-//             });
-//             if (response.ok) {
-//                 fetchBatches();
-//             } else {
-//                 alert("Failed to delete batch.");
-//             }
-//         } catch (error) {
-//             alert("Error deleting batch.");
-//         }
-//     };
-// });
-
-
-
+// ==========================================================================
+// DOM Initialization & Main Flow
+// ==========================================================================
 document.addEventListener("DOMContentLoaded", function () {
+    // 1. Security Check
     const token = localStorage.getItem("access_token");
     if (!token || token === "null") {
         alert("Please login first!");
@@ -235,30 +87,73 @@ document.addEventListener("DOMContentLoaded", function () {
         return;
     }
 
-    // 🔥 1. Safe tarike se ID nikalein (chahe inst_id ho ya institution_id)
+    // 2. Strict ID Resolution (URL priority, phir localStorage. NO '|| 1')
     const urlParams = new URLSearchParams(window.location.search);
-    let instituteId = urlParams.get("inst_id") || urlParams.get("institution_id") || localStorage.getItem("institution_id") || localStorage.getItem("coaching_id") || 1;
+    let instituteId = urlParams.get("institution_id") || urlParams.get("inst_id") || localStorage.getItem("institution_id") || localStorage.getItem("coaching_id");
 
-    // Isko localStorage mein save bhi kar lo taaki aage problem na aaye
+    // Strict Validation: ID agar invalid/missing ho toh redirection
+    if (!instituteId || instituteId === "null" || instituteId === "undefined" || isNaN(instituteId)) {
+        console.error("Invalid Institute ID:", instituteId);
+        localStorage.removeItem("institution_id");
+        alert("Institute ID missing! Please select your coaching institute.");
+        window.location.href = "add_institute.html";
+        return;
+    }
+
+    // ID ko clean state mein lock karein
     localStorage.setItem("institution_id", instituteId);
 
-    let isEditMode = false;
-    let editBatchId = null;
+    // 🔥 URL AUTO-SYNC: Agar URL mein ID nahi hai ya galat key hai, toh URL bar ko automatically correct karein bina page reload kiye
+    if (urlParams.get("institution_id") !== instituteId) {
+        const cleanUrl = `${window.location.pathname}?institution_id=${instituteId}`;
+        window.history.replaceState(null, "", cleanUrl);
+    }
 
+    // 3. Navbar Links Dynamic Injection
+    const courseLink = document.getElementById("navCourseLink");
+    const batchLink = document.getElementById("navBatchLink");
+    const faqLink = document.getElementById("navFaqLink");
+
+    if (courseLink) courseLink.href = `add_course.html?institution_id=${instituteId}`;
+    if (batchLink) batchLink.href = `add_batch.html?institution_id=${instituteId}`;
+    if (faqLink) faqLink.href = `add_faq.html?institution_id=${instituteId}`;
+
+    // 4. Safe Global Logout
+    const logoutBtn = document.getElementById("globalLogoutBtn");
+    if (logoutBtn) {
+        logoutBtn.addEventListener("click", () => {
+            if (confirm("Are you sure you want to log out?")) {
+                localStorage.clear();
+                window.location.href = "login.html";
+            }
+        });
+    }
+
+    // 5. Elements Reference
     const batchForm = document.getElementById("batchForm");
     const msgEl = document.getElementById("formMessage");
     const submitBtn = document.getElementById("saveBatchBtn");
-    const cancelEditBtn = document.getElementById("cancelEditBtn");
     const batchesList = document.getElementById("batchesList");
     const courseSelect = document.getElementById("courseSelect");
     const teacherSelect = document.getElementById("teacherSelect");
 
-    // --- 1. LOAD COURSES & TEACHERS FOR DROPDOWN ---
+    function showMsg(text, type) {
+        if (!msgEl) return;
+        msgEl.textContent = text;
+        msgEl.className = `message ${type}`;
+        msgEl.style.display = "block";
+        setTimeout(() => {
+            msgEl.style.display = "none";
+            msgEl.className = "message";
+        }, 4000);
+    }
+
+    // 6. Load Courses & Teachers for Dropdowns
     async function loadDropdowns() {
         try {
             // A. Load Courses
-            const courseRes = await fetch(`http://127.0.0.1:5000/owner/academics/courses/get/${instituteId}`, { 
-                headers: { "Authorization": `Bearer ${token}` } 
+            const courseRes = await fetch(`http://127.0.0.1:5000/owner/academics/courses/get/${instituteId}`, {
+                headers: { "Authorization": `Bearer ${token}` }
             });
             const courseData = await courseRes.json();
             if (courseSelect) {
@@ -271,13 +166,12 @@ document.addEventListener("DOMContentLoaded", function () {
             }
 
             // B. Load Teachers
-            const teacherRes = await fetch(`http://127.0.0.1:5000/teacher/get/${instituteId}`, { 
-                headers: { "Authorization": `Bearer ${token}` } 
+            const teacherRes = await fetch(`http://127.0.0.1:5000/teacher/get/${instituteId}`, {
+                headers: { "Authorization": `Bearer ${token}` }
             });
             const teacherData = await teacherRes.json();
             if (teacherSelect) {
                 teacherSelect.innerHTML = '<option value="">-- Assign Teacher --</option>';
-                
                 if (teacherRes.ok && teacherData.teacher_list) {
                     if (teacherData.teacher_list.length === 0) {
                         teacherSelect.innerHTML += '<option value="" disabled>No teachers found. Add a teacher first!</option>';
@@ -293,7 +187,7 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 
-    // --- 2. FETCH & DISPLAY BATCHES ---
+    // 7. Fetch & Display Active Batches
     async function fetchBatches() {
         try {
             const response = await fetch(`http://127.0.0.1:5000/owner/academics/batch/get/${instituteId}`, {
@@ -302,49 +196,51 @@ document.addEventListener("DOMContentLoaded", function () {
             });
             const data = await response.json();
 
-            if (batchesList) {
-                if (response.ok && data.batches) {
-                    batchesList.innerHTML = "";
-                    if (data.batches.length === 0) {
-                        batchesList.innerHTML = `<p style="text-align: center; color: #6b7280;">No batches created yet.</p>`;
-                        return;
-                    }
-                    
-                    data.batches.forEach(batch => {
-                        const div = document.createElement("div");
-                        div.className = "course-item"; 
-                        
-                        div.innerHTML = `
-                            <div class="course-info">
-                                <h4>${batch.batch_name} <span class="badge">🕒 ${batch.start_time || 'N/A'} - ${batch.end_time || 'N/A'}</span></h4>
-                                <p>Course ID: ${batch.course_id} | Teacher ID: ${batch.teacher_id}</p>
-                            </div>
-                            <div class="action-buttons">
-                                <button style="background: #10b981; color: white; padding: 6px 12px; border: none; border-radius: 6px; cursor: pointer; font-weight: 500;" 
-                                        onclick="window.location.href='add_student.html?batch_id=${batch.id}'">
-                                    👨‍🎓 Add/View Students
-                                </button>
-                                
-                                <button class="edit-btn" onclick='fillEditForm(${JSON.stringify(batch).replace(/'/g, "&#39;")})'>✏️ Edit</button>
-                                <button class="del-btn" onclick="deleteBatch(${batch.id})">🗑️ Delete</button>
-                            </div>
-                        `;
-                        batchesList.appendChild(div);
-                    });
+            if (!batchesList) return;
+
+            if (response.ok && data.batches) {
+                batchesList.innerHTML = "";
+                if (data.batches.length === 0) {
+                    batchesList.innerHTML = `<p class="loading-text">No batches created yet. Create your first batch above.</p>`;
+                    return;
                 }
+
+                data.batches.forEach(batch => {
+                    const div = document.createElement("div");
+                    div.className = "batch-item";
+
+                    div.innerHTML = `
+                        <div class="batch-info">
+                            <h4>${batch.batch_name} <span style="font-size:12px; background:#e0f2fe; color:#0284c7; padding:2px 8px; border-radius:8px; margin-left:8px;">🕒 ${batch.start_time || 'N/A'} - ${batch.end_time || 'N/A'}</span></h4>
+                            <p>Course ID: ${batch.course_id} | Teacher ID: ${batch.teacher_id}</p>
+                        </div>
+                        <div style="display: flex; gap: 8px; align-items: center;">
+                            <button style="background: #10b981; color: white; padding: 8px 14px; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 13px;" 
+                                    onclick="window.location.href='add_student.html?batch_id=${batch.id}&institution_id=${instituteId}'">
+                                👨‍🎓 Students
+                            </button>
+                            <button class="lock-btn" onclick='fillEditForm(${JSON.stringify(batch).replace(/'/g, "&#39;")})'>✏️ Edit</button>
+                            <button class="del-btn" onclick="deleteBatch(${batch.id})">🗑️ Delete</button>
+                        </div>
+                    `;
+                    batchesList.appendChild(div);
+                });
+            } else {
+                batchesList.innerHTML = `<p style="color:#ef4444; text-align:center;">Failed to load batches.</p>`;
             }
         } catch (error) {
             if (batchesList) {
-                batchesList.innerHTML = `<p style="color:red; text-align:center;">Failed to load batches.</p>`;
+                batchesList.innerHTML = `<p style="color:#ef4444; text-align:center;">Server error fetching batches.</p>`;
             }
         }
     }
 
-    // Load initial data
+    window.reloadBatches = fetchBatches;
+
     loadDropdowns();
     fetchBatches();
 
-    // --- 3. CREATE OR UPDATE BATCH ---
+    // 8. Create or Update Batch Form Submission
     if (batchForm) {
         batchForm.addEventListener("submit", async (e) => {
             e.preventDefault();
@@ -353,62 +249,52 @@ document.addEventListener("DOMContentLoaded", function () {
                 submitBtn.textContent = isEditMode ? "Updating Batch..." : "Creating Batch...";
             }
 
-            const payload = {
-                batch_name: document.getElementById("batchName").value.trim(),
-                teacher_id: document.getElementById("teacherSelect").value,
-                start_time: document.getElementById("startTime").value,
-                end_time: document.getElementById("endTime").value,
-                mode: "Offline" 
-            };
-
             const selectedCourseId = document.getElementById("courseSelect").value;
             if (!selectedCourseId) {
                 alert("Please select a course!");
                 if (submitBtn) {
                     submitBtn.disabled = false;
-                    submitBtn.textContent = "Create Batch";
+                    submitBtn.textContent = isEditMode ? "Update Batch" : "Create Batch";
                 }
                 return;
             }
 
-            const apiUrl = isEditMode 
-                ? `http://127.0.0.1:5000/owner/academics/batch/update/${editBatchId}` 
+            const payload = {
+                batch_name: document.getElementById("batchName").value.trim(),
+                teacher_id: document.getElementById("teacherSelect").value,
+                start_time: document.getElementById("startTime").value,
+                end_time: document.getElementById("endTime").value,
+                mode: "Offline"
+            };
+
+            const apiUrl = isEditMode
+                ? `http://127.0.0.1:5000/owner/academics/batch/update/${editBatchId}`
                 : `http://127.0.0.1:5000/owner/academics/batch/add/${selectedCourseId}`;
-            
+
             const apiMethod = isEditMode ? "PATCH" : "POST";
 
             try {
                 const response = await fetch(apiUrl, {
                     method: apiMethod,
-                    headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${token}`
+                    },
                     body: JSON.stringify(payload)
                 });
 
                 const data = await response.json();
-                if (msgEl) msgEl.style.display = "block";
 
                 if (response.ok || data.success) {
-                    if (msgEl) {
-                        msgEl.style.color = "#4ade80";
-                        msgEl.textContent = isEditMode ? "Batch Updated Successfully!" : "Batch Created Successfully!";
-                    }
-                    
+                    showMsg(isEditMode ? "Batch Updated Successfully!" : "Batch Created Successfully!", "success");
                     batchForm.reset();
-                    cancelEdit();
-                    fetchBatches(); 
-
-                    if (msgEl) setTimeout(() => { msgEl.style.display = "none"; }, 3000);
+                    window.cancelEdit();
+                    fetchBatches();
                 } else {
-                    if (msgEl) {
-                        msgEl.style.color = "#ef4444";
-                        msgEl.textContent = data.message || "Failed to save batch.";
-                    }
+                    showMsg(data.message || "Failed to save batch.", "error");
                 }
             } catch (error) {
-                if (msgEl) {
-                    msgEl.style.color = "#ef4444";
-                    msgEl.textContent = "Server error!";
-                }
+                showMsg("Server connection error!", "error");
             } finally {
                 if (submitBtn) {
                     submitBtn.disabled = false;
@@ -417,65 +303,4 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         });
     }
-
-    // --- 4. FILL EDIT FORM ---
-    window.fillEditForm = function(batch) {
-        isEditMode = true;
-        editBatchId = batch.id;
-
-        const formTitle = document.querySelector(".form-card h3");
-        const formSub = document.querySelector(".form-card .subtitle");
-        if (formTitle) formTitle.textContent = "Update Batch";
-        if (formSub) formSub.textContent = "Modify details for " + batch.batch_name;
-        
-        document.getElementById("batchName").value = batch.batch_name;
-        document.getElementById("courseSelect").value = batch.course_id;
-        document.getElementById("teacherSelect").value = batch.teacher_id;
-        document.getElementById("startTime").value = batch.start_time || "";
-        document.getElementById("endTime").value = batch.end_time || "";
-
-        if (submitBtn) {
-            submitBtn.textContent = "Update Batch";
-            submitBtn.style.background = "linear-gradient(135deg, #f59e0b 0%, #d97706 100%)";
-        }
-        if (cancelEditBtn) cancelEditBtn.style.display = "inline-block";
-        window.scrollTo(0, 0);
-    };
-
-    // --- 5. CANCEL EDIT MODE ---
-    window.cancelEdit = function() {
-        isEditMode = false;
-        editBatchId = null;
-        if (batchForm) batchForm.reset();
-        
-        const formTitle = document.querySelector(".form-card h3");
-        const formSub = document.querySelector(".form-card .subtitle");
-        if (formTitle) formTitle.textContent = "Step 4: Create Batches";
-        if (formSub) formSub.textContent = "Assign a Teacher and a Course to create a new Batch.";
-        
-        if (submitBtn) {
-            submitBtn.textContent = "Create Batch";
-            submitBtn.style.background = "linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)";
-        }
-        if (cancelEditBtn) cancelEditBtn.style.display = "none";
-    };
-
-    // --- 6. DELETE BATCH ---
-    window.deleteBatch = async function(id) {
-        if (!confirm("Are you sure you want to delete this batch?")) return;
-        
-        try {
-            const response = await fetch(`http://127.0.0.1:5000/owner/academics/batch/delete/${id}`, {
-                method: "DELETE",
-                headers: { "Authorization": `Bearer ${token}` }
-            });
-            if (response.ok) {
-                fetchBatches();
-            } else {
-                alert("Failed to delete batch.");
-            }
-        } catch (error) {
-            alert("Error deleting batch.");
-        }
-    };
 });

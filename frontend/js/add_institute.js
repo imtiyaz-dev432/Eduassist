@@ -111,10 +111,13 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     // --- LOGOUT BUTTON ---
-    logoutBtn.addEventListener("click", () => {
-        localStorage.removeItem("access_token");
-        window.location.href = "login.html";
-    });
+    // --- LOGOUT BUTTON (Safe Code) ---
+    if (logoutBtn) {
+        logoutBtn.addEventListener("click", () => {
+            localStorage.removeItem("access_token");
+            window.location.href = "login.html";
+        });
+    }
 });
 
 // --- DELETE INSTITUTE ---

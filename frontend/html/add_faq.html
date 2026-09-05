@@ -7,7 +7,6 @@
     <!-- Hum purani CSS hi use kar rahe hain 👇 -->
     <link rel="stylesheet" href="../css/owner_dashboard.css">
     <style>
-        /* Thodi extra styling form aur table ke liye */
         .form-group { margin-bottom: 15px; }
         .form-group label { display: block; font-weight: bold; margin-bottom: 5px; color: #374151; }
         .form-control { width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 14px; font-family: inherit; }
@@ -27,13 +26,15 @@
 
     <!-- Global Navigation Bar -->
     <nav class="global-navbar">
-        <div class="nav-brand">🎓 EduAssist Dashboard</div>
+        <div class="nav-brand">🎓 EduAssist </div>
         <div class="nav-links">
-            <a href="owner_dashboard.html">Dashboard</a>
+            <a href="owner_dashboard.html" >Dashboard</a>
             <a href="add_institute.html">Institute</a>
-            <a href="add_course.html">Courses</a>
-            <a href="add_batch.html">Batches</a>
-            <a href="add_faq.html" class="active">AI FAQs</a> <!-- Yeh naya link hai -->
+            <a href="add_course.html" id="navCourseLink">Courses</a>
+            <a href="add_batch.html" id="navBatchLink">Batches</a>
+            <a href="add_faq.html"style="color: #0ea5e9; font-weight: 700; border-bottom: 2.5px solid #0ea5e9; padding-bottom: 4px;" >AI FAQs</a>
+            <a href="manages_leads.html">Leads</a>
+            <a href="chat_history.html">Chat History</a>
         </div>
         <button id="globalLogoutBtn" class="nav-logout-btn">Logout</button>
     </nav>

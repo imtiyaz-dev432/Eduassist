@@ -124,7 +124,7 @@ def login():
             "success":False,
             "message":"Invalid Mobile No.."
         }),400
-        user = User.query.filter_by(email=email).first()
+        user = User.query.filter_by(mobile_no=mobile_no).first()
         if not user:
             return jsonify({
             "message":"Invalid email/mobile no.. or password"

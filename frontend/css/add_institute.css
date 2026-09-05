@@ -1,303 +1,355 @@
-/* ==========================================================================
-   1. RESET & BASE STYLES
-   ========================================================================== */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: 'Poppins', sans-serif;
 }
 
 body {
-    background-color: #f4f7f9;
-    color: #1f2937;
+    background-color: #f0f4f8;
+    color: #334155;
     min-height: 100vh;
-    /* Dashboard ke liye block layout chahiye, center flex nahi */
-    display: block; 
+    position: relative;
     overflow-x: hidden;
 }
 
-/* ==========================================================================
-   2. NAVBAR (Modern Glassmorphism)
-   ========================================================================== */
-.navbar {
-    background: rgba(255, 255, 255, 0.90);
-    backdrop-filter: blur(10px);
+.bg-shape {
+    position: fixed;
+    border-radius: 50%;
+    filter: blur(100px);
+    z-index: -1;
+    opacity: 0.45;
+    pointer-events: none;
+}
+
+.shape-1 {
+    width: 420px;
+    height: 420px;
+    background-color: #0ea5e9;
+    top: -120px;
+    left: -120px;
+}
+
+.shape-2 {
+    width: 520px;
+    height: 520px;
+    background-color: #1e3a8a;
+    bottom: -160px;
+    right: -120px;
+}
+
+.navbar,
+.global-navbar {
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.6);
     padding: 15px 40px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
     position: sticky;
     top: 0;
-    z-index: 50;
+    z-index: 1000;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
 }
 
-.navbar h2 {
-    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-   -webkit-text-fill-color: transparent;
-    font-weight: bold;
+.navbar h2,
+.nav-brand {
+    font-size: 20px;
+    font-weight: 700;
+    background: linear-gradient(135deg, #1e3a8a, #0ea5e9);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
     letter-spacing: 0.5px;
 }
 
-.logout-btn {
+.logout-btn,
+.nav-logout-btn {
     background: transparent;
     color: #ef4444;
     border: 1.5px solid #ef4444;
-    padding: 8px 20px;
-    border-radius: 8px;
-    cursor: pointer;
+    padding: 8px 18px;
+    border-radius: 10px;
+    font-size: 13px;
     font-weight: 600;
+    cursor: pointer;
     transition: all 0.3s ease;
 }
 
-.logout-btn:hover {
+.logout-btn:hover,
+.nav-logout-btn:hover {
     background: #ef4444;
-    color: white;
-    box-shadow: 0 4px 10px rgba(239, 68, 68, 0.3);
+    color: #ffffff;
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.25);
+    transform: translateY(-2px);
 }
 
-/* ==========================================================================
-   3. DASHBOARD CONTAINER & CARDS
-   ========================================================================== */
+
 .dashboard-container {
     display: flex;
-    align-items: flex-start; /* Cards upar se shuru honge */
+    align-items: flex-start;
     gap: 30px;
-    padding: 40px 30px;
+    padding: 40px 20px;
     max-width: 1200px;
-    margin: 0 auto; /* Center the container */
-    flex-wrap: wrap;
+    margin: 0 auto;
+    position: relative;
+    z-index: 1;
 }
 
 .card {
-    background-color: #ffffff;
-    padding: 30px;
-    border-radius: 12px;
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.06);
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    padding: 35px;
+    border-radius: 20px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.06);
 }
 
 .form-card {
-    flex: 2; /* Form ko 66% jagah milegi */
+    flex: 1.4;
     min-width: 320px;
 }
 
 .list-card {
-    flex: 1; /* List ko 33% jagah milegi */
+    flex: 1;
     min-width: 320px;
-    max-height: 600px; /* List zyada lambi ho toh scroll ban jaye */
+    max-height: 650px;
     overflow-y: auto;
 }
 
-.card h3 {
-    color: #1f2937;
-    font-size: 20px;
-    margin-bottom: 25px;
-    padding-bottom: 15px;
-    border-bottom: 2px solid #f3f4f6;
+.list-card::-webkit-scrollbar {
+    width: 6px;
+}
+.list-card::-webkit-scrollbar-track {
+    background: transparent;
+}
+.list-card::-webkit-scrollbar-thumb {
+    background-color: #cbd5e1;
+    border-radius: 10px;
+}
+.list-card::-webkit-scrollbar-thumb:hover {
+    background-color: #94a3b8;
 }
 
-/* ==========================================================================
-   4. FORM ELEMENTS
-   ========================================================================== */
+.card h3 {
+    color: #1e3a8a;
+    font-size: 22px;
+    font-weight: 700;
+    margin-bottom: 20px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid rgba(226, 232, 240, 0.8);
+}
+
+
 .form-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 20px;
+    gap: 18px;
 }
 
 .full-width {
     grid-column: span 2;
 }
 
+.input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
 .input-group label {
-    display: block;
-    font-size: 14px;
-    color: #4b5563;
-    margin-bottom: 8px;
+    font-size: 13px;
+    color: #334155;
     font-weight: 600;
 }
 
 .input-group input, 
 .input-group select {
     width: 100%;
-    padding: 12px 15px;
-    border: 1px solid #d1d5db;
-    border-radius: 8px;
-    font-size: 15px;
-    color: #374151;
-    background-color: #f9fafb;
+    padding: 13px 16px;
+    border: 1px solid #cbd5e1;
+    border-radius: 12px;
+    font-size: 14px;
+    color: #334155;
+    background-color: #f8fafc;
     outline: none;
     transition: all 0.3s ease;
 }
 
 .input-group input:focus, 
 .input-group select:focus {
-    border-color: #4facfe;
+    border-color: #0ea5e9;
     background-color: #ffffff;
-    box-shadow: 0 0 0 3px rgba(79, 172, 254, 0.2);
+    box-shadow: 0 0 0 4px rgba(14, 165, 233, 0.15);
 }
 
+.input-group input::placeholder {
+    color: #94a3b8;
+}
+
+/* Submit Action Button */
 .submit-btn {
     width: 100%;
     padding: 14px;
-    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-    color: white;
+    background: linear-gradient(135deg, #1e3a8a, #0ea5e9);
+    color: #ffffff;
     border: none;
-    border-radius: 8px;
-    font-size: 16px;
-    font-weight: bold;
+    border-radius: 12px;
+    font-size: 15px;
+    font-weight: 600;
     cursor: pointer;
-    transition: transform 0.2s, box-shadow 0.2s;
-    margin-top: 20px;
+    transition: all 0.3s ease;
+    margin-top: 22px;
+    box-shadow: 0 4px 15px rgba(14, 165, 233, 0.3);
 }
 
 .submit-btn:hover {
     transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(0, 242, 254, 0.4);
+    box-shadow: 0 6px 20px rgba(14, 165, 233, 0.45);
 }
 
-.message {
-    font-size: 14px;
-    font-weight: 500;
-    margin-bottom: 15px;
-    display: none;
-    text-align: center;
-    padding: 10px;
-    border-radius: 6px;
-    background-color: #f9fafb;
+.submit-btn:active {
+    transform: scale(0.98);
 }
 
 /* ==========================================================================
-   5. LIST ELEMENTS (My Coachings)
+   6. DYNAMIC NOTIFICATIONS / MESSAGES
+   ========================================================================== */
+.message {
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 16px;
+    display: none;
+    text-align: center;
+    padding: 12px;
+    border-radius: 10px;
+}
+
+.message.success {
+    background: #ecfdf5;
+    color: #10b981;
+    border: 1px solid #a7f3d0;
+    display: block;
+}
+
+.message.error {
+    background: #fef2f2;
+    color: #ef4444;
+    border: 1px solid #fecaca;
+    display: block;
+}
+
+/* ==========================================================================
+   7. LIST ITEMS (My Coachings Cards)
    ========================================================================== */
 .institutes-list {
     display: flex;
     flex-direction: column;
-    gap: 15px;
+    gap: 14px;
 }
 
 .inst-item {
-    border: 1px solid #e5e7eb;
-    padding: 18px;
-    border-radius: 10px;
-    background: #f9fafb;
+    border: 1px solid #cbd5e1;
+    padding: 18px 20px;
+    border-radius: 14px;
+    background: rgba(255, 255, 255, 0.6);
     position: relative;
     transition: all 0.3s ease;
 }
 
 .inst-item:hover {
-    border-color: #4facfe;
+    border-color: #0ea5e9;
     background: #ffffff;
-    box-shadow: 0 5px 15px rgba(79, 172, 254, 0.1);
+    box-shadow: 0 8px 20px rgba(14, 165, 233, 0.12);
+    transform: translateY(-2px);
 }
 
 .inst-item h4 {
-    color: #1f2937;
-    margin-bottom: 8px;
-    font-size: 17px;
-    padding-right: 70px; /* Taaki Delete button ke neeche text na aaye */
+    color: #1e3a8a;
+    margin-bottom: 6px;
+    font-size: 16px;
+    font-weight: 600;
 }
 
 .inst-item p {
-    font-size: 13.5px;
-    color: #6b7280;
+    font-size: 13px;
+    color: #64748b;
     margin-bottom: 4px;
 }
 
-.delete-btn {
-    position: absolute;
-    top: 15px;
-    right: 15px;
-    background: #fee2e2;
-    color: #ef4444;
-    border: none;
-    padding: 6px 12px;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 12px;
-    font-weight: bold;
-    transition: all 0.2s;
+.action-buttons {
+    margin-top: 14px;
+    display: flex;
+    gap: 10px;
+    align-items: center;
 }
 
+.add-btn {
+    background: linear-gradient(135deg, #1e3a8a, #0ea5e9);
+    color: #ffffff;
+    border: none;
+    padding: 8px 14px;
+    border-radius: 9px;
+    cursor: pointer;
+    font-size: 12.5px;
+    font-weight: 600;
+    transition: all 0.25s ease;
+    box-shadow: 0 2px 8px rgba(14, 165, 233, 0.25);
+}
+
+.add-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(14, 165, 233, 0.35);
+}
+
+.del-btn,
+.delete-btn {
+    background: #fef2f2;
+    color: #ef4444;
+    border: 1px solid #fecaca;
+    padding: 8px 14px;
+    border-radius: 9px;
+    cursor: pointer;
+    font-size: 12.5px;
+    font-weight: 600;
+    transition: all 0.25s ease;
+}
+
+.del-btn:hover,
 .delete-btn:hover {
     background: #ef4444;
-    color: white;
+    color: #ffffff;
+    box-shadow: 0 3px 10px rgba(239, 68, 68, 0.25);
+    transform: translateY(-1px);
 }
 
-/* ==========================================================================
-   6. RESPONSIVE DESIGN (Mobile Friendly)
-   ========================================================================== */
-@media (max-width: 768px) {
+@media (max-width: 850px) {
     .dashboard-container {
-        flex-direction: column; /* Mobile par dono cards ek ke neeche ek aayenge */
-        padding: 20px 15px;
+        flex-direction: column;
+        padding: 25px 16px;
     }
-    
+
+    .form-card,
+    .list-card {
+        width: 100%;
+        max-height: none;
+    }
+
     .form-grid {
-        grid-template-columns: 1fr; /* Form single line ho jayega */
+        grid-template-columns: 1fr;
     }
 
     .full-width {
         grid-column: span 1;
     }
-    
-    .navbar {
+
+    .navbar,
+    .global-navbar {
         padding: 15px 20px;
     }
-    
-    .navbar h2 {
-        font-size: 18px;
-    }
-}
-
-/* ==========================================================================
-   7. ACTION BUTTONS (Add Teacher & Delete)
-   ========================================================================== */
-.action-buttons {
-    margin-top: 15px; 
-    display: flex; 
-    gap: 10px;
-}
-
-.add-btn {
-    background: #4facfe; 
-    color: white; 
-    border: none; 
-    padding: 6px 12px; 
-    border-radius: 6px; 
-    cursor: pointer; 
-    font-size: 13px; 
-    font-weight: 600;
-    transition: background 0.2s;
-}
-
-.add-btn:hover { 
-    background: #3b8fd9; 
-}
-
-.del-btn {
-    background: #fee2e2; 
-    color: #ef4444; 
-    border: none; 
-    padding: 6px 12px; 
-    border-radius: 6px; 
-    cursor: pointer; 
-    font-size: 13px; 
-    font-weight: 600;
-    transition: background 0.2s;
-}
-
-.del-btn:hover { 
-    background: #fca5a5; 
-    color: white; 
-}
-
-.navbar h2 {
-    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-    -webkit-background-clip: text; 
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
-    font-weight: bold;
-    letter-spacing: 0.5px;
 }

@@ -6,27 +6,13 @@
     <title>My Quizzes - EduAssist</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Segoe+UI:wght@400;600;700&display=swap" rel="stylesheet">
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
-        body { background-color: #f4f7f9; color: #374151; }
-        .navbar { background: white; padding: 15px 40px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #e5e7eb; box-shadow: 0 2px 10px rgba(0,0,0,0.03); }
-        .nav-brand { font-weight: 700; font-size: 20px; color: #1f2937; }
-        .nav-links a { margin: 0 15px; text-decoration: none; color: #6b7280; font-weight: 600; }
-        .nav-links a.active { color: #8b5cf6; border-bottom: 2px solid #8b5cf6; padding-bottom: 5px;}
-        .container { max-width: 1000px; margin: 40px auto; padding: 0 20px; }
-        
-        .header-banner { background: linear-gradient(135deg, #8b5cf6 0%, #a855f7 100%); color: white; padding: 30px; border-radius: 12px; margin-bottom: 30px; }
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; }
-        
-        .quiz-card { background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); border-top: 5px solid #8b5cf6;}
-        .q-title { font-size: 18px; color: #1f2937; margin-bottom: 10px; font-weight: 700; }
-        .q-meta { font-size: 14px; color: #6b7280; margin-bottom: 5px; }
-        .start-btn { background: #8b5cf6; color: white; border: none; padding: 10px; width: 100%; border-radius: 8px; font-weight: 600; cursor: pointer; margin-top: 15px; text-decoration: none; display: inline-block; text-align: center;}
-        .start-btn:hover { background: #7c3aed; }
-    </style>
+    
+    <!-- External CSS Link -->
+    <link rel="stylesheet" href="../css/student_quizzes.css">
 </head>
 <body>
 
+    <!-- Navbar -->
     <nav class="navbar">
         <div class="nav-brand">🎓 EduAssist Student</div>
         <div class="nav-links">
@@ -34,77 +20,24 @@
             <a href="student_assignments.html">My Assignments</a>
             <a href="student_quizzes.html" class="active">My Quizzes</a>
         </div>
-        <button class="logout-btn" style="background:#fee2e2; color:#ef4444; border:none; padding:8px 15px; border-radius:6px; font-weight:bold; cursor:pointer;" onclick="window.location.href='login.html'">Logout</button>
+        <button class="logout-btn" onclick="window.location.href='login.html'">Logout</button>
     </nav>
 
+    <!-- Main Content -->
     <div class="container">
+        
         <div class="header-banner">
             <h1>⏱️ My Quizzes</h1>
             <p>Test your knowledge with live quizzes given by your teachers.</p>
         </div>
 
         <div class="grid" id="quizGrid">
-            <p style="text-align:center; color:#6b7280; grid-column: 1 / -1;">Loading your quizzes...</p>
+            <p class="status-text">Loading your quizzes...</p>
         </div>
+
     </div>
 
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            const token = localStorage.getItem("access_token");
-            if (!token) { alert("Please login first"); window.location.href = "login.html"; return; }
-
-            const quizGrid = document.getElementById("quizGrid");
-            
-            // Backend API jo bachhe ki quizzes fetch karegi
-            const API_URL = "http://127.0.0.1:5000/student/quiz/list"; 
-
-            async function loadQuizzes() {
-                try {
-                    const response = await fetch(API_URL, {
-                        method: "GET",
-                        headers: { "Authorization": `Bearer ${token}` }
-                    });
-                    const data = await response.json();
-
-                    if (response.ok && data.success) {
-                        if(data.quizzes.length === 0) {
-                            quizGrid.innerHTML = `<p style="text-align:center; color:#6b7280; grid-column: 1 / -1; padding: 40px; background: white; border-radius: 10px;">No active quizzes available for your batch right now! 🎉</p>`;
-                            return;
-                        }
-                        
-                        quizGrid.innerHTML = "";
-                        
-                        data.quizzes.forEach(quiz => {
-                            // Agar active hai toh 'Start Quiz' ka button dikhega
-                            let btnHtml = "";
-                            if(quiz.status === "Active") {
-                                // 🔥 YAHAN HAI MAIN LINK JO STUDENT KO LIVE EXAM WALE PAGE PAR BHEJEGA 🔥
-                                btnHtml = `<a href="student_take_quiz.html?quiz_id=${quiz.id}" class="start-btn"><i class="fas fa-play-circle"></i> Start Quiz</a>`;
-                            } else {
-                                btnHtml = `<button class="start-btn" style="background:#d1d5db; cursor:not-allowed;" disabled>Currently Unavailable</button>`;
-                            }
-
-                            quizGrid.innerHTML += `
-                                <div class="quiz-card">
-                                    <h3 class="q-title">${quiz.title}</h3>
-                                    <p class="q-meta"><strong>Topic:</strong> ${quiz.topic || 'N/A'}</p>
-                                    <p class="q-meta"><strong>Difficulty:</strong> ${quiz.difficulty || 'N/A'}</p>
-                                    <p class="q-meta"><strong>Total Marks:</strong> ${quiz.total_marks}</p>
-                                    <p class="q-meta"><strong>Status:</strong> <span style="color:${quiz.status === 'Active' ? '#10b981' : '#f59e0b'}; font-weight:bold;">${quiz.status}</span></p>
-                                    ${btnHtml}
-                                </div>
-                            `;
-                        });
-                    } else {
-                        quizGrid.innerHTML = `<p style="color:red; text-align:center; grid-column: 1/-1;">${data.message}</p>`;
-                    }
-                } catch (e) {
-                    quizGrid.innerHTML = `<p style="color:red; text-align:center; grid-column: 1/-1;">Network error fetching quizzes.</p>`;
-                }
-            }
-
-            loadQuizzes();
-        });
-    </script>
+    <!-- External JS Link -->
+    <script src="../js/student_quizzes.js"></script>
 </body>
 </html>

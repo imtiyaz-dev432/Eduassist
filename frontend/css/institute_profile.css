@@ -1,11 +1,7 @@
-/* =========================================
-   Import Modern Font (Poppins)
-========================================= */
+
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
 
-/* =========================================
-   Global & Body Styles
-========================================= */
+
 body { 
     font-family: 'Poppins', sans-serif; 
     background: #f0f4f8; 
@@ -14,9 +10,7 @@ body {
     overflow-x: hidden;
 }
 
-/* =========================================
-   Unique Hero Header (Curved Bottom)
-========================================= */
+
 .header { 
     background: linear-gradient(135deg, #1e3a8a, #0ea5e9); 
     color: white; 
@@ -41,9 +35,6 @@ body {
     opacity: 0.85; 
 }
 
-/* =========================================
-   Chat Widget Container
-========================================= */
 .chat-widget { 
     position: fixed; 
     bottom: 30px; 
@@ -54,9 +45,7 @@ body {
     align-items: flex-end;
 }
 
-/* =========================================
-   Pulsing Chat Button (Unique)
-========================================= */
+
 .chat-btn { 
     background: linear-gradient(135deg, #0ea5e9, #2563eb); 
     color: white; 
@@ -82,11 +71,9 @@ body {
     100% { box-shadow: 0 0 0 0 rgba(37, 99, 235, 0); }
 }
 
-/* =========================================
-   Glassmorphism Chat Box (Unique UI)
-========================================= */
+
 .chat-box { 
-    display: none; /* JS will change this to flex */
+    display: none; 
     flex-direction: column; 
     width: 380px; 
     height: 600px; 
@@ -101,7 +88,7 @@ body {
     margin-bottom: 20px; 
     overflow: hidden; 
     
-    /* Pop-up Animation */
+
     animation: popUp 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
@@ -110,7 +97,7 @@ body {
     to { opacity: 1; transform: translateY(0) scale(1); }
 }
 
-/* Chat Header */
+
 .chat-header { 
     background: transparent; 
     color: #1e3a8a; 
@@ -142,9 +129,7 @@ body {
     transform: rotate(90deg);
 }
 
-/* =========================================
-   Sleek Minimalist Lead Form
-========================================= */
+
 .lead-form { 
     background: rgba(248, 250, 252, 0.6); 
     padding: 15px 25px; 
@@ -159,7 +144,7 @@ body {
     font-weight: 700; 
 }
 
-/* Line style inputs */
+
 .lead-form input { 
     width: 100%; 
     box-sizing: border-box; 
@@ -186,9 +171,7 @@ body {
     margin-bottom: 5px;
 }
 
-/* =========================================
-   Chat Messages Area
-========================================= */
+
 .chat-messages { 
     flex: 1; 
     padding: 20px 25px; 
@@ -198,7 +181,7 @@ body {
     gap: 15px; 
 }
 
-/* Hide scrollbar for clean look */
+
 .chat-messages::-webkit-scrollbar { width: 5px; }
 .chat-messages::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
 
@@ -212,7 +195,7 @@ body {
     box-shadow: 0 2px 5px rgba(0,0,0,0.05);
 }
 
-/* AI Message Gradient */
+
 .ai-message { 
     background: linear-gradient(135deg, #ffffff, #f1f5f9); 
     color: #334155; 
@@ -221,7 +204,7 @@ body {
     border: 1px solid #e2e8f0;
 }
 
-/* User Message Modern Blue */
+
 .user-message { 
     background: #0ea5e9; 
     color: white; 
@@ -245,9 +228,7 @@ body {
     to { opacity: 1; }
 }
 
-/* =========================================
-   Floating Input Area (Bottom)
-========================================= */
+
 .chat-input { 
     display: flex; 
     padding: 15px 20px; 
@@ -286,9 +267,7 @@ body {
     transform: translateY(-2px);
 }
 
-/* =========================================
-   Mobile Responsiveness
-========================================= */
+
 @media (max-width: 480px) {
     .chat-widget {
         bottom: 10px;

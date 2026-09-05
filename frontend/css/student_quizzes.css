@@ -1,0 +1,132 @@
+/* --- Reset and Global --- */
+* { 
+    margin: 0; 
+    padding: 0; 
+    box-sizing: border-box; 
+    font-family: 'Segoe UI', sans-serif; 
+}
+body { 
+    background-color: #f4f7f9; 
+    color: #374151; 
+}
+
+/* --- Navbar --- */
+.navbar { 
+    background: white; 
+    padding: 15px 40px; 
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center; 
+    border-bottom: 1px solid #e5e7eb; 
+    box-shadow: 0 2px 10px rgba(0,0,0,0.03); 
+}
+.nav-brand { 
+    font-weight: 700; 
+    font-size: 20px; 
+    color: #1f2937; 
+}
+.nav-links a { 
+    margin: 0 15px; 
+    text-decoration: none; 
+    color: #6b7280; 
+    font-weight: 600; 
+}
+.nav-links a.active { 
+    color: #8b5cf6; 
+    border-bottom: 2px solid #8b5cf6; 
+    padding-bottom: 5px;
+}
+.logout-btn { 
+    background: #fee2e2; 
+    color: #ef4444; 
+    border: none; 
+    padding: 8px 15px; 
+    border-radius: 6px; 
+    font-weight: bold; 
+    cursor: pointer; 
+    transition: background 0.2s;
+}
+.logout-btn:hover {
+    background: #fecaca;
+}
+
+/* --- Container & Banner --- */
+.container { 
+    max-width: 1000px; 
+    margin: 40px auto; 
+    padding: 0 20px; 
+}
+.header-banner { 
+    background: linear-gradient(135deg, #8b5cf6 0%, #a855f7 100%); 
+    color: white; 
+    padding: 30px; 
+    border-radius: 12px; 
+    margin-bottom: 30px; 
+}
+.header-banner h1 {
+    margin-bottom: 5px;
+}
+
+/* --- Grid & Quiz Cards --- */
+.grid { 
+    display: grid; 
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); 
+    gap: 20px; 
+}
+.quiz-card { 
+    background: white; 
+    padding: 25px; 
+    border-radius: 12px; 
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05); 
+    border-top: 5px solid #8b5cf6;
+}
+.q-title { 
+    font-size: 18px; 
+    color: #1f2937; 
+    margin-bottom: 10px; 
+    font-weight: 700; 
+}
+.q-meta { 
+    font-size: 14px; 
+    color: #6b7280; 
+    margin-bottom: 5px; 
+}
+
+/* --- Buttons & Status text --- */
+.start-btn { 
+    background: #8b5cf6; 
+    color: white; 
+    border: none; 
+    padding: 10px; 
+    width: 100%; 
+    border-radius: 8px; 
+    font-weight: 600; 
+    cursor: pointer; 
+    margin-top: 15px; 
+    text-decoration: none; 
+    display: inline-block; 
+    text-align: center;
+    transition: background 0.2s;
+}
+.start-btn:hover { 
+    background: #7c3aed; 
+}
+.start-btn.disabled {
+    background: #d1d5db; 
+    cursor: not-allowed;
+}
+.start-btn.disabled:hover {
+    background: #d1d5db;
+}
+
+.status-text {
+    text-align: center; 
+    color: #6b7280; 
+    grid-column: 1 / -1; 
+    padding: 40px; 
+    background: white; 
+    border-radius: 10px;
+}
+.status-text.error {
+    color: #ef4444;
+}

@@ -1,4 +1,3 @@
-/* Table Layout for Chats */
 .table-responsive {
     overflow-x: auto;
 }
@@ -51,7 +50,7 @@
     word-wrap: break-word;
 }
 
-/* Lead Status Badges */
+
 .badge {
     padding: 4px 10px;
     border-radius: 20px;
@@ -60,10 +59,10 @@
     display: inline-block;
 }
 
-.badge-lead { background: #dcfce7; color: #15803d; } /* Green - If lead was captured */
-.badge-anon { background: #fef2f2; color: #b91c1c; } /* Red - If anonymous chat */
+.badge-lead { background: #dcfce7; color: #15803d; } 
+.badge-anon { background: #fef2f2; color: #b91c1c; } 
 
-/* Date Text */
+
 .date-text {
     font-size: 12px;
     color: #64748b;
