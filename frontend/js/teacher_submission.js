@@ -168,7 +168,7 @@ document.addEventListener("DOMContentLoaded", function () {
     document.getElementById("logoutBtn").addEventListener("click", function() {
         if (confirm("Are you sure you want to log out?")) {
             localStorage.clear(); 
-            window.location.href = "login.html";
+            window.location.href = "teacher_login.html";
         }
     });
 

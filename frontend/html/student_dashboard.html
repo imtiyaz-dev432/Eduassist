@@ -8,17 +8,39 @@
 </head>
 <body>
     <!-- Navbar -->
-     <nav class="navbar">
-        <div class="nav-brand">🎓 EduAssist Student</div>
-        <div class="nav-links">
-            <a href="student_dashboard.html">Dashboard</a>
-            <a href="student_assignments.html" class="active">My Assignments</a>
-            <a href="student_quizzes.html">My Quizzes</a>
-        
-     
-            <button onclick="logoutStudent()" class="logout-btn">Log Out ➔</button>
+     <!-- Modern Owner-Style Top Navbar -->
+<nav class="navbar">
+    <div class="nav-left">
+        <div class="nav-brand">
+            <span class="brand-icon">🎓</span>
+            <span class="brand-text">EduAssist</span>
         </div>
-    </nav>
+        <span class="portal-badge">Student Portal</span>
+    </div>
+
+    <div class="nav-links">
+        <a href="student_dashboard.html" class="nav-item active">
+            <span>📊</span> Dashboard
+        </a>
+        <a href="student_assignments.html" class="nav-item">
+            <span>📝</span> My Assignments
+        </a>
+        <a href="student_quizzes.html" class="nav-item">
+            <span>❓</span> My Quizzes
+        </a>
+    </div>
+
+    <div class="nav-right">
+        <div class="user-chip">
+            <div class="user-avatar">👨‍🎓</div>
+            <span class="user-role">Student</span>
+        </div>
+        <button onclick="logoutStudent()" class="logout-btn" title="Logout">
+            <span>Log Out</span>
+            <span class="arrow">➔</span>
+        </button>
+    </div>
+</nav>
 
     <div class="dashboard-container">
         <!-- Error Message Box -->

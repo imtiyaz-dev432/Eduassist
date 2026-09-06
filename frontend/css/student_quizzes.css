@@ -32,8 +32,8 @@ body {
     font-weight: 600; 
 }
 .nav-links a.active { 
-    color: #8b5cf6; 
-    border-bottom: 2px solid #8b5cf6; 
+    color: #5ccaf6; 
+    border-bottom: 2px solid #43c7ef; 
     padding-bottom: 5px;
 }
 .logout-btn { 
@@ -57,7 +57,7 @@ body {
     padding: 0 20px; 
 }
 .header-banner { 
-    background: linear-gradient(135deg, #8b5cf6 0%, #a855f7 100%); 
+    background: linear-gradient(135deg, #539ceb 0%, #55c9f7 100%); 
     color: white; 
     padding: 30px; 
     border-radius: 12px; 
@@ -78,7 +78,7 @@ body {
     padding: 25px; 
     border-radius: 12px; 
     box-shadow: 0 4px 10px rgba(0,0,0,0.05); 
-    border-top: 5px solid #8b5cf6;
+    border-top: 5px solid #3eb1ef;
 }
 .q-title { 
     font-size: 18px; 
@@ -94,7 +94,7 @@ body {
 
 /* --- Buttons & Status text --- */
 .start-btn { 
-    background: #8b5cf6; 
+    background: #4299e6; 
     color: white; 
     border: none; 
     padding: 10px; 
@@ -109,7 +109,7 @@ body {
     transition: background 0.2s;
 }
 .start-btn:hover { 
-    background: #7c3aed; 
+    background: #3aa8e3; 
 }
 .start-btn.disabled {
     background: #d1d5db; 
@@ -129,4 +129,222 @@ body {
 }
 .status-text.error {
     color: #ef4444;
+}
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+}
+
+body {
+    background-color: #f8fafc;
+    color: #1e293b;
+    min-height: 100vh;
+}
+
+/* ========================================== */
+/* TOP NAVBAR (Owner / Admin Style)          */
+/* ========================================== */
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #ffffff;
+    padding: 0.75rem 2rem;
+    border-bottom: 1px solid #e2e8f0;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+/* Left: Logo & Portal Tag */
+.nav-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.nav-brand {
+    font-size: 1.25rem;
+    font-weight: 800;
+    color: #3360ca;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    letter-spacing: -0.5px;
+}
+
+.portal-badge {
+    background: #e0f2fe;
+    color: #0284c7;
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 3px 8px;
+    border-radius: 6px;
+    text-transform: uppercase;
+}
+
+/* Center: Switchable Tabs */
+.nav-links {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: #f8fafc;
+    padding: 4px 6px;
+    border-radius: 10px;
+    border: 1px solid #f1f5f9;
+}
+
+.nav-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 14px;
+    text-decoration: none;
+    color: #64748b;
+    font-weight: 600;
+    font-size: 0.9rem;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+}
+
+.nav-item:hover {
+    color: #0ea5e9;
+    background: #ffffff;
+}
+
+/* Active Highlight for Quizzes */
+.nav-item.active {
+    background: #ffffff;
+    color: #16181c;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+    border: 1px solid #e0f2fe;
+}
+
+/* Right: User Chip & Logout */
+.nav-right {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.user-chip {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 4px 10px;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 20px;
+}
+
+.user-avatar {
+    width: 28px;
+    height: 28px;
+    background: #e2e8f0;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.9rem;
+}
+
+.user-role {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #334155;
+}
+
+.logout-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: #fee2e2;
+    color: #ef4444;
+    border: 1px solid #fecaca;
+    padding: 7px 14px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.logout-btn:hover {
+    background: #ef4444;
+    color: #ffffff;
+    border-color: #ef4444;
+}
+
+.logout-btn .arrow {
+    transition: transform 0.2s ease;
+}
+
+.logout-btn:hover .arrow {
+    transform: translateX(3px);
+}
+
+/* ========================================== */
+/* MAIN CONTENT LAYOUT                        */
+/* ========================================== */
+.container {
+    max-width: 1200px;
+    margin: 30px auto;
+    padding: 0 20px;
+}
+
+.header-banner {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    padding: 24px 30px;
+    border-radius: 12px;
+    margin-bottom: 25px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+}
+
+.header-banner h1 {
+    font-size: 1.6rem;
+    color: #0f172a;
+    font-weight: 700;
+    margin-bottom: 6px;
+}
+
+.header-banner p {
+    color: #64748b;
+    font-size: 0.95rem;
+}
+
+/* Quiz Cards Grid */
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 20px;
+}
+
+.status-text {
+    grid-column: 1 / -1;
+    text-align: center;
+    color: #64748b;
+    font-size: 1rem;
+    padding: 40px 0;
+}
+
+/* Optional styling for dynamic cards injected by JS */
+.quiz-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.quiz-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.06);
 }

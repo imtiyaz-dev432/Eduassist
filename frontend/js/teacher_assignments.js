@@ -239,9 +239,18 @@ function closeAddModal() {
 }
 
 function handleLogout() { 
-    localStorage.clear(); 
-    window.location.href = "login.html"; 
+    if (confirm("Are you sure you want to log out?")) {
+        // 2. Data clear karega
+        localStorage.clear();
+        sessionStorage.clear();
+        
+        // 3. Logout success alert dikhayega
+        alert("Logged out successfully! Redirecting to login page...");
+        
+        // 4. Alert par 'OK' dabane ke baad redirect karega
+        window.location.href = "teacher_login.html";
+     
 }
 
 // Call on Load
-document.addEventListener('DOMContentLoaded', fetchAssignments);
+document.addEventListener('DOMContentLoaded', fetchAssignments);}

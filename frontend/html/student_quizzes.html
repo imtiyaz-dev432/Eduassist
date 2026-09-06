@@ -5,22 +5,44 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Quizzes - EduAssist</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Segoe+UI:wght@400;600;700&display=swap" rel="stylesheet">
-    
-    <!-- External CSS Link -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../css/student_quizzes.css">
 </head>
 <body>
 
-    <!-- Navbar -->
+    <!-- Modern Owner-Style Top Navbar -->
     <nav class="navbar">
-        <div class="nav-brand">🎓 EduAssist Student</div>
-        <div class="nav-links">
-            <a href="student_dashboard.html">Dashboard</a>
-            <a href="student_assignments.html">My Assignments</a>
-            <a href="student_quizzes.html" class="active">My Quizzes</a>
+        <div class="nav-left">
+            <div class="nav-brand">
+                <span class="brand-icon">🎓</span>
+                <span class="brand-text">EduAssist</span>
+            </div>
+            <span class="portal-badge">Student Portal</span>
         </div>
-        <button class="logout-btn" onclick="window.location.href='login.html'">Logout</button>
+
+        <div class="nav-links">
+            <a href="student_dashboard.html" class="nav-item">
+                <span>📊</span> Dashboard
+            </a>
+            <a href="student_assignments.html" class="nav-item">
+                <span>📝</span> My Assignments
+            </a>
+            <!-- Quizzes section active (blue highlight) -->
+            <a href="student_quizzes.html" class="nav-item active">
+                <span>❓</span> My Quizzes
+            </a>
+        </div>
+
+        <div class="nav-right">
+            <div class="user-chip">
+                <div class="user-avatar">👨‍🎓</div>
+                <span class="user-role">Student</span>
+            </div>
+            <button onclick="logoutStudent()" class="logout-btn" title="Logout">
+                <span>Log Out</span>
+                <span class="arrow">➔</span>
+            </button>
+        </div>
     </nav>
 
     <!-- Main Content -->
