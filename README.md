@@ -57,9 +57,9 @@ Application / Containers
 ```
 
 The setup also includes Redis and PostgreSQL exporters, cAdvisor, and Node Exporter.
-## Screenshots
 
 ## Screenshots
+
 
 ### Grafana Dashboard
 ![Grafana Dashboard](screenshots/Grafana_list.png)

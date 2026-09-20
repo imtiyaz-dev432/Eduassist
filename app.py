@@ -174,7 +174,7 @@ def record_request_metrics(response):
             status=response.status_code
         ).observe(duration)
 
-    return response
+    return response    
 @app.route("/metrics")
 @limiter.exempt
 def metrics():
