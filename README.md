@@ -69,10 +69,12 @@ The setup also includes Redis and PostgreSQL exporters, cAdvisor, and Node Expor
 
 ### Loki
 ![Loki](screenshots/grafana_loki.png)
+
 ![Loki](screenshots/Grafana_loki2.png)
 
-### Prometheus Targets
+### Prometheus Targets And Queries
 ![Prometheus Targets](screenshots/prometheus_target.png)
+
 ![Prometheus Query](screenshots/prometheus_query.png)
 
 ### Node Exporter
