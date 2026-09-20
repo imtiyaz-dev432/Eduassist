@@ -1,0 +1,59 @@
+auth_enabled: false
+
+server:
+  http_listen_port: 3100
+  grpc_listen_port: 9096
+  log_level: info
+
+common:
+  instance_addr: 127.0.0.1
+  path_prefix: /tmp/loki
+
+  storage:
+    filesystem:
+      chunks_directory: /tmp/loki/chunks
+      rules_directory: /tmp/loki/rules
+
+  replication_factor: 1
+
+  ring:
+    kvstore:
+      store: inmemory
+
+schema_config:
+  configs:
+    - from: 2020-10-24
+      store: tsdb
+      object_store: filesystem
+      schema: v13
+      index:
+        prefix: index_
+        period: 24h
+
+ruler:
+  alertmanager_url: http://127.0.0.1:9093
+
+#LOKI ALLOY==--
+# | Purpose                | Query                                    |                            |           |
+# | ---------------------- | ---------------------------------------- | -------------------------- | --------- |
+# | Service ke saare logs  | `{service_name="eduassist-grafana"}`     |                            |           |
+# | All Docker logs        | `{job="docker"}`                         |                            |           |
+# | Multiple services      | `{service_name=~"eduassist-(grafana      | loki                       | alloy)"}` |
+# | Exact text search      | `{job="docker"}                          | = "error"`                 |           |
+# | Case-insensitive regex | `{job="docker"}                          | ~ "(?i)error"`             |           |
+# | Exclude text           | `{job="docker"} != "healthcheck"`        |                            |           |
+# | Exclude regex          | `{job="docker"} !~ "(?i)debug"`          |                            |           |
+# | Error + warning        | `{job="docker"}                          | ~ "(?i)error               | warn"`    |
+# | Specific event         | `{service_name="eduassist-alertmanager"} | = "Notify attempt failed"` |           |
+
+
+# | Purpose          | Query                                                                  |
+# | ---------------- | ---------------------------------------------------------------------- |
+# | All 5xx          | `{job="docker"} \| logfmt \| status=~"5.."`                            |
+# | All 4xx          | `{job="docker"} \| logfmt \| status=~"4.."`                            |
+# | Count 5xx        | `sum(count_over_time({job="docker"} \| logfmt \| status=~"5.." [5m]))` |
+# | 5xx rate         | `sum(rate({job="docker"} \| logfmt \| status=~"5.." [5m]))`            |
+# | Status breakdown | `sum by (status) (rate({job="docker"} \| logfmt [5m]))`                |
+
+
+

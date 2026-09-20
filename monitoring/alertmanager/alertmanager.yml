@@ -1,0 +1,32 @@
+global:
+  resolve_timeout: 5m
+
+  smtp_smarthost: 'smtp.gmail.com:587'
+  smtp_from: 'mohammadimtiyaz0305@gmail.com'
+  smtp_auth_username: 'mohammadimtiyaz0305@gmail.com'
+  smtp_auth_password: 'qbfy ccev wdpc jqok'
+
+  smtp_require_tls: true
+
+route:
+  receiver: gmail
+
+
+  group_by:
+    - alertname
+    - instance
+    - job
+
+  group_wait: 10s
+  group_interval: 10s
+  repeat_interval: 1h
+
+receivers:
+  - name: gmail
+    email_configs:
+      - to: 'imtiyazmohommad7@gmail.com'
+        from: 'mohammadimtiyaz0305@gmail.com'
+        smarthost: 'smtp.gmail.com:587'
+        auth_username: 'mohammadimtiyaz0305@gmail.com'
+        auth_password: 'qbfy ccev wdpc jqok'
+        require_tls: true      

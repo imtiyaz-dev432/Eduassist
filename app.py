@@ -6,6 +6,9 @@ from dbms.db import db
 from utils.rate import limiter
 from utils.extensions import redis_client
 from flask_migrate import Migrate
+import time
+from prometheus_client import Counter, generate_latest, CONTENT_TYPE_LATEST,Histogram
+
 #models
 from models.user import User
 from models.institute import Institution
@@ -130,13 +133,71 @@ app.register_blueprint(teacher_dashboard_bp)
 app.register_blueprint(owner_dashboard_bp)
 app.register_blueprint(notif_bp)
 app.register_blueprint(teacher_batch_student_bp)
+REQUEST_COUNT = Counter(
+    "flask_requests_total",
+    "Total number of Flask requests",
+    ["method", "endpoint", "status"]
+)
+REQUEST_LATENCY = Histogram(
+    "flask_request_duration_seconds",
+    "Flask request latency in seconds",
+    ["method", "endpoint", "status"]
+)
+
+# @app.before_request
+# def count_request():
+#         if request.path != "/metrics":
+#             REQUEST_COUNT.inc()
+@app.before_request
+def start_timer():
+    if request.path != "/metrics":
+        request._start_time = time.perf_counter()
+
+
+
+@app.after_request
+def record_request_metrics(response):
+    if request.path != "/metrics":
+        endpoint = request.endpoint or "unknown"
+
+        REQUEST_COUNT.labels(
+            method=request.method,
+            endpoint=endpoint,
+            status=response.status_code
+        ).inc()
+
+        duration = time.perf_counter() - request._start_time
+
+        REQUEST_LATENCY.labels(
+            method=request.method,
+            endpoint=endpoint,
+            status=response.status_code
+        ).observe(duration)
+
+    return response
+@app.route("/metrics")
+@limiter.exempt
+def metrics():
+    return generate_latest(), 200, {"Content-Type": CONTENT_TYPE_LATEST}
 @app.before_request
 def log_request_info():
     print(f"Incoming Request -> URL: {request.path}, Method: {request.method}", flush=True)
 @app.route("/",methods=["GET"])
+@limiter.exempt
 def home():
     return jsonify({
         "message":"eduassist ai is running successfully"
     }),200
 if __name__ == "__main__":
     app.run(debug=True)
+
+# While instrumenting Flask with Prometheus, I initially 
+# encountered HTTP 429 on the /metrics endpoint because the global
+#  rate limiter was also applied to Prometheus scrape requests.
+#   I excluded the monitoring endpoint from rate limiting so that
+#    observability traffic would not interfere with application monitoring
+
+
+# sum(rate(flask_requests_total[5m]))
+# means:
+# Sabhi matching Flask time-series ki requests/sec ko add karke total requests/sec batao
