@@ -1,140 +1,343 @@
+# services:
+
+#   prometheus:
+#     image: prom/prometheus:latest
+#     container_name: eduassist-prometheus
+#     restart: unless-stopped
+#     network_mode: host
+
+#     volumes:
+#       - ./monitoring/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+#       - ./monitoring/prometheus/alerts.yml:/etc/prometheus/alerts.yml:ro
+
+#     command:
+#       - "--config.file=/etc/prometheus/prometheus.yml"
+
+#     depends_on:
+#       - alertmanager
+
+
+#   alertmanager:
+#     image: prom/alertmanager:latest
+#     container_name: eduassist-alertmanager
+#     restart: unless-stopped
+#     network_mode: host
+
+#     volumes:
+#       - ./monitoring/alertmanager/alertmanager.yml:/etc/alertmanager/alertmanager.yml:ro
+
+#     command:
+#       - "--config.file=/etc/alertmanager/alertmanager.yml"
+
+
+#   grafana:
+#     image: grafana/grafana:latest
+#     container_name: eduassist-grafana
+#     restart: unless-stopped
+#     network_mode: host
+
+#     volumes:
+#       - grafana-data:/var/lib/grafana
+#       - ./monitoring/grafana/provisioning:/etc/grafana/provisioning:ro
+
+#     depends_on:
+#       - prometheus
+
+
+#   node-exporter:
+#     image: prom/node-exporter:latest
+#     container_name: eduassist-node-exporter
+#     restart: unless-stopped
+#     network_mode: host
+
+
+#   cadvisor:
+#     image: gcr.io/cadvisor/cadvisor:latest
+#     container_name: eduassist-cadvisor
+#     restart: unless-stopped
+#     network_mode: host
+
+#     volumes:
+#       - /:/rootfs:ro
+#       - /var/run:/var/run:ro
+#       - /sys:/sys:ro
+#       - /var/lib/docker:/var/lib/docker
+
+
+#   redis-exporter:
+#     image: oliver006/redis_exporter:latest
+#     container_name: eduassist-redis-exporter
+#     restart: unless-stopped
+#     network_mode: host
+
+#     environment:
+#       REDIS_ADDR: "redis://127.0.0.1:6379"
+
+#     command:
+#       - "--web.listen-address=0.0.0.0:9121"
+
+
+#   postgres-exporter:
+#     image: prometheuscommunity/postgres-exporter:latest
+#     container_name: eduassist-postgres-exporter
+#     restart: unless-stopped
+#     network_mode: host
+
+#     environment:
+#       DATA_SOURCE_NAME: "postgresql://postgres:postgres@127.0.0.1:5432/eduassist?sslmode=disable"
+
+#     command:
+#       - "--web.listen-address=0.0.0.0:9187"
+
+
+#   tempo:
+#     image: grafana/tempo:2.5.0
+#     container_name: eduassist-tempo
+#     restart: unless-stopped
+#     network_mode: host
+
+#     volumes:
+#       - ./monitoring/tempo/tempo.yml:/etc/tempo/tempo.yml:ro
+
+#     command:
+#       - "-config.file=/etc/tempo/tempo.yml"
+
+
+#   loki:
+#     image: grafana/loki:3.7.0
+#     container_name: eduassist-loki
+#     restart: unless-stopped
+#     network_mode: host
+
+#     volumes:
+#       - ./monitoring/loki/loki.yml:/etc/loki/loki.yml:ro
+
+#     command:
+#       - "-config.file=/etc/loki/loki.yml"
+
+
+#   alloy:
+#     image: grafana/alloy:latest
+#     container_name: eduassist-alloy
+#     restart: unless-stopped
+#     network_mode: host
+
+#     volumes:
+#       - ./monitoring/alloy/config.alloy:/etc/alloy/config.alloy:ro
+#       - /var/run/docker.sock:/var/run/docker.sock:ro
+#       - alloy-data:/var/lib/alloy/data
+
+#     command:
+#       - run
+#       - --server.http.listen-addr=0.0.0.0:12345
+#       - --storage.path=/var/lib/alloy/data
+#       - /etc/alloy/config.alloy
+
+
+# volumes:
+#   grafana-data:
+#   alloy-data:
+
+
+
+
+
+
+# services:
+
+#   prometheus:
+#     image: prom/prometheus:latest
+#     container_name: eduassist-prometheus
+#     restart: unless-stopped
+#     network_mode: host
+
+#     volumes:
+#       - ./monitoring/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+#       - ./monitoring/prometheus/alerts.yml:/etc/prometheus/alerts.yml:ro
+
+#     command:
+#       - "--config.file=/etc/prometheus/prometheus.yml"
+
+#     depends_on:
+#       - alertmanager
+
+
+#   alertmanager:
+#     image: prom/alertmanager:latest
+#     container_name: eduassist-alertmanager
+#     restart: unless-stopped
+#     network_mode: host
+
+#     volumes:
+#       - ./monitoring/alertmanager/alertmanager.yml:/etc/alertmanager/alertmanager.yml:ro
+
+#     command:
+#       - "--config.file=/etc/alertmanager/alertmanager.yml"
+
+
+#   grafana:
+#     image: grafana/grafana:latest
+#     container_name: eduassist-grafana
+#     restart: unless-stopped
+#     network_mode: host
+
+#     volumes:
+#       - grafana-data:/var/lib/grafana
+#       - ./monitoring/grafana/provisioning:/etc/grafana/provisioning:ro
+
+#     depends_on:
+#       - prometheus
+#     ports:
+#       - "3000:3000"  
+
+
+#   node-exporter:
+#     image: prom/node-exporter:latest
+#     container_name: eduassist-node-exporter
+#     restart: unless-stopped
+#     network_mode: host
+
+
+#   cadvisor:
+#     image: gcr.io/cadvisor/cadvisor:latest
+#     container_name: eduassist-cadvisor
+#     restart: unless-stopped
+#     network_mode: host
+
+#     volumes:
+#       - /:/rootfs:ro
+#       - /var/run:/var/run:ro
+#       - /sys:/sys:ro
+#       - /var/lib/docker:/var/lib/docker
+
+
+#   redis-exporter:
+#     image: oliver006/redis_exporter:latest
+#     container_name: eduassist-redis-exporter
+#     restart: unless-stopped
+#     network_mode: host
+
+#     environment:
+#       REDIS_ADDR: "redis://127.0.0.1:6379"
+
+#     command:
+#       - "--web.listen-address=0.0.0.0:9121"
+
+
+#   postgres-exporter:
+#     image: prometheuscommunity/postgres-exporter:latest
+#     container_name: eduassist-postgres-exporter
+#     restart: unless-stopped
+#     network_mode: host
+
+#     environment:
+#       DATA_SOURCE_NAME: "postgresql://postgres:postgres@127.0.0.1:5432/eduassist?sslmode=disable"
+
+#     command:
+#       - "--web.listen-address=0.0.0.0:9187"
+
+
+#   tempo:
+#     image: grafana/tempo:2.5.0
+#     container_name: eduassist-tempo
+#     restart: unless-stopped
+#     network_mode: host
+
+#     volumes:
+#       - ./monitoring/tempo/tempo.yml:/etc/tempo/tempo.yml:ro
+
+#     command:
+#       - "-config.file=/etc/tempo/tempo.yml"
+
+
+#   loki:
+#     image: grafana/loki:3.7.0
+#     container_name: eduassist-loki
+#     restart: unless-stopped
+#     network_mode: host
+
+#     volumes:
+#       - ./monitoring/loki/loki.yml:/etc/loki/loki.yml:ro
+
+#     command:
+#       - "-config.file=/etc/loki/loki.yml"
+
+
+#   alloy:
+#     image: grafana/alloy:latest
+#     container_name: eduassist-alloy
+#     restart: unless-stopped
+#     network_mode: host
+
+#     volumes:
+#       - ./monitoring/alloy/config.alloy:/etc/alloy/config.alloy:ro
+#       - /var/run/docker.sock:/var/run/docker.sock:ro
+#       - alloy-data:/var/lib/alloy/data
+
+#     command:
+#       - run
+#       - --server.http.listen-addr=0.0.0.0:12345
+#       - --storage.path=/var/lib/alloy/data
+#       - /etc/alloy/config.alloy
+#     ports:
+#       - "4318:4318"    
+#       - "12345:12345"   
+
+
+# volumes:
+#   grafana-data:
+#   alloy-data:
+
+
+
+
+
+
+version: '3.8'
+
 services:
-
-  prometheus:
-    image: prom/prometheus:latest
-    container_name: eduassist-prometheus
-    restart: unless-stopped
-    network_mode: host
-
+  alloy:
+    image: grafana/alloy:latest
+    container_name: eduassist-alloy
+    ports:
+      - "4318:4318"
+      - "12345:12345"
     volumes:
-      - ./monitoring/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
-      - ./monitoring/prometheus/alerts.yml:/etc/prometheus/alerts.yml:ro
-
+      - ./monitoring/alloy/config.alloy:/etc/alloy/config.alloy
     command:
-      - "--config.file=/etc/prometheus/prometheus.yml"
-
-    depends_on:
-      - alertmanager
-
-
-  alertmanager:
-    image: prom/alertmanager:latest
-    container_name: eduassist-alertmanager
-    restart: unless-stopped
-    network_mode: host
-
-    volumes:
-      - ./monitoring/alertmanager/alertmanager.yml:/etc/alertmanager/alertmanager.yml:ro
-
-    command:
-      - "--config.file=/etc/alertmanager/alertmanager.yml"
-
-
-  grafana:
-    image: grafana/grafana:latest
-    container_name: eduassist-grafana
-    restart: unless-stopped
-    network_mode: host
-
-    volumes:
-      - grafana-data:/var/lib/grafana
-      - ./monitoring/grafana/provisioning:/etc/grafana/provisioning:ro
-
-    depends_on:
-      - prometheus
-
-
-  node-exporter:
-    image: prom/node-exporter:latest
-    container_name: eduassist-node-exporter
-    restart: unless-stopped
-    network_mode: host
-
-
-  cadvisor:
-    image: gcr.io/cadvisor/cadvisor:latest
-    container_name: eduassist-cadvisor
-    restart: unless-stopped
-    network_mode: host
-
-    volumes:
-      - /:/rootfs:ro
-      - /var/run:/var/run:ro
-      - /sys:/sys:ro
-      - /var/lib/docker:/var/lib/docker
-
-
-  redis-exporter:
-    image: oliver006/redis_exporter:latest
-    container_name: eduassist-redis-exporter
-    restart: unless-stopped
-    network_mode: host
-
-    environment:
-      REDIS_ADDR: "redis://127.0.0.1:6379"
-
-    command:
-      - "--web.listen-address=0.0.0.0:9121"
-
-
-  postgres-exporter:
-    image: prometheuscommunity/postgres-exporter:latest
-    container_name: eduassist-postgres-exporter
-    restart: unless-stopped
-    network_mode: host
-
-    environment:
-      DATA_SOURCE_NAME: "postgresql://postgres:postgres@127.0.0.1:5432/eduassist?sslmode=disable"
-
-    command:
-      - "--web.listen-address=0.0.0.0:9187"
-
+      - run
+      - --server.http.listen-addr=0.0.0.0:12345
+      - /etc/alloy/config.alloy
+    networks:
+      monitoring:
+        ipv4_address: 172.20.0.30
 
   tempo:
     image: grafana/tempo:2.5.0
     container_name: eduassist-tempo
-    restart: unless-stopped
-    network_mode: host
-
-    volumes:
-      - ./monitoring/tempo/tempo.yml:/etc/tempo/tempo.yml:ro
-
+    ports:
+      - "3200:3200"
     command:
-      - "-config.file=/etc/tempo/tempo.yml"
-
-
-  loki:
-    image: grafana/loki:3.7.0
-    container_name: eduassist-loki
-    restart: unless-stopped
-    network_mode: host
-
+      - "-config.file=/etc/tempo_config/tempo.yaml"
+      - "-server.http-listen-port=3200"
     volumes:
-      - ./monitoring/loki/loki.yml:/etc/loki/loki.yml:ro
+      - ./monitoring/tempo:/etc/tempo_config
+    networks:
+      monitoring:
+        ipv4_address: 172.20.0.10
 
-    command:
-      - "-config.file=/etc/loki/loki.yml"
+  grafana:
+    image: grafana/grafana:latest
+    container_name: eduassist-grafana
+    ports:
+      - "3000:3000"
+    networks:
+      monitoring:
+        ipv4_address: 172.20.0.20
 
-
-  alloy:
-    image: grafana/alloy:latest
-    container_name: eduassist-alloy
-    restart: unless-stopped
-    network_mode: host
-
-    volumes:
-      - ./monitoring/alloy/config.alloy:/etc/alloy/config.alloy:ro
-      - /var/run/docker.sock:/var/run/docker.sock:ro
-      - alloy-data:/var/lib/alloy/data
-
-    command:
-      - run
-      - --server.http.listen-addr=0.0.0.0:12345
-      - --storage.path=/var/lib/alloy/data
-      - /etc/alloy/config.alloy
-
-
-volumes:
-  grafana-data:
-  alloy-data:
-
+networks:
+  monitoring:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16

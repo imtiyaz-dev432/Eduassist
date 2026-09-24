@@ -154,7 +154,6 @@ def start_timer():
         request._start_time = time.perf_counter()
 
 
-
 @app.after_request
 def record_request_metrics(response):
     if request.path != "/metrics":
@@ -166,15 +165,16 @@ def record_request_metrics(response):
             status=response.status_code
         ).inc()
 
-        duration = time.perf_counter() - request._start_time
+        # SAFE CHECK: Pehle check karein ki _start_time exist karta hai ya nahi
+        if hasattr(request, '_start_time'):
+            duration = time.perf_counter() - request._start_time
+            REQUEST_LATENCY.labels(
+                method=request.method,
+                endpoint=endpoint,
+                status=response.status_code
+            ).observe(duration)
 
-        REQUEST_LATENCY.labels(
-            method=request.method,
-            endpoint=endpoint,
-            status=response.status_code
-        ).observe(duration)
-
-    return response    
+    return response  
 @app.route("/metrics")
 @limiter.exempt
 def metrics():
@@ -189,15 +189,15 @@ def home():
         "message":"eduassist ai is running successfully"
     }),200
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=False)
 
-# While instrumenting Flask with Prometheus, I initially 
-# encountered HTTP 429 on the /metrics endpoint because the global
-#  rate limiter was also applied to Prometheus scrape requests.
-#   I excluded the monitoring endpoint from rate limiting so that
-#    observability traffic would not interfere with application monitoring
+# # While instrumenting Flask with Prometheus, I initially 
+# # encountered HTTP 429 on the /metrics endpoint because the global
+# #  rate limiter was also applied to Prometheus scrape requests.
+# #   I excluded the monitoring endpoint from rate limiting so that
+# #    observability traffic would not interfere with application monitoring
 
 
-# sum(rate(flask_requests_total[5m]))
-# means:
-# Sabhi matching Flask time-series ki requests/sec ko add karke total requests/sec batao
+# # sum(rate(flask_requests_total[5m]))
+# # means:
+# # Sabhi matching Flask time-series ki requests/sec ko add karke total requests/sec batao

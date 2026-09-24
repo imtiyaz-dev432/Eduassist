@@ -92,7 +92,7 @@ def register():
 
 #Login Route
 @auth_bp.route("/login",methods=["POST"])
-# @limiter.limit("3 per minute")
+@limiter.limit("3 per minute")
 def login():
     data=request.get_json()
     if not data:
