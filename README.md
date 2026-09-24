@@ -322,6 +322,3 @@ docker-compose.yml
 
 Md Imtiyaz
 
-update my readme 
-
-EduAssist
